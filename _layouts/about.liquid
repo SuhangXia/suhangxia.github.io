@@ -40,6 +40,66 @@ layout: default
 
     <div class="clearfix">{{ content }}</div>
 
+    <!-- Projects -->
+{% if site.data.projects %}
+  <h2>
+    <a href="{{ '/projects/' | relative_url }}" style="color: inherit">Projects</a>
+  </h2>
+  <div class="myprojects">
+    <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+      <tbody>
+        {% for project in site.data.projects %}
+        <tr>
+          <td width="40%" valign="top" align="center">
+            <img src="{{ project.image | prepend: 'assets/img/' }}" alt="{{ project.title }}" width="90%" style="margin-top:10px;padding-top:0px;padding-bottom:0px;border-radius:15px;border:1px solid black">
+          </td>
+          <td width="60%" valign="top">
+            <p>
+              <a href="{{ project.webpage }}" id="project">
+                <b>{{ project.title }}</b>
+              </a><br>
+              Team members:
+              {% for member in project.team_members %}
+                {% if member.link %}
+                  <a href="{{ member.link }}">{{ member.name }}</a>{% if forloop.last == false %},{% endif %}
+                {% else %}
+                  <b>{{ member.name }}</b>{% if forloop.last == false %},{% endif %}
+                {% endif %}
+              {% endfor %}
+              <br>
+              Supervised by
+              {% for supervisor in project.supervised_by %}
+                <a href="{{ supervisor.link }}">{{ supervisor.name }}</a>{% if forloop.last == false %},{% endif %}
+              {% endfor %}
+            </p>
+            <p>
+              <div class="project" id="project">
+                <a href="{{ project.webpage }}">Webpage</a> |
+                {% if project.poster %}
+                  <a href="{{ project.poster }}">Poster</a> |
+                {% endif %}
+                {% if project.demo %}
+                  <a href="{{ project.demo }}">Demo</a> |
+                {% endif %}
+                {% if project.report %}
+                  <a href="{{ project.report }}">Report</a>
+                {% endif %}
+              </div>
+            </p>
+            <p>
+              <div>
+                {{ project.description }}
+              </div>
+            </p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+
     <!-- News -->
     {% if page.news and site.announcements.enabled %}
       <h2>
