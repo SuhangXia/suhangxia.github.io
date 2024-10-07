@@ -2,11 +2,11 @@
 # Site settings
 # -----------------------------------------------------------------------------
 
-title: blank # the website title (if blank, full name will be used instead)
-first_name: You
-middle_name: R.
-last_name: Name
-email: you@example.com
+title: Suang xia (夏苏杭) # the website title (if blank, full name will be used instead)
+first_name: Suhang
+middle_name: 
+last_name: Xia
+email: xiasuhang.leo@foxmail.com
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design.
 footer_text: >
@@ -78,7 +78,7 @@ dblp_url: # your DBLP profile url
 discord_id: # your discord id (18-digit unique numerical identifier)
 facebook_id: # your facebook id
 flickr_id: # your flickr id
-github_username: # your GitHub user name
+github_username: suhangxia # your GitHub user name
 gitlab_username: # your GitLab user name
 ieee_id: # your ieeexplore.ieee.org/author/id
 inspirehep_id: 1010907 # Inspire HEP author ID
@@ -133,14 +133,14 @@ bing_site_verification: # out your bing-site-verification ID (Bing Webmaster)
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: al-folio # blog_name will be displayed in your blog page
-blog_description: a simple whitespace theme for academics
-permalink: /blog/:year/:title/
-lsi: false # produce an index for related posts
+#blog_name: al-folio # blog_name will be displayed in your blog page
+#blog_description: a simple whitespace theme for academics
+#permalink: /blog/:year/:title/
+#lsi: false # produce an index for related posts
 
 # Pagination
-pagination:
-  enabled: true
+#pagination:
+#  enabled: true
 
 related_blog_posts:
   enabled: true
@@ -313,8 +313,8 @@ display_categories: ["external-services"] # these categories will be displayed o
 # -----------------------------------------------------------------------------
 
 scholar:
-  last_name: [Einstein]
-  first_name: [Albert, A.]
+  last_name: [Xia]
+  first_name: [Suhang]
 
   style: apa
   locale: en
