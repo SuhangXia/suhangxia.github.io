@@ -73,20 +73,6 @@ layout: default
               {% endfor %}
             </p>
             <p>
-              <div class="project" id="project">
-                <a href="{{ project.webpage }}">Webpage</a> |
-                {% if project.poster %}
-                  <a href="{{ project.poster }}">Poster</a> |
-                {% endif %}
-                {% if project.demo %}
-                  <a href="{{ project.demo }}">Demo</a> |
-                {% endif %}
-                {% if project.report %}
-                  <a href="{{ project.report }}">Report</a>
-                {% endif %}
-              </div>
-            </p>
-            <p>
               <div>
                 {{ project.description }}
               </div>
