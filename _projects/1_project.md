@@ -130,7 +130,7 @@ $$
 
 ### A* Algorithm
 
-- The A* algorithm incorporates a cost function $ f(n) = g(n) + h(n) $, where $ h(n) $ is the heuristic function.
+- The A* algorithm incorporates a cost function $$ f(n) = g(n) + h(n) $$, where $$ h(n) $$ is the heuristic function.
 - **Heuristic Function Comparison**: Diagonal distance heuristic vs. Euclidean distance heuristic.
 
 <div class="row">
