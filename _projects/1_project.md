@@ -8,65 +8,184 @@ category: work
 related_publications: true
 ---
 
+- **Author**: [Suhang Xia]()
+- **Supervisor**: Yunpu Song
+- **Affiliation**: Department of Mechanical and Automotive Engineering, Zhejiang College of Tongji University
+- **Title**: Research on Indoor Navigation of Quadrotor UAV
 
+---
 
-<h1 style="text-align: center;"><strong>Abstract</strong></h1>
+## Table of Contents
 
-This paper presents an in-depth study on the route planning and trajectory optimisation techniques for quadrotor UAVs. Firstly, the research status of UAV route planning algorithms is introduced, including global path planning algorithms and local trajectory planning algorithms. Then, this paper designs a system scheme for quadrotor UAV control and establishes its dynamics model. On this basis, a controller based on PD feed-forward compensation is designed, and the effectiveness of this controller in quadrotor UAV control is verified through parameter tuning and simulation analysis. In terms of route planning, this paper investigates the Dijkstra algorithm based on the breadth-first algorithm (BFS), and the A* algorithm path planning algorithm based on the depth-first algorithm (DFS) and the greedy best-first search algorithm, and analyses their applications in quadrotor UAV route planning. Further, this paper carries out a trajectory optimisation study and explores the application of segmented polynomials, Bessel curves and B spline curves in trajectory planning. In order to achieve rapid trajectory optimisation, a trajectory optimisation algorithm based on multi-objective optimisation is proposed, which achieves rapid trajectory generation and optimisation through trajectory representation and collision region trajectory detection, obstacle thrust calculation and multi-objective optimisation function design.Finally, the effectiveness of the trajectory optimisation algorithm proposed in this paper is verified through simulation experiments, which proves its practical value and potential application prospect in improving UAV route planning and trajectory optimisation.
+1. [Simulation Platform Construction and Mathematical Modeling](#simulation-platform-construction-and-mathematical-modeling)
+2. [Design 1: PD Feedforward Compensation Controller for Quadrotor UAV in MATLAB](#design-1)
+3. [Design 2: A* Algorithm and Trajectory Optimization](#design-2)
+4. [EGO-Planner Algorithm Research](#ego-planner-algorithm-research)
+5. [Conclusion and Experimental Results](#conclusion-and-experimental-results)
+6. [Acknowledgments](#acknowledgments)
+
+---
+
+## Simulation Platform Construction and Mathematical Modeling
+
+### Simulation Platform Construction
+
+- **Core Components**: The simulation platform is constructed using ROS, Gazebo, the PX4-autopilot flight controller, QGC ground control software, and the EGO-Planner algorithm for UAV trajectory planning.
+  
+- **Challenges**: Conventional simulator maps typically fail to accurately represent real-world conditions, leading to significant discrepancies between virtual simulations and real-life scenarios.
+
+- **Proposed Solution**: 
+
+To address this critical issue, this study proposes an advanced high-fidelity simulation environment based on LiDAR 3D reconstruction technology. This cutting-edge approach leverages high-resolution LiDAR sensors to capture comprehensive environmental data from real-world scenarios. Through sophisticated spatial reconstruction algorithms, the simulation platform generates highly accurate 3D models that reflect the complexity and dynamic nature of real environments. The constructed platform not only replicates intricate geometric structures but also supports dynamic updates, ensuring that it can faithfully simulate real-world conditions. This unprecedented level of fidelity provides a robust framework for testing and validating UAV autonomous navigation and obstacle avoidance algorithms, offering real-time control feedback. By bridging the gap between virtual and physical testing environments, this innovative platform sets a new standard for high-precision simulations in UAV autonomous driving technology.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/3.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/Project1/ROSFrame.png" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
-<div class="caption">
-    Caption photos easily. On the left, a road goes through a tunnel. Middle, leaves artistically fall in a hipster photoshoot. Right, in another hipster photoshoot, a lumberjack grasps a handful of pine needles.
-</div>
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    This image can also have a caption. It's like magic.
-</div>
-You can also put regular text between your rows of images, even citations {% cite einstein1950meaning %}.
-Say you wanted to write a bit about your project before you posted the rest of the images.
-You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
 
-<div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
-</div>
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
+### UAV Mathematical Modeling
 
-{% raw %}
+The quadrotor UAV dynamics model is described as follows:
 
-```html
-<div class="row justify-content-sm-center">
-  <div class="col-sm-8 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-  <div class="col-sm-4 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-</div>
+```math
+\begin{aligned}
+    &\ddot{y}=\frac{U_1}{m}[\cos\varphi\sin\theta\cos\psi+\sin\varphi\sin\psi]-\frac{K_x\dot{x}}{m} \\
+    &\ddot{y}=\frac{U_1}{m}[\cos\varphi\sin\theta\sin\psi-\sin\varphi\cos\psi]-\frac{K_y\dot{y}}{m} \\
+    &\ddot{z}=\frac{U_1}{m}\cos\varphi\cos\theta-g-\frac{k_z\dot{z}}{m} \\
+    &\dot{\phi}=\frac{(I_y-I_z)}{I_x}\dot{\theta}\dot{\psi}-\frac{I_p}{I_x}\dot{\theta}\Omega+\frac{U_2}{I_x}-\frac{K_\varphi p}{I_x} \\
+    &\ddot{\theta}=\frac{(I_z-I_x)}{I_y}\dot{\varphi}\dot{\psi}-\frac{J_{Ap}}{I_y}\dot{\phi}\Omega+\frac{U_3}{I_y}-\frac{k_\theta q}{I_y} \\
+    &\ddot{\psi}=\frac{(I_x-I_y)}{I_z}\dot{\varphi}\dot{\theta}+\frac{U_4}{I_z}-\frac{k_\psi r}{I_z}
+\end{aligned}
 ```
 
-{% endraw %}
+---
+
+## Design 1: PD Feedforward Compensation Controller for Quadrotor UAV in MATLAB
+
+- **Tools**: MATLAB-Simulink
+- **Inner Loop Attitude Controller**:
+
+```math
+u_2 = -k_{p\phi}\phi_c - k_{d\phi}\dot{\phi}_c + \ddot{\phi}_d + \frac{lK_4}{I_x}\dot{\phi}_d
+```
+
+- **Outer Loop Position Controller**:
+
+```math
+u_{1x} = -k_{px}X_c - k_{dx}\dot{X}_c
+```
+
+#### MATLAB Simulation Results Comparison
+
+- **Position and Attitude Convergence Process**: PD control vs. Feedforward PD control.
+- **Four-channel Output Comparison**: PD control vs. Feedforward PD control.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/Project1/ComparePosition.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/Project1/4ChannelsCompare.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+
+---
+
+## Design 2: A* Algorithm and Trajectory Optimization
+
+### A* Algorithm
+
+- The A* algorithm incorporates a cost function $ f(n) = g(n) + h(n) $, where $ h(n) $ is the heuristic function.
+- **Heuristic Function Comparison**: Diagonal distance heuristic vs. Euclidean distance heuristic.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/Project1/AStar.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/Project1/HFunctionCompare.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+
+### Trajectory Optimization and B-Spline
+
+- **Trajectory Optimization**: This study considers various factors, such as position (x), velocity (v), acceleration (a), jerk, and snap, to optimize the UAV trajectory.
+- **B-Spline Curve**: The B-Spline formulation is given as:
+
+```math
+C(t) = \sum_{i=0}^{n}N_{i,p}(t)Q_i
+```
+
+B-Spline curves improve over Bezier curves by enhancing local control and stability in trajectory generation.
+
+---
+
+## EGO-Planner Algorithm Research
+
+### Algorithm Overview
+
+- EGO-Planner is based on rapid local trajectory optimization utilizing non-Euclidean distance fields.
+- ESDF (Euclidean Signed Distance Field) provides gradient information about obstacles but has certain limitations.
+  
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/Project1/ego-planner.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+
+### Optimization Problem
+
+The optimization problem can be formulated as:
+
+```math
+\min_{\mathbf{Q}}T = \lambda_sT_s + \lambda_cT_c + \lambda_dT_d
+```
+
+- **Smoothness Penalty Term**:
+
+```math
+T_s = \sum_{i=1}^{N_c-1}\parallel A_i \parallel_2^2 + \sum_{i=1}^{N_c-2}\parallel J_i \parallel_2^2
+```
+
+- **Collision Penalty Term**:
+
+```math
+T_c = \sum_{i=1}^{N_c}j_c(\mathbf{Q}_i)
+```
+
+- **Feasibility Penalty Term**:
+
+```math
+T_d = \sum_{i=1}^{N_c}w_vF(\mathbf{V}_i) + \sum_{i=1}^{N_c-1}w_aF(\mathbf{A}_i) + \sum_{i=1}^{N_c-2}w_jF(\mathbf{J}_i)
+```
+
+---
+
+## Conclusion and Experimental Results
+
+- **Simulation Environment**: A comprehensive ROS, Gazebo, and Rviz-based simulation environment was employed to validate the performance of the EGO-Planner algorithm.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/Project1/egoResult.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+
+### Experimental Conclusion
+
+- The EGO-Planner algorithm demonstrated superior performance in trajectory planning for quadrotor UAVs in complex indoor environments. Compared to traditional methods, it exhibited significantly faster planning speeds, allowing the UAV to quickly respond to dynamic environmental changes.
+- Additionally, the algorithm proved highly robust in obstacle avoidance, successfully preventing collisions in various test scenarios. This highlights the algorithm’s effectiveness in real-world applications where rapid and precise path adjustments are crucial.
+
+---
+
+## Acknowledgments
+
+Sincere thanks to my supervisor and the panel for their invaluable feedback and guidance.
