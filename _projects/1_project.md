@@ -48,7 +48,7 @@ To address this critical issue, this study proposes an advanced high-fidelity si
 
 The quadrotor UAV dynamics model is described as follows:
 
-```math
+$$
 \begin{aligned}
     &\ddot{y}=\frac{U_1}{m}[\cos\varphi\sin\theta\cos\psi+\sin\varphi\sin\psi]-\frac{K_x\dot{x}}{m} \\
     &\ddot{y}=\frac{U_1}{m}[\cos\varphi\sin\theta\sin\psi-\sin\varphi\cos\psi]-\frac{K_y\dot{y}}{m} \\
@@ -57,7 +57,7 @@ The quadrotor UAV dynamics model is described as follows:
     &\ddot{\theta}=\frac{(I_z-I_x)}{I_y}\dot{\varphi}\dot{\psi}-\frac{J_{Ap}}{I_y}\dot{\phi}\Omega+\frac{U_3}{I_y}-\frac{k_\theta q}{I_y} \\
     &\ddot{\psi}=\frac{(I_x-I_y)}{I_z}\dot{\varphi}\dot{\theta}+\frac{U_4}{I_z}-\frac{k_\psi r}{I_z}
 \end{aligned}
-```
+$$
 
 ---
 
@@ -66,15 +66,15 @@ The quadrotor UAV dynamics model is described as follows:
 - **Tools**: MATLAB-Simulink
 - **Inner Loop Attitude Controller**:
 
-```math
+$$
 u_2 = -k_{p\phi}\phi_c - k_{d\phi}\dot{\phi}_c + \ddot{\phi}_d + \frac{lK_4}{I_x}\dot{\phi}_d
-```
+$$
 
 - **Outer Loop Position Controller**:
 
-```math
+$$
 u_{1x} = -k_{px}X_c - k_{dx}\dot{X}_c
-```
+$$
 
 #### MATLAB Simulation Results Comparison
 
@@ -119,9 +119,9 @@ u_{1x} = -k_{px}X_c - k_{dx}\dot{X}_c
 - **Trajectory Optimization**: This study considers various factors, such as position (x), velocity (v), acceleration (a), jerk, and snap, to optimize the UAV trajectory.
 - **B-Spline Curve**: The B-Spline formulation is given as:
 
-```math
+$$
 C(t) = \sum_{i=0}^{n}N_{i,p}(t)Q_i
-```
+$$
 
 B-Spline curves improve over Bezier curves by enhancing local control and stability in trajectory generation.
 
@@ -145,27 +145,32 @@ B-Spline curves improve over Bezier curves by enhancing local control and stabil
 
 The optimization problem can be formulated as:
 
-```math
+$$
 \min_{\mathbf{Q}}T = \lambda_sT_s + \lambda_cT_c + \lambda_dT_d
-```
+$$
 
 - **Smoothness Penalty Term**:
 
-```math
+$$
 T_s = \sum_{i=1}^{N_c-1}\parallel A_i \parallel_2^2 + \sum_{i=1}^{N_c-2}\parallel J_i \parallel_2^2
-```
+$$
 
 - **Collision Penalty Term**:
 
-```math
+$$
 T_c = \sum_{i=1}^{N_c}j_c(\mathbf{Q}_i)
-```
+$$
 
 - **Feasibility Penalty Term**:
 
-```math
+
+$$
 T_d = \sum_{i=1}^{N_c}w_vF(\mathbf{V}_i) + \sum_{i=1}^{N_c-1}w_aF(\mathbf{A}_i) + \sum_{i=1}^{N_c-2}w_jF(\mathbf{J}_i)
-```
+$$
+
+
+​				
+​					
 
 ---
 
