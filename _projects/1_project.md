@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Indoor Navigation of Quadrotor UAV with EGO-Planner
+title: Indoor Navigation of Quadrotor UAV
 description: Dissertation with distinction
 img: assets/img/uav _ego.gif
 importance: 1
@@ -65,16 +65,47 @@ $$
 
 - **Tools**: MATLAB-Simulink
 - **Inner Loop Attitude Controller**:
+$$u_2$$: roll torque, $$u_3$$: pitch torque, $$u_4$$: yaw torque
 
 $$
-u_2 = -k_{p\phi}\phi_c - k_{d\phi}\dot{\phi}_c + \ddot{\phi}_d + \frac{lK_4}{I_x}\dot{\phi}_d
+\begin{align}
+u_2 &= -k_{p\phi}\phi_c - k_{d\phi}\dot{\phi}_c + \ddot{\phi}_d + \frac{lK_4}{I_x}\dot{\phi}
+\end{align}
 $$
+$$
+\begin{align}
+u_3=-k_{p\theta}\theta_c-k_{d\theta}\dot{\theta}_c+\ddot{\theta}_d+\frac{lK_5}{I_y}\dot{\theta}_d
+\end{align}
+$$
+$$
+\begin{align}
+u_4=-k_{p\varphi}\varphi_c-k_{d\varphi}\dot{\varphi}_c+\ddot{\varphi}_d+\frac{lK_6}{I_z}\dot{\varphi}_d
+\end{align}
+$$
+
 
 - **Outer Loop Position Controller**:
-
+$$u_1$$: vertical thrust
 $$
+\begin{align}
 u_{1x} = -k_{px}X_c - k_{dx}\dot{X}_c
+\end{align}
 $$
+$$
+\begin{align}
+u_{1y}=-k_{py}Y_c-k_{dy}\dot{Y}_c
+\end{align}
+$$
+$$
+\begin{align}
+u_{1z}=-k_{pz}z_c-k_{dx}\dot{Z}_c+g+\ddot{Z}_c+\frac{K_3}m\dot{Z}_c
+\end{align}
+$$
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/Project1/matlab_simulink.png" title="example image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
 
 #### MATLAB Simulation Results Comparison
 
