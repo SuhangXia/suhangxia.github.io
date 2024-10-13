@@ -72,9 +72,12 @@ layout: default
                 <a href="{{ supervisor.link }}">{{ supervisor.name }}</a>{% if forloop.last == false %},{% endif %}
               {% endfor %}
             </p>
-            {% if project.demo %}
-                  <a href="{{ project.demo }}">Github</a> 
-                {% endif %}
+              {% if project.demo %}
+                <a href="{{ project.demo }}">Github Link1</a> |
+              {% endif %}
+              {% if project.demo2 %}
+                <a href="{{ project.demo2 }}">Github Link2</a>
+              {% endif %}
             <p>
               <div>
                 {{ project.description }}

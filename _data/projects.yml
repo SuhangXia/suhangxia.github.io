@@ -3,6 +3,7 @@
   webpage: "https://suhangxia.github.io/projects/1_project/"
   poster: "assets/pdf/3dv_poster.pdf"
   demo: "https://github.com/SuhangXia/IndoorUAV-NaviAlgoSim"
+  demo2: "https://github.com/SuhangXia/quadrotor-pd-control"
   report: "assets/pdf/3dv_report.pdf"
   team_members: 
     
