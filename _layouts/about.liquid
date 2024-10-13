@@ -72,7 +72,9 @@ layout: default
                 <a href="{{ supervisor.link }}">{{ supervisor.name }}</a>{% if forloop.last == false %},{% endif %}
               {% endfor %}
             </p>
-            
+            {% if project.demo %}
+                  <a href="{{ project.demo }}">Github</a> 
+                {% endif %}
             <p>
               <div>
                 {{ project.description }}
@@ -103,13 +105,6 @@ layout: default
       {% include latest_posts.liquid %}
     {% endif %}
 
-    <!-- Selected papers -->
-    {% if page.selected_papers %}
-      <h2>
-        <a href="{{ '/publications/' | relative_url }}" style="color: inherit">selected publications</a>
-      </h2>
-      {% include selected_papers.liquid %}
-    {% endif %}
 
     <!-- Social -->
     {% if page.social %}

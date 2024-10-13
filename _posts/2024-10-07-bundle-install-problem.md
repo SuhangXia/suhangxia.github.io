@@ -2,7 +2,7 @@
 layout: post
 title: A way to deal with bundle install getting stuck
 date: 2024-10-07 00:23:13
-description: this is what included tabs in a post could look like
+description: This is what included tabs in a post could look like
 tags: formatting code
 categories: sample-posts
 tabs: true
