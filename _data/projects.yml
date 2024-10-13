@@ -2,7 +2,7 @@
   image: "uav _ego.gif"
   webpage: "https://suhangxia.github.io/projects/1_project/"
   poster: "assets/pdf/3dv_poster.pdf"
-  demo: "https://github.com/SuhangXia/Simulation-of-Indoor-Navigation-of-Quadrotor-UAV-with-ego-planner"
+  demo: "https://github.com/SuhangXia/IndoorUAV-NaviAlgoSim"
   report: "assets/pdf/3dv_report.pdf"
   team_members: 
     
