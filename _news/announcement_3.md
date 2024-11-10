@@ -18,12 +18,6 @@ We kicked off with a fun icebreaker game, "Who’s the Spy?" 🕵️‍♂️, w
    Playing "Who’s the Spy?"
 </div>
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/news/EC_env1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-
 
 Then, we split into small groups to dive into some meaningful questions around time management, such as:
 
@@ -37,7 +31,7 @@ One of the highlights was definitely meeting some really interesting people! I s
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/posts/EC_env2.JPG" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/posts/EC_env2.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
@@ -49,7 +43,7 @@ Finally, each group created a time management plan for a hypothetical "newbie" n
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/posts/ENG_presentation.JPG" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/posts/ENG_presentation.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
