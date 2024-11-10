@@ -31,7 +31,7 @@ One of the highlights was definitely meeting some really interesting people! I s
     </div>
 </div>
 
-Finally, each group created a time management plan for a hypothetical "newbie" named George 🧑‍💼, with two representatives from each team presenting the ideas. The open Q&A made it even more interactive and engaging.
+Finally, each group created a time management plan for a hypothetical "newbie" named George 🧑‍💼, with two representatives from each team presenting the ideas. The open Q&A made it even more interactive and engaging!
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
