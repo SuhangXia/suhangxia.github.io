@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Becoming a Algorithm Engineer
-date: 2024-5-12 15:59:00-0400
+date: 2024-9-2 15:59:00-0400
 inline: false
 related_posts: false
 ---
