@@ -27,7 +27,7 @@ Then, we split into small groups to dive into some meaningful questions around t
 - How does stress impact time management, and how can we handle it? 💆‍♀️
 - How can we stop multitasking and focus better? 🔍
 
-One of the highlights was definitely meeting some really interesting people! I sat next to an experienced architect from Alibaba, who shared some practical time management tips from his job. I also connected with a data scientist (also from Alibaba!) who relies on precise time allocation and introduced us to the “Pomodoro Technique”—definitely taking notes on that! 📈 Alongside them, there was an English teacher, an immigration officer from China’s visa department, and an auditor from ShineWing. The diversity of backgrounds made our discussions incredibly rich and insightful.
+One of the highlights was definitely meeting some really interesting people! I sat next to an experienced architect from Alibaba, who shared some practical time management tips from his job. I also connected with a data scientist (also from Alibaba!) who relies on precise time allocation and introduced us to the “Pomodoro Technique”—definitely taking notes on that! 📈 Alongside them, there was an English teacher, an immigration officer from China’s visa department, and an auditor from BDO. The diversity of backgrounds made our discussions incredibly rich and insightful.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
