@@ -14,7 +14,14 @@ We kicked off with a fun icebreaker game, "Who’s the Spy?" 🕵️‍♂️, w
         {% include figure.liquid loading="eager" path="assets/img/posts/EC_env1.JPG" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
-
+<div class="row">
+    <div class="col-sm-6 mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/posts/dental_tools.jpg" title="First Image" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-6 mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/posts/new_workplace1.jpg" title="Second Image" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
 
 Then, we split into small groups to dive into some meaningful questions around time management, such as:
 
