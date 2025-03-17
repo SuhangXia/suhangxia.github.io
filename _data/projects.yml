@@ -14,4 +14,35 @@
       link: "https://xueshu.baidu.com/scholarID/CN-BE75CP8J/"
   description: "A high-fidelity simulation environment based on LiDAR 3D reconstruction, developed for testing quadrotor UAV autonomous driving capabilities, enabling accurate simulation of real-world environments."
 
+- title: "Neurosurgical Robot"
+  image: "NS.gif"
+  webpage: "https://suhangxia.github.io/projects/3_project/"
+  team_members: 
+    
+    - name: "Suhang Xia"
+      link: "https://suhangxia.github.io/"
+  supervised_by:
+    - name: "Zaiwang Zhou"
+
+- title: "Percutaneous Puncture Surgical Robot"
+  image: "Project2/NS_Robot.jpg"
+  webpage: "https://suhangxia.github.io/projects/2_project/"
+  team_members: 
+    
+    - name: "Suhang Xia"
+      link: "https://suhangxia.github.io/"
+  supervised_by:
+    - name: "Zaiwang Zhou"
+
+
+- title: "Deploying MR to surgical Robot"
+  image: "MR.gif"
+  webpage: "https://suhangxia.github.io/projects/4_project/"
+  team_members: 
+    
+    - name: "Suhang Xia"
+      link: "https://suhangxia.github.io/"
+  supervised_by:
+    - name: "My self"
+
 
