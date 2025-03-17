@@ -11,9 +11,13 @@ We kicked off with a fun icebreaker game, "Who’s the Spy?" 🕵️‍♂️, w
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/news/EC_env1.JPG" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/posts/EC_env1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
+<div class="caption">
+   Playing "Who’s the Spy?"
+</div>
+
 
 Then, we split into small groups to dive into some meaningful questions around time management, such as:
 
@@ -27,16 +31,23 @@ One of the highlights was definitely meeting some really interesting people! I s
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/news/EC_env2.JPG" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/posts/EC_env2.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
+<div class="caption">
+   Group discussion
+</div>
+
 
 Finally, each group created a time management plan for a hypothetical "newbie" named George 🧑‍💼, with two representatives from each team presenting the ideas. The open Q&A made it even more interactive and engaging!
 
-<div class="row mt-3">
+<div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/news/ENG_presentation.JPG" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid loading="eager" path="assets/img/posts/ENG_presentation.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
+</div>
+<div class="caption">
+   Presentation
 </div>
 
 
