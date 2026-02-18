@@ -2,8 +2,7 @@
 layout: page
 title: "DeCo-MAE: Teaching Robots to 'Understand' Unseen Actions"
 description: Achieving 78.86% Zero-Shot Accuracy by Decomposing Human-Robot Interaction Semantics.
-# img: assets/img/DeCoMAE/teaser.jpg  # TODO: 添加图片后取消注释
-img: assets/img/NS.gif
+img: assets/img/Project5/DeCo-MAE-teaser.png
 importance: 5
 category: work
 related_publications: true
@@ -37,7 +36,7 @@ On the **HRI30** dataset, DeCo-MAE doesn't just improve—it unlocks entirely ne
 ## Technical Visualizations
 
 ### Architecture
-<!-- TODO: 添加 assets/img/DeCoMAE/architecture_new.jpg 后取消下方注释
+
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/DeCoMAE/architecture_new.jpg" title="Professional Architecture" class="img-fluid rounded z-depth-1" %}
@@ -46,18 +45,17 @@ On the **HRI30** dataset, DeCo-MAE doesn't just improve—it unlocks entirely ne
 <div class="caption">
    Overview of the Dual-Head mechanism. We combine Cross-Entropy loss $\mathcal{L}_{CE}$ with Semantic Cosine Similarity $\mathcal{L}_{sem}$ to supervise the learning process.
 </div>
--->
+
 
 ### Does the model "see" the tool?
 Yes. Our **Cross-Modal Attention** maps demonstrate that even for **Unseen classes**, DeCo-MAE explicitly focuses on the interaction area between the human hand and the tool.
 
-<!-- TODO: 添加 assets/img/DeCoMAE/attention_map.jpg 后取消下方注释
+
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/DeCoMAE/attention_map.jpg" title="Attention Visualization" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/Project5/attention_map.jpg" title="Attention Visualization" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
--->
 
 ---
 
