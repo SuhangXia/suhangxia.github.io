@@ -58,7 +58,7 @@ layout: default
               <a href="{{ project.webpage }}" id="project">
                 <b>{{ project.title }}</b>
               </a><br>
-              Team members:
+              {% if project.solo_author %}作者:{% else %}Team members:{% endif %}
               {% for member in project.team_members %}
                 {% if member.link %}
                   <a href="{{ member.link }}">{{ member.name }}</a>{% if forloop.last == false %},{% endif %}

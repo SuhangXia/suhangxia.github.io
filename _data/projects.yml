@@ -1,18 +1,24 @@
-- title: "Indoor Navigation of Quadrotor UAV with EGO-Planner"
-  image: "uav _ego.gif"
-  webpage: "https://suhangxia.github.io/projects/1_project/"
-  poster: "assets/pdf/3dv_poster.pdf"
-  demo: "https://github.com/SuhangXia/IndoorUAV-NaviAlgoSim"
-  demo2: "https://github.com/SuhangXia/quadrotor-pd-control"
-  report: "assets/pdf/3dv_report.pdf"
+- title: "DeCo-MAE: Teaching Robots to 'Understand' Unseen Actions"
+  image: "NS.gif"
+  webpage: "https://suhangxia.github.io/projects/5_project/"
+  team_members:
+    - name: "Suhang Xia"
+      link: "https://suhangxia.github.io/"
+  supervised_by:
+    - name: "Shan Luo"
+  description: "Achieving 78.86% Zero-Shot Accuracy by Decomposing Human-Robot Interaction Semantics."
+  demo: "https://github.com/SuhangXia/DeCo-MAE"
+
+- title: "Deploying MR to surgical Robot"
+  image: "MR.gif"
+  webpage: "https://suhangxia.github.io/projects/4_project/"
+  solo_author: true
   team_members: 
     
     - name: "Suhang Xia"
       link: "https://suhangxia.github.io/"
   supervised_by:
-    - name: "Yunpu Song"
-      link: "https://xueshu.baidu.com/scholarID/CN-BE75CP8J/"
-  description: "A high-fidelity simulation environment based on LiDAR 3D reconstruction, developed for testing quadrotor UAV autonomous driving capabilities, enabling accurate simulation of real-world environments."
+    - name: "My self"
 
 - title: "Neurosurgical Robot"
   image: "NS.gif"
@@ -34,15 +40,21 @@
   supervised_by:
     - name: "Zaiwang Zhou"
 
-
-- title: "Deploying MR to surgical Robot"
-  image: "MR.gif"
-  webpage: "https://suhangxia.github.io/projects/4_project/"
+- title: "Indoor Navigation of Quadrotor UAV with EGO-Planner"
+  image: "uav _ego.gif"
+  webpage: "https://suhangxia.github.io/projects/1_project/"
+  solo_author: true
+  poster: "assets/pdf/3dv_poster.pdf"
+  demo: "https://github.com/SuhangXia/IndoorUAV-NaviAlgoSim"
+  demo2: "https://github.com/SuhangXia/quadrotor-pd-control"
+  report: "assets/pdf/3dv_report.pdf"
   team_members: 
     
     - name: "Suhang Xia"
       link: "https://suhangxia.github.io/"
   supervised_by:
-    - name: "My self"
+    - name: "Yunpu Song"
+      link: "https://xueshu.baidu.com/scholarID/CN-BE75CP8J/"
+  description: "A high-fidelity simulation environment based on LiDAR 3D reconstruction, developed for testing quadrotor UAV autonomous driving capabilities, enabling accurate simulation of real-world environments."
 
 

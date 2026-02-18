@@ -3,7 +3,7 @@ layout: page
 title: Deploying MR to surgical Robot
 description: 
 img: assets/img/MR.gif
-importance: 1
+importance: 4
 category: work
 related_publications: true
 ---

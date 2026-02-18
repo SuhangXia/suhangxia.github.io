@@ -9,14 +9,14 @@ profile:
   image_circular: false # crops the image to make it circular
   more_info: >
     <p>London, United Kingdom</p>
-    <p>E2 6PF</p>
+
 
 news: true # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-**Email**: xiasuhang.leo@foxmail.com
+**Email**: xiasuhang.leo@foxmail.com & suhang.xia@kcl.ac.uk
 
 Currently, I am an **MSc Robotics student at King's College London (KCL)**, where I am privileged to be supervised by **[Dr. Shan Luo](https://shanluo.github.io/)**. My current research interests focus on **Vision-Tactile-Language-Action (VTLA)** models and their applications in robotic manipulation, such as robotic cloth sorting.
 

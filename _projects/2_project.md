@@ -3,7 +3,7 @@ layout: page
 title: Percutaneous Puncture Surgical Robot
 description: Project Leader
 img: assets/img/Project2/NS_Robot.jpg
-importance: 1
+importance: 2
 category: work
 related_publications: true
 ---
