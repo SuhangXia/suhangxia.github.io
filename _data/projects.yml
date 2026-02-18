@@ -4,8 +4,10 @@
   team_members:
     - name: "Suhang Xia"
       link: "https://suhangxia.github.io/"
+    - name: "Ruiyi Hu"
+    - name: "Muye Yuan"
   supervised_by:
-    - name: "Shan Luo"
+    - name: "Dr Oya Celiktutan"
   description: "Achieving 78.86% Zero-Shot Accuracy by Decomposing Human-Robot Interaction Semantics."
   demo: "https://github.com/SuhangXia/DeCo-MAE"
 

@@ -10,27 +10,27 @@ related_publications: true
 ---
 
 ## The Challenge: Beyond Pattern Matching
-[cite_start]Current SOTA models like **VideoMAE V2** excel at memorizing closed-set actions but often fail in open-ended **Human-Robot Interaction (HRI)**[cite: 9, 32]. [cite_start]When faced with a new combination—like "Walking with a Polisher" instead of a "Drill"—traditional "Black Box" models are rendered helpless[cite: 23, 24, 29].
+Current SOTA models like **VideoMAE V2** excel at memorizing closed-set actions but often fail in open-ended **Human-Robot Interaction (HRI)**. When faced with a new combination—like "Walking with a Polisher" instead of a "Drill"—traditional "Black Box" models are rendered helpless.
 
 ## Our Vision: DeCo-MAE
-[cite_start]We propose **DeCo-MAE** (Decomposed Semantic VideoMAE), a framework designed to learn **genuine semantic understanding** rather than simple pattern matching[cite: 16, 34]. 
+We propose **DeCo-MAE** (Decomposed Semantic VideoMAE), a framework designed to learn **genuine semantic understanding** rather than simple pattern matching.
 
 ### 🚀 Key Innovations
-* **Semantic Decomposition**: We break down complex actions into a triplet structure: **(Action, Tool, Modifier)**[cite: 48]. By aligning visual tokens with a frozen **BERT** language encoder, the robot learns the "concept" of a tool rather than just its pixels[cite: 11, 50].
-* [cite_start]**Dual-Head Architecture**: A non-symmetric design that balances discriminative power with open-set generalization[cite: 46].
-* [cite_start]**Cool-down Fine-tuning**: A specialized two-stage training strategy (Robustness $\rightarrow$ Precision) that effectively bridges the distribution shift on small-scale HRI datasets[cite: 12, 52, 53].
+* **Semantic Decomposition**: We break down complex actions into a triplet structure: **(Action, Tool, Modifier)**. By aligning visual tokens with a frozen **BERT** language encoder, the robot learns the "concept" of a tool rather than just its pixels.
+* **Dual-Head Architecture**: A non-symmetric design that balances discriminative power with open-set generalization.
+* **Cool-down Fine-tuning**: A specialized two-stage training strategy (Robustness $\rightarrow$ Precision) that effectively bridges the distribution shift on small-scale HRI datasets.
 
 ---
 
 ## 🏆 State-of-the-Art Performance
-[cite_start]On the **HRI30** dataset, DeCo-MAE doesn't just improve—it unlocks entirely new capabilities[cite: 13, 14]:
+On the **HRI30** dataset, DeCo-MAE doesn't just improve—it unlocks entirely new capabilities:
 
 | Metric | VideoMAE V2 (Giant) | **DeCo-MAE (Ours)** |
 | :--- | :---: | :---: |
-| **Fully-Supervised Accuracy** | 83.60% | [cite_start]**85.80%** [cite: 14] |
-| **Zero-Shot (Unseen Action)** | 0.00% (Fail) | [cite_start]**78.86%** [cite: 15] |
+| **Fully-Supervised Accuracy** | 83.60% | **85.80%** |
+| **Zero-Shot (Unseen Action)** | 0.00% (Fail) | **78.86%** |
 
-> [cite_start]**"Our model successfully identifies novel actions by decomposing video semantics into primitives, paving the way for generalizable HRI systems."** [cite: 16, 29]
+> **"Our model successfully identifies novel actions by decomposing video semantics into primitives, paving the way for generalizable HRI systems."**
 
 ---
 
@@ -49,7 +49,7 @@ related_publications: true
 -->
 
 ### Does the model "see" the tool?
-Yes. [cite_start]Our **Cross-Modal Attention** maps demonstrate that even for **Unseen classes**, DeCo-MAE explicitly focuses on the interaction area between the human hand and the tool[cite: 73, 104].
+Yes. Our **Cross-Modal Attention** maps demonstrate that even for **Unseen classes**, DeCo-MAE explicitly focuses on the interaction area between the human hand and the tool.
 
 <!-- TODO: 添加 assets/img/DeCoMAE/attention_map.jpg 后取消下方注释
 <div class="row">
@@ -63,9 +63,10 @@ Yes. [cite_start]Our **Cross-Modal Attention** maps demonstrate that even for **
 
 ## Collaborators & Resources
 
-* [cite_start]**Suhang Xia**: Principal Investigator (King's College London).
-* **Dr. [cite_start]Shan Luo**: Project Supervisor.
-* *(Optional)* **[Name]**: [Contribution, e.g., Data Collection].
+* **Suhang Xia**: Principal Investigator (King's College London).
+* **Ruiyi Hu**: Collaborator.
+* **Muye Yuan**: Collaborator.
+* **Dr. Oya Celiktutan**: Project Supervisor.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
