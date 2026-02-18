@@ -18,6 +18,10 @@ manage_gemfile_lock() {
 
 start_jekyll() {
     manage_gemfile_lock
+    # Ensure gems match mounted Gemfile.lock (e.g. after volume mount)
+    if [ -f Gemfile ]; then
+        bundle install --no-cache -q 2>/dev/null || bundle install --no-cache
+    fi
     bundle exec jekyll serve --watch --port=8080 --host=0.0.0.0 --livereload --verbose --trace --force_polling &
 }
 
