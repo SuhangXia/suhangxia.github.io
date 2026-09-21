@@ -1,0 +1,46 @@
+---
+import type { PlayableVideo } from '../data/videos';
+import ResearchVideo from './ResearchVideo.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  introduction: string;
+  videos: readonly PlayableVideo[];
+}
+
+const { eyebrow, title, introduction, videos } = Astro.props;
+// Featured demos play in the project lead with controls; the gallery holds any
+// additional full demonstrations without duplicating that lead video.
+const publicDemos = videos.filter((video) => video.status === 'public' && !video.featured);
+---
+
+{
+  publicDemos.length > 0 && (
+    <section class="project-demos section-shell" aria-labelledby="project-demos-title">
+      <header class="project-demos__heading">
+        <p class="eyebrow">{eyebrow}</p>
+        <div>
+          <h3 id="project-demos-title">{title}</h3>
+          <p>{introduction}</p>
+        </div>
+      </header>
+
+      <div class="project-demos__list">
+        {publicDemos.map((video) => (
+          <article class="project-demos__item">
+            <div class="project-demos__player">
+              <ResearchVideo video={video} label={`${video.title} full demonstration`} />
+            </div>
+            <div class="project-demos__copy">
+              <span>Full recorded demonstration</span>
+              <h4>{video.title}</h4>
+              {video.description && <p>{video.description}</p>}
+              {video.duration && <small>{video.duration.toFixed(2)} s · H.264 MP4</small>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}

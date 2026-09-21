@@ -1,0 +1,21 @@
+---
+import TravelGallery from './TravelGallery.astro';
+import { about, site } from '../data/site';
+---
+
+<section class="about-preview" aria-labelledby="about-preview-title">
+  <div class="about-preview__inner section-shell">
+    <div class="about-preview__copy">
+      <p class="eyebrow" data-reveal>About</p>
+      <h2 class="display-serif" id="about-preview-title" data-reveal>
+        Research shaped by both algorithms and the physical systems they inhabit.
+      </h2>
+      <p data-reveal>{about.short}</p>
+      <div class="about-preview__actions" data-reveal>
+        <a class="text-link" href="/about">Read more <span aria-hidden="true">↗</span></a>
+        <a class="text-link" href={`mailto:${site.email}`}>Email <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+    <TravelGallery />
+  </div>
+</section>

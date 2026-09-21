@@ -1,0 +1,53 @@
+---
+import '@fontsource-variable/manrope';
+import '@fontsource-variable/newsreader';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/motion.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  pageClass?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = 'Suhang Xia — Robotics Researcher',
+  description = 'Robotics research across perception, robot learning, interaction, and surgical robotic systems.',
+  pageClass = '',
+  noindex = false,
+} = Astro.props;
+
+const pathname = Astro.url.pathname === '/' ? '/' : Astro.url.pathname.replace(/\/$/, '');
+const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#161816" />
+    <meta name="color-scheme" content="light" />
+    <script is:inline>document.documentElement.classList.add('has-js');</script>
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+  </head>
+  <body class={pageClass} id="top">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <Header currentPath={pathname} />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>

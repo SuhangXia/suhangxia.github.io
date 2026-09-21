@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import { heroMedia } from '../data/projects';
+import { site } from '../data/site';
+---
+
+<section class="hero" aria-labelledby="hero-title" data-hero>
+  <svg class="hero__filter-definitions" aria-hidden="true" focusable="false">
+    <filter id="kcl-white-logo" color-interpolation-filters="sRGB">
+      <feColorMatrix
+        type="matrix"
+        values="
+          0 0 0 0 1
+          0 0 0 0 1
+          0 0 0 0 1
+          0.8504 2.8608 0.2888 0 -3
+        "
+      />
+    </filter>
+  </svg>
+
+  <div class="hero__sticky">
+    <div class="hero__media" data-hero-media>
+      <Image
+        src={heroMedia}
+        alt="A surgical robot guiding an instrument toward a physical phantom"
+        widths={[640, 960, 1440, 1920]}
+        sizes="100vw"
+        format="avif"
+        quality={84}
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="hero__media-shade"></div>
+    </div>
+
+    <h1 class="hero__title" id="hero-title" aria-label={site.name}>
+      <span>Suhang</span><span>Xia</span>
+    </h1>
+
+    <a
+      class="hero__kcl-logo"
+      href="https://www.kcl.ac.uk/"
+      target="_blank"
+      rel="noreferrer"
+      data-hero-meta
+      aria-label="King's College London website"
+    >
+      <img
+        src="https://www.kcl.ac.uk/newimages/logos/kcl-logo.x5f83f6ee.png?f=webp"
+        alt="King's College London"
+        width="260"
+        loading="eager"
+      />
+    </a>
+
+    <div class="hero__statement" data-hero-meta>
+      <p>{site.role}</p>
+    </div>
+
+    <div class="hero__details" data-hero-meta>
+      <p>{site.affiliation}</p>
+      <ul aria-label="Research areas">
+        {site.focus.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+
+    <a class="hero__scroll" href="#research-thesis" data-hero-meta>
+      <span>Scroll to explore</span>
+      <span class="hero__scroll-line" aria-hidden="true"></span>
+    </a>
+  </div>
+</section>

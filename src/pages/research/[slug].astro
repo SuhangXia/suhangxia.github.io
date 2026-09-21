@@ -1,0 +1,192 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ClothumiEvidence from '../../components/ClothumiEvidence.astro';
+import ClothumiMediaPlan from '../../components/ClothumiMediaPlan.astro';
+import ProjectDemoGallery from '../../components/ProjectDemoGallery.astro';
+import ProjectEvidenceGallery from '../../components/ProjectEvidenceGallery.astro';
+import ProjectFeature from '../../components/ProjectFeature.astro';
+import VtlaThesisEvidence from '../../components/VtlaThesisEvidence.astro';
+import PunctureSystemEvidence from '../../components/PunctureSystemEvidence.astro';
+import EvidenceLightbox from '../../components/EvidenceLightbox.astro';
+import { repositoryEvidence } from '../../data/evidence';
+import { detailMedia, projects } from '../../data/projects';
+import { publicLocalVideosForProject, publicVideosForProject } from '../../data/videos';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({ params: { slug: project.slug } }));
+}
+
+const project = projects.find((entry) => entry.slug === Astro.params.slug);
+
+if (!project) {
+  throw new Error(`Unknown research project: ${Astro.params.slug}`);
+}
+
+const managedProjectVideos = publicVideosForProject(project.slug);
+const projectVideos = [...managedProjectVideos, ...publicLocalVideosForProject(project.slug)];
+const projectDemoDetails = {
+  'tactile-umi': {
+    eyebrow: 'Tactile UMI · Recorded systems evidence',
+    title: 'From portable collection to force-grounded robot rollout.',
+    introduction:
+      'The lead sequence shows portable UMI collection; the comparison sequence records a UniForce-conditioned Diffusion Policy rollout on Franka FR3.',
+  },
+  'touch-until-certain': {
+    eyebrow: 'VTLA for Cloth Sorting · Qualitative robot integration',
+    title: 'From force-aligned touch to guarded cloth sorting.',
+    introduction:
+      'The recording documents the integrated sensing and execution workflow. It is qualitative systems evidence, not a robot success-rate or learned-policy evaluation.',
+  },
+  'robocup-ur5e': {
+    eyebrow: 'RoboCup UR5e · System demonstration',
+    title: 'Perception, grasping, planning, and sorting in one control loop.',
+    introduction:
+      'The demonstration shows the RoboCup sorting environment and the integrated UR5e decision-and-execution workflow.',
+  },
+  'percutaneous-puncture-surgical-robot': {
+    eyebrow: 'Percutaneous puncture robot · Retained engineering demonstrations',
+    title: 'Planning, registration, and guidance remain inspectable.',
+    introduction:
+      'These recordings come from the original project archive. They document robot rendering and mixed-reality registration experiments; they are engineering evidence, not a clinical-performance evaluation.',
+  },
+  'neurosurgical-robot': {
+    eyebrow: 'Neurosurgical robot · Navigation demonstrations',
+    title: 'Tracked anatomy and robot motion share one coordinate account.',
+    introduction:
+      'The recordings preserve the navigation interface and probe rendering used during robotic-arm navigation development without asserting an unreported clinical outcome.',
+  },
+} as const;
+const projectDemo = projectDemoDetails[project.slug as keyof typeof projectDemoDetails];
+const projectRepositoryEvidence = repositoryEvidence[project.slug];
+const isPuncture = project.slug === 'percutaneous-puncture-surgical-robot';
+const punctureCertificate = isPuncture && projectRepositoryEvidence ? {
+  eyebrow: 'Product milestone · Lancet Robotics',
+  title: 'An NMPA-registered medical device.',
+  introduction: 'The RobPath-PCT-001 Puncture Surgery Navigation and Positioning Equipment is registered under NMPA No. 20263011303. The privacy-masked registration certificate is retained here as the product-level milestone.',
+  items: projectRepositoryEvidence.items.filter((item) => item.id === 'nmpa-registration'),
+} : undefined;
+const punctureEngineering = isPuncture && projectRepositoryEvidence ? {
+  eyebrow: 'Engineering archive · Planning, guidance & communication',
+  title: 'From the workstation to the physical system.',
+  introduction: 'Retained planning, phantom-guidance, and broadcast images complement the calibration method and animal-study results above. The original technical demonstration videos follow.',
+  items: projectRepositoryEvidence.items.filter((item) =>
+    !['nmpa-registration', 'animal-study-workcell', 'animal-study-team'].includes(item.id ?? '')
+    && item.media.src !== project.media?.src),
+} : undefined;
+---
+
+<BaseLayout
+  title={`${project.title} — Research — Suhang Xia`}
+  description={project.description}
+  pageClass="inner-page project-page"
+>
+  <nav class="project-detail-nav section-shell" aria-label="Research project navigation">
+    <a class="text-link" href="/" data-return-home>← Home</a>
+    <p><span>{project.index}</span>{project.field}</p>
+  </nav>
+
+  <ProjectFeature project={project} isDetail />
+
+  {punctureCertificate && (
+    <ProjectEvidenceGallery evidence={punctureCertificate} headingId="puncture-registration-title" zoomable />
+  )}
+
+  {project.slug === 'tactile-umi' ? (
+    <>
+      <ClothumiMediaPlan />
+      <ClothumiEvidence />
+    </>
+  ) : project.slug === 'touch-until-certain' ? (
+    <VtlaThesisEvidence />
+  ) : isPuncture ? (
+    <PunctureSystemEvidence />
+  ) : (
+    <div class:list={['research-evidence', !project.secondaryMedia && 'research-evidence--note-only', 'section-shell']}>
+      {project.secondaryMedia && (
+        <figure>
+          <Image
+            src={project.secondaryMedia}
+            alt={project.secondaryAlt ?? ''}
+            widths={[640, 960, 1440]}
+            sizes="(max-width: 767px) 100vw, 56vw"
+            format="avif"
+            quality={82}
+            loading="lazy"
+          />
+        </figure>
+      )}
+      {project.evidenceNote && (
+        <div class="research-evidence__note">
+          <span>Evidence / {project.index}</span>
+          <p>{project.evidenceNote}</p>
+        </div>
+      )}
+    </div>
+  )}
+
+  {projectRepositoryEvidence
+    && project.slug !== 'touch-until-certain'
+    && project.slug !== 'percutaneous-puncture-surgical-robot'
+    && <ProjectEvidenceGallery evidence={projectRepositoryEvidence} />}
+
+  {project.slug === 'deco-mae' && (
+    <div class="research-diagram section-shell">
+      <Image
+        src={detailMedia.decoArchitecture}
+        alt="DeCo-MAE dual-head model architecture"
+        widths={[720, 1080, 1440, 1920]}
+        sizes="100vw"
+        format="avif"
+        quality={82}
+        loading="lazy"
+      />
+      <p><span>Model architecture</span> Decomposed semantic supervision alongside the visual classification path.</p>
+    </div>
+  )}
+
+  {punctureEngineering && <ProjectEvidenceGallery evidence={punctureEngineering} headingId="puncture-engineering-title" zoomable />}
+
+  {projectDemo && <ProjectDemoGallery {...projectDemo} videos={projectVideos} />}
+
+  {isPuncture && (
+    <>
+      <section class="puncture-patent-link section-shell" aria-labelledby="puncture-patent-link-title">
+        <p class="eyebrow">Related industry work</p>
+        <h2 id="puncture-patent-link-title">Inventions, with their original record.</h2>
+        <p>Five published invention applications from my work at Lancet Robotics, spanning surgical navigation and medical-image processing. Three list me first among the inventors.</p>
+        <a class="text-link" href="/about/#patent-applications">View patent applications ↗</a>
+      </section>
+      <EvidenceLightbox />
+    </>
+  )}
+</BaseLayout>
+
+<style>
+  .puncture-patent-link { padding-block: var(--space-8); border-top: 1px solid var(--line); }
+  .puncture-patent-link h2 { margin: 1.5rem 0; font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 450; letter-spacing: -.04em; line-height: 1; }
+  .puncture-patent-link > p:not(.eyebrow) { max-width: 48rem; font-size: 1rem; line-height: 1.8; color: var(--ink-soft); }
+  .puncture-patent-link a { display: inline-block; margin-top: 1.75rem; padding-block: .75rem; font-size: 1rem; }
+</style>
+
+<script>
+  const returnHome = document.querySelector<HTMLAnchorElement>('[data-return-home]');
+  const homeNavigationKey = 'suhangxia-home-project-navigation';
+
+  returnHome?.addEventListener('click', (event) => {
+    const openedFromHome = window.sessionStorage.getItem(homeNavigationKey) === window.location.pathname;
+    if (!openedFromHome || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+
+    event.preventDefault();
+    window.sessionStorage.removeItem(homeNavigationKey);
+    window.history.back();
+
+    // A directly opened project can have no same-tab history entry. In that
+    // exceptional case, keep the Home link as a safe fallback.
+    window.setTimeout(() => {
+      if (window.location.pathname === new URL(returnHome.href).pathname.replace(/\/$/, '')
+        || window.location.pathname === '/') return;
+      window.location.assign('/');
+    }, 350);
+  });
+</script>

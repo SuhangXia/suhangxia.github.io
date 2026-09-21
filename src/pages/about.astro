@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import PatentApplications from '../components/PatentApplications.astro';
+import EvidenceLightbox from '../components/EvidenceLightbox.astro';
+import portrait from '../assets/media/portrait.jpg';
+import { about, site } from '../data/site';
+---
+
+<BaseLayout
+  title="About — Suhang Xia"
+  description="About Suhang Xia, a robotics researcher at King's College London."
+  pageClass="inner-page"
+>
+  <PageHero
+    eyebrow="About"
+    index="03"
+    title="Working between models, instruments, and the real world."
+    introduction="I study robotic perception and action with a practical bias: representations matter most when they survive contact with physical systems."
+  />
+
+  <section class="about-profile section-shell" aria-labelledby="about-biography">
+    <figure class="about-profile__portrait">
+      <Image
+        src={portrait}
+        alt="Portrait of Suhang Xia"
+        widths={[480, 720, 960]}
+        sizes="(max-width: 767px) 100vw, 40vw"
+        format="avif"
+        quality={84}
+        loading="eager"
+      />
+    </figure>
+    <div class="about-profile__copy">
+      <p class="eyebrow">Biography</p>
+      <h2 id="about-biography" class="display-serif">Perception is only useful when it changes what a robot can do.</h2>
+      <p>{about.short}</p>
+      <p>{about.background}</p>
+      <p class="about-profile__location">Based in {site.location}.</p>
+      <div class="about-profile__links">
+        {site.links.map((link) => <a class="text-link" href={link.href}>{link.label} <span aria-hidden="true">↗</span></a>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="trajectory section-shell" aria-labelledby="trajectory-title">
+    <div class="section-rule"></div>
+    <p class="eyebrow">Trajectory</p>
+    <h2 id="trajectory-title">Research experience</h2>
+    <ol>
+      <li>
+        <span>Now</span>
+        <div><h3>King’s College London</h3><p>MSc Robotics · Vision–tactile–language–action models and robotic manipulation.</p></div>
+      </li>
+      <li>
+        <span>Previously</span>
+        <div><h3>Hangzhou Lancet Robotics</h3><p>Algorithm Engineer · Navigation and control for surgical robotic systems.</p></div>
+      </li>
+    </ol>
+  </section>
+
+  <PatentApplications />
+  <EvidenceLightbox />
+</BaseLayout>

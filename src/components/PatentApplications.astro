@@ -1,0 +1,66 @@
+---
+import { patentApplications } from '../data/patents';
+import EvidenceFigure from './EvidenceFigure.astro';
+---
+
+<section id="patent-applications" class="patent-applications section-shell" aria-labelledby="patent-applications-title">
+  <header>
+    <p class="eyebrow">Industry inventions · Lancet Robotics</p>
+    <h2 id="patent-applications-title">Patent Applications</h2>
+    <p>Five published invention applications from my work at Lancet Robotics, including three listing me first among the inventors. These records span surgical navigation and medical-image processing.</p>
+  </header>
+  <div class="patent-list">
+    {patentApplications.map((patent, index) => {
+      const inventorPosition = patent.inventors.indexOf('Suhang Xia') + 1;
+      return (
+        <article id={patent.publicationNumber} class:list={['patent-entry', { 'patent-entry--first': inventorPosition === 1 }]}>
+          <span class="patent-index">{String(index + 1).padStart(2, '0')}</span>
+          <div class="patent-copy">
+            <p class="patent-meta"><span>Application publication</span><span>{patent.publicationNumber}</span><time datetime={patent.publicationDate}>{patent.publicationDate}</time></p>
+            <h3>{patent.title}</h3>
+            <p class="patent-role">{inventorPosition === 1 ? 'First-listed inventor' : `${inventorPosition === 2 ? 'Second' : 'Third'}-listed inventor`} · Suhang Xia</p>
+            <dl>
+              <div><dt>Inventors, in listed order</dt><dd>{patent.inventors.map((name, position) => <><span class:list={{ 'patent-self': name === 'Suhang Xia' }}>{name}</span>{position < patent.inventors.length - 1 && ' · '}</>)}</dd></div>
+              <div><dt>Applicant</dt><dd>{patent.applicant}</dd></div>
+            </dl>
+            <details open>
+              <summary>Application front page <span aria-hidden="true">+</span></summary>
+              <EvidenceFigure media={patent.frontPage} title={patent.publicationNumber} alt={`Original Chinese application-publication front page for ${patent.title}, listing Suhang Xia among the inventors`} source={patent.source} compact />
+            </details>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .patent-applications { padding-block: var(--space-9); border-top: 1px solid var(--line); scroll-margin-top: calc(var(--header-height) + 2rem); }
+  header { max-width: 58rem; }
+  h2 { margin: 1.25rem 0; font-family: var(--font-serif); font-size: clamp(2.8rem, 6vw, 6rem); font-weight: 450; letter-spacing: -.04em; line-height: 1; }
+  header > p:last-child { max-width: 46rem; font-size: 1rem; line-height: 1.8; color: var(--ink-soft); }
+  .patent-list { margin-top: 3rem; border-top: 1px solid var(--line); }
+  .patent-entry { display: grid; grid-template-columns: 1fr 7fr; gap: 2rem; padding-block: 2.5rem; border-bottom: 1px solid var(--line); }
+  .patent-index { padding-top: .3rem; font-size: .8rem; color: var(--accent); font-weight: 700; }
+  .patent-copy { min-width: 0; }
+  .patent-meta { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; font-size: .72rem; color: var(--muted); }
+  h3 { font-size: clamp(1.5rem, 2.8vw, 2.5rem); line-height: 1.2; letter-spacing: -.025em; margin-top: .85rem; }
+  .patent-role { display: inline-block; margin-block: 1rem; padding: .4rem .65rem; border: 1px solid var(--line); font-size: .8rem; }
+  .patent-entry--first .patent-role { color: #364e30; background: #e1e8dc; border-color: #afbda7; }
+  dl { display: grid; grid-template-columns: 1.25fr 1fr; gap: 1rem; }
+  dt { font-size: .72rem; color: var(--muted); margin-bottom: .45rem; }
+  dd { font-size: .9rem; line-height: 1.8; }
+  .patent-self { font-weight: 750; color: var(--ink); }
+  details { max-width: 54rem; margin-top: 1.5rem; }
+  summary { display: flex; justify-content: space-between; padding-block: .9rem; font-size: .9rem; border-top: 1px solid var(--line); cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary span { font-size: 1.1rem; }
+  details[open] summary span { transform: rotate(45deg); }
+  details :global(.evidence-figure) { max-width: 42rem; }
+  details :global(.evidence-figure__image img) { max-height: none; width: 100%; }
+  @media(max-width: 767px) {
+    .patent-entry { grid-template-columns: 1.4rem minmax(0, 1fr); gap: .75rem; }
+    dl { grid-template-columns: 1fr; }
+    .patent-meta { gap: .5rem .75rem; }
+  }
+</style>

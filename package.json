@@ -1,6 +1,33 @@
 {
+  "name": "suhangxia-site-v2",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "video:check": "node scripts/video/check.mjs",
+    "video:cors": "node scripts/video/cors.mjs",
+    "video:list": "node scripts/video/list.mjs",
+    "video:process": "node scripts/video/process.mjs",
+    "video:preview:update": "node scripts/video/update-preview.mjs",
+    "video:publish:prepared": "node scripts/video/publish-prepared.mjs",
+    "video:upload": "node scripts/video/upload.mjs",
+    "video:verify": "node scripts/video/verify.mjs",
+    "video:hide": "node scripts/video/hide.mjs",
+    "video:remove": "node scripts/video/remove.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "astro": "^7.2.4",
+    "cos-nodejs-sdk-v5": "^3.0.0",
+    "gsap": "^3.15.0"
+  },
   "devDependencies": {
-    "@shopify/prettier-plugin-liquid": "1.4.0",
-    "prettier": "3.1.1"
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
   }
 }

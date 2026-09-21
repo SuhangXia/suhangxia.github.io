@@ -1,0 +1,44 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  media: ImageMetadata;
+  title: string;
+  alt: string;
+  description?: string;
+  source: string;
+  wide?: boolean;
+  compact?: boolean;
+}
+const { media, title, alt, description, source, wide = false, compact = false } = Astro.props;
+const displayWidth = Math.min(media.width, 1920);
+const widths = [...new Set([480, 720, 1080, 1440, displayWidth].filter((width) => width <= displayWidth))].sort((a, b) => a - b);
+---
+
+<figure class:list={['evidence-figure', { 'evidence-figure--wide': wide, 'evidence-figure--compact': compact }]}>
+  <a class="evidence-figure__image" href={media.src} target="_blank" rel="noopener" data-lightbox-src={media.src} data-lightbox-title={title} aria-label={`View full image: ${title}`}>
+    <Image src={media} alt={alt} width={displayWidth} widths={widths} sizes={wide ? '94vw' : '(max-width: 767px) 94vw, 46vw'} format="webp" quality={90} loading="lazy" />
+    <span class="evidence-figure__expand" aria-hidden="true">View full image ↗</span>
+  </a>
+  <figcaption>
+    <h4>{title}</h4>
+    {description && <p>{description}</p>}
+    <small>{source}</small>
+  </figcaption>
+</figure>
+
+<style>
+  .evidence-figure { min-width: 0; margin: 0; }
+  .evidence-figure--wide { grid-column: 1 / -1; }
+  .evidence-figure__image { display: flex; position: relative; align-items: center; justify-content: center; min-height: 14rem; padding: clamp(.75rem, 2vw, 2rem); background: var(--paper-deep); border: 1px solid var(--line); }
+  .evidence-figure__image img { display: block; width: 100%; height: auto; max-height: 42rem; object-fit: contain; }
+  .evidence-figure--wide .evidence-figure__image img { max-height: none; }
+  .evidence-figure--compact .evidence-figure__image img { width: auto; max-width: 100%; max-height: 30rem; }
+  .evidence-figure__expand { position: absolute; bottom: .6rem; right: .6rem; padding: .45rem .6rem; background: var(--paper-raised); color: var(--ink); font-size: .65rem; border: 1px solid var(--line); }
+  .evidence-figure__image:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+  figcaption { padding-top: 1rem; }
+  h4 { margin: 0; font-size: clamp(1rem, 1.4vw, 1.3rem); font-weight: 650; line-height: 1.35; }
+  p { max-width: 58rem; margin-top: .65rem; font-size: .9rem; line-height: 1.7; color: var(--ink-soft); }
+  small { display: block; margin-top: .8rem; color: var(--muted); font-size: .7rem; line-height: 1.5; }
+</style>

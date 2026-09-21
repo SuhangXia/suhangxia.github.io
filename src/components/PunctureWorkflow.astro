@@ -1,0 +1,123 @@
+---
+const imageSteps = [
+  { id: 'fixtureCmm', title: 'CMM fixture geometry', detail: 'Measure six pillar socket centres and six sampling divots a–f.' },
+  { id: 'ctScan', title: 'CT with metal spheres', detail: 'Seat the spheres in the assembled pillar sockets A–F and acquire CT.' },
+  { id: 'ctGeometry', title: 'Recover image geometry', detail: 'Extract the six sphere centres; select the six divots directly in CT.' },
+  { id: 'landmark', title: 'Landmark registration', detail: 'Use the pivot-calibrated NDI probe to sample the six matching divots.' },
+  { id: 'icp', title: 'Surface ICP refinement', detail: 'Acquire 20 additional surface points and align them to the CT fixture surface.' },
+  { id: 'target', title: 'Plan origin + direction', detail: 'Choose A as the target origin and A → B as the planned axis.' },
+];
+const toolSteps = [
+  { id: 'toolCmm', title: 'CMM tool geometry', detail: 'Measure the three socket centres and three adjacent conical-divot apices.' },
+  { id: 'toolCalibration', title: 'Probe-based tool calibration', detail: 'Sample the three apices with the calibrated NDI probe to register the tool geometry to its tracked marker.' },
+  { id: 'toolAxis', title: 'Select TCP + tool axis', detail: 'One sphere centre defines the origin; a second defines the axis direction.' },
+];
+---
+
+<figure class="puncture-workflow" aria-labelledby="workflow-title" aria-describedby="workflow-caption">
+  <header class="workflow-heading">
+    <span>Method / 01</span>
+    <h4 id="workflow-title">Calibrate the chain.<br />Measure it independently.</h4>
+    <p>Two navigation branches meet an independent metrology reference at robot execution.</p>
+  </header>
+
+  <div class="workflow-probe" data-flow-node="pivot">
+    <span>Shared sampling prerequisite</span>
+    <strong>NDI probe pivot calibration</strong>
+    <p>Establish the probe-tip offset before fixture landmark sampling, surface acquisition, and tool-divot probing.</p>
+  </div>
+
+  <div class="workflow-lanes">
+    <section class="workflow-lane" aria-labelledby="workflow-image-title">
+      <h5 id="workflow-image-title"><span>01</span> Image ↔ fixture</h5>
+      <ol>
+        {imageSteps.map((step) => <li data-flow-node={step.id}><strong>{step.title}</strong><p>{step.detail}</p></li>)}
+      </ol>
+      <p class="workflow-output">↓ Registered target origin + axis</p>
+    </section>
+
+    <section class="workflow-lane" aria-labelledby="workflow-tool-title">
+      <h5 id="workflow-tool-title"><span>02</span> Tool ↔ robot</h5>
+      <ol>
+        {toolSteps.map((step) => <li data-flow-node={step.id}><strong>{step.title}</strong><p>{step.detail}</p></li>)}
+      </ol>
+      <div class="workflow-prerequisite" data-flow-node="handEye">
+        <span>Additional prerequisite</span>
+        <strong>Robot hand–eye calibration</strong>
+        <p>Connect optical tracking and robot motion. This and the calibrated tool geometry are both required at execution.</p>
+      </div>
+      <p class="workflow-output">↓ Calibrated TCP + hand–eye relationship</p>
+    </section>
+
+    <section class="workflow-lane workflow-lane--metrology" aria-labelledby="workflow-leica-title">
+      <h5 id="workflow-leica-title"><span>03</span> Leica reference</h5>
+      <ol>
+        <li data-flow-node="reference"><strong>Record pillar centres</strong><p>Seat an SMR in each assembled pillar socket in turn. Store the six Leica-measured reference positions.</p></li>
+        <li data-flow-node="removal"><strong>Remove the pillars</strong><p>Keep the fixture base fixed. Preserve the same valid Leica measurement coordinate system.</p></li>
+      </ol>
+      <div class="workflow-reference-note"><strong>Keep the reference record</strong><p>The pre-removal coordinates are retained for the final error calculation—not substituted with NDI navigation estimates.</p></div>
+      <p class="workflow-output">↓ Clear target space + retained reference</p>
+    </section>
+  </div>
+
+  <svg class="workflow-merge" viewBox="0 0 900 48" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M150 0V20H450M750 0V20H450M450 0V44M444 37L450 44L456 37" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+  </svg>
+
+  <div class="workflow-execution" data-flow-node="motion">
+    <span>All three branches → robot execution</span>
+    <strong>Align the origin. Match the direction.</strong>
+    <p>Move the selected TCP origin to the planned point and align its axis with the planned line. The second tool sphere need not coincide with the second target sphere.</p>
+  </div>
+  <ol class="workflow-verification" aria-label="Independent measurement and reporting">
+    <li data-flow-node="actual"><span>Measure</span><strong>Tool sphere centres</strong><p>After arrival, seat the Leica SMR in the tool sockets and measure the actual origin and axis.</p></li>
+    <li data-flow-node="errors"><span>Compare</span><strong>Three geometric errors</strong><p>Compare the actual tool measurements with the retained pillar reference: point-to-point, point-to-line, and axis angle.</p></li>
+    <li data-flow-node="report"><span>Document</span><strong>Inspection report</strong><p>Record the measured deviations in the common Leica coordinate system.</p></li>
+  </ol>
+  <figcaption id="workflow-caption">CMM establishes the manufactured geometry. NDI supports registration and navigation. Leica independently measures the executed result.</figcaption>
+</figure>
+
+<style>
+  .puncture-workflow { margin: 3rem 0; padding: clamp(1rem, 2.5vw, 2.75rem); color: var(--ink); background: var(--paper-deep); border: 1px solid var(--line); }
+  .workflow-heading { display: grid; grid-template-columns: 1fr 2fr 1.5fr; gap: 2rem; align-items: end; margin-bottom: 2rem; }
+  .workflow-heading > span, .workflow-probe > span, .workflow-prerequisite > span, .workflow-execution > span, .workflow-verification span { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+  h4 { margin: 0; font-family: var(--font-serif); font-size: clamp(2rem, 3.4vw, 3.8rem); font-weight: 450; line-height: 1; letter-spacing: -.035em; }
+  p { font-size: .86rem; line-height: 1.65; color: var(--ink-soft); }
+  .workflow-probe { margin-bottom: 1.5rem; padding: 1.2rem 1.5rem; border-left: 3px solid var(--accent); background: var(--paper-raised); }
+  .workflow-probe strong { display: block; margin: .4rem 0; font-size: 1.1rem; }
+  .workflow-lanes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+  .workflow-lane { display: flex; flex-direction: column; min-width: 0; padding: 1.2rem; border: 1px solid var(--line); background: var(--paper); }
+  .workflow-lane--metrology { background: #e4eae1; }
+  h5 { display: flex; gap: .6rem; font-size: 1.1rem; line-height: 1.4; margin: 0 0 1.25rem; }
+  h5 span { color: var(--accent); font-size: .8rem; padding-top: .15rem; }
+  ol { list-style: none; padding: 0; margin: 0; }
+  .workflow-lane li { position: relative; padding: 1rem; border: 1px solid var(--line); background: var(--paper-raised); }
+  .workflow-lane li + li { margin-top: 1.6rem; }
+  .workflow-lane li + li::before { content: '↓'; position: absolute; top: -1.6rem; left: calc(50% - .35rem); font-size: 1.2rem; line-height: 1.6rem; color: var(--muted); }
+  li strong, .workflow-prerequisite strong, .workflow-reference-note strong { display: block; font-size: .97rem; line-height: 1.45; }
+  li p, .workflow-prerequisite p, .workflow-reference-note p { margin-top: .4rem; font-size: .8rem; }
+  .workflow-prerequisite { margin-top: 1.5rem; padding: 1rem; border: 1px dashed var(--muted); }
+  .workflow-prerequisite > span { margin-bottom: .6rem; font-size: .62rem; }
+  .workflow-reference-note { margin-top: 1.5rem; padding: 1rem; border-left: 2px solid #52654b; }
+  .workflow-output { margin-top: auto; padding-top: 1.75rem; font-size: .72rem; font-weight: 700; }
+  .workflow-merge { display: block; width: 100%; height: 3rem; color: var(--muted); }
+  .workflow-execution { max-width: 54rem; padding: 1.5rem 2rem; margin-inline: auto; text-align: center; background: var(--night); color: var(--white); }
+  .workflow-execution strong { display: block; margin: .7rem 0; font-size: clamp(1.2rem, 2vw, 1.75rem); }
+  .workflow-execution p { color: #cccfc6; }
+  .workflow-verification { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; margin-top: 2.5rem; }
+  .workflow-verification li { position: relative; padding: 1.25rem; border-top: 2px solid #52654b; }
+  .workflow-verification li + li::before { content: '→'; position: absolute; left: -1.4rem; top: 1.1rem; }
+  .workflow-verification span { margin-bottom: .75rem; color: #455a3e; }
+  figcaption { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: .8rem; line-height: 1.6; color: var(--muted); }
+  @media (max-width: 1099px) {
+    .workflow-heading { grid-template-columns: 1fr; gap: .85rem; }
+    .workflow-lanes { grid-template-columns: 1fr; }
+    .workflow-lane { padding: 1rem; }
+    .workflow-merge { display: none; }
+    .workflow-execution { margin-top: 1.5rem; padding: 1.4rem 1rem; }
+    .workflow-verification { grid-template-columns: 1fr; gap: 1.25rem; }
+    .workflow-verification li + li::before { content: '↓'; left: calc(50% - .35rem); top: -1.65rem; }
+    .workflow-output { padding-top: 1rem; }
+    li p { font-size: .9rem; }
+  }
+</style>

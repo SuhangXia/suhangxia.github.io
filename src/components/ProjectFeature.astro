@@ -1,0 +1,183 @@
+---
+import { Image } from 'astro:assets';
+import type { Project } from '../data/projects';
+import { publicFeaturedVideoForProject } from '../data/videos';
+import ResearchVideo from './ResearchVideo.astro';
+
+interface Props {
+  project: Project;
+  isDetail?: boolean;
+}
+
+const { project, isDetail = false } = Astro.props;
+const links = isDetail ? project.links.filter((link) => !link.href.startsWith('/research/')) : project.links;
+const researchLink = project.links.find((link) => link.href.startsWith('/research/'));
+const featuredVideo = publicFeaturedVideoForProject(project.slug);
+---
+
+<article
+  class:list={[
+    'project-feature',
+    `project-feature--${project.slug}`,
+    `project-feature--${project.theme}`,
+    `project-feature--${project.layout}`,
+  ]}
+  id={project.slug}
+  data-project-feature
+>
+  <div class="project-feature__inner section-shell">
+    <header class="project-feature__header">
+      <p class="eyebrow"><span>{project.index}</span>{project.field}</p>
+      <div class="project-feature__heading-main">
+        <div class="project-feature__title-row">
+          <h3>
+            {!isDetail && researchLink ? (
+              <a class="project-feature__title-link" href={researchLink.href}>{project.title}</a>
+            ) : (
+              project.title
+            )}
+          </h3>
+          {project.organisation && (
+            <a
+              class="project-feature__organisation"
+              href={project.organisation.href}
+              aria-label={`${project.organisation.product} official product page`}
+            >
+              {project.organisation.logo ? (
+                <Image
+                  src={project.organisation.logo}
+                  alt={project.organisation.logoAlt ?? project.organisation.product}
+                  widths={[240, 360, 480]}
+                  sizes="(max-width: 767px) 9rem, 14rem"
+                  format="webp"
+                  quality={90}
+                  loading="lazy"
+                />
+              ) : (
+                <>
+                  <strong>{project.organisation.name}</strong>
+                  <span>{project.organisation.product}</span>
+                </>
+              )}
+            </a>
+          )}
+        </div>
+        {project.achievement && (
+          <a class="project-feature__achievement" href={project.achievement.href}>
+            <span class="project-feature__achievement-authority">{project.achievement.authority}</span>
+            <span class="project-feature__achievement-copy">
+              <small>Regulatory status</small>
+              <strong>{project.achievement.label}</strong>
+              <span>Registration no. {project.achievement.value}</span>
+            </span>
+            <span class="project-feature__achievement-action">
+              View certificate <b aria-hidden="true">↗</b>
+            </span>
+          </a>
+        )}
+      </div>
+    </header>
+
+    {featuredVideo ? (
+      <div class="project-feature__media project-feature__media--video" data-project-media>
+        <ResearchVideo
+          video={featuredVideo}
+          preview={!isDetail}
+          label={`${project.title} demonstration${isDetail ? '' : ' preview'}`}
+        />
+      </div>
+    ) : !isDetail && project.previewMedia ? (
+      <figure
+        class:list={[
+          'project-feature__media',
+          project.previewMediaAnimated && 'project-feature__media--animated',
+        ]}
+        data-project-media
+      >
+        {project.previewMediaAnimated ? (
+          <>
+            <img
+              class="project-feature__animated-preview"
+              src={project.previewMedia.src}
+              width={project.previewMedia.width}
+              height={project.previewMedia.height}
+              alt={project.previewMediaAlt ?? project.mediaAlt ?? ''}
+              loading="lazy"
+              decoding="async"
+            />
+            {project.previewFallback && (
+              <Image
+                class="project-feature__animated-fallback"
+                src={project.previewFallback}
+                alt={project.previewMediaAlt ?? project.mediaAlt ?? ''}
+                widths={[640, 960, 1440]}
+                sizes={project.layout === 'split' ? '(max-width: 899px) 100vw, 62vw' : '100vw'}
+                format="avif"
+                quality={83}
+                loading="lazy"
+              />
+            )}
+          </>
+        ) : (
+          <Image
+            src={project.previewMedia}
+            alt={project.previewMediaAlt ?? project.mediaAlt ?? ''}
+            widths={[640, 960, 1440, 1920]}
+            sizes={project.layout === 'split' ? '(max-width: 899px) 100vw, 62vw' : '100vw'}
+            format="avif"
+            quality={83}
+            loading="lazy"
+          />
+        )}
+      </figure>
+    ) : project.media ? (
+      <figure class="project-feature__media" data-project-media>
+        <Image
+          src={project.media}
+          alt={project.mediaAlt ?? ''}
+          widths={[640, 960, 1440, 1920]}
+          sizes={project.layout === 'split' ? '(max-width: 899px) 100vw, 62vw' : '100vw'}
+          format="avif"
+          quality={83}
+          loading="lazy"
+        />
+      </figure>
+    ) : (
+      <div
+        class="project-feature__media project-feature__media--pending"
+        data-project-media
+        role="group"
+        aria-label="Reserved media space for the Tactile UMI field demonstration"
+      >
+        <div class="media-pending__top">
+          <span>Media / 00</span>
+          <span>Field capture pending</span>
+        </div>
+        <div class="media-pending__centre">
+          <span class="media-pending__mark" aria-hidden="true"></span>
+          <p>Human demonstration<br />to robot execution</p>
+        </div>
+        <ol class="media-pending__sequence" aria-label="Planned Tactile UMI media sequence">
+          <li><span>01</span>Demonstrate</li>
+          <li><span>02</span>Align</li>
+          <li><span>03</span>Encode</li>
+          <li><span>04</span>Compare</li>
+        </ol>
+      </div>
+    )}
+
+    <div class="project-feature__copy">
+      <p class="project-feature__question">{project.question}</p>
+      <p class="project-feature__description">{project.description}</p>
+      {links.length > 0 && (
+        <div class="project-feature__links" aria-label={`${project.title} links`}>
+          {links.map((link) => (
+            <a class:list={['text-link', link.href === researchLink?.href && 'project-feature__research-link']} href={link.href}>
+              {link.label} <span aria-hidden="true">↗</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</article>

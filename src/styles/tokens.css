@@ -1,0 +1,45 @@
+:root {
+  --paper: #f1efe8;
+  --paper-raised: #f7f5ef;
+  --paper-deep: #e4e1d7;
+  --ink: #141614;
+  --ink-soft: #343834;
+  --muted: #62665f;
+  --line: rgba(20, 22, 20, 0.2);
+  --line-inverse: rgba(247, 245, 239, 0.22);
+  --night: #171917;
+  --night-raised: #202320;
+  --white: #f7f5ef;
+  --accent: #b54b32;
+  --accent-dark: #863724;
+
+  --font-sans: 'Manrope Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-serif: 'Newsreader Variable', 'Iowan Old Style', 'Baskerville', Georgia, serif;
+
+  --space-1: 0.5rem;
+  --space-2: 0.75rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --space-6: 3rem;
+  --space-7: 4.5rem;
+  --space-8: 6rem;
+  --space-9: 9rem;
+  --space-10: 12rem;
+
+  --page-gutter: clamp(1.25rem, 3vw, 3.5rem);
+  --max-width: 112rem;
+  --header-height: 5rem;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (max-width: 767px) {
+  :root {
+    --page-gutter: 1.25rem;
+    --header-height: 4.25rem;
+    --space-8: 4.5rem;
+    --space-9: 6rem;
+    --space-10: 7rem;
+  }
+}

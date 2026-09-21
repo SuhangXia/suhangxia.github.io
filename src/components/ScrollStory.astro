@@ -1,0 +1,63 @@
+---
+import { Image } from 'astro:assets';
+import { story } from '../data/projects';
+---
+
+<section class="story" aria-labelledby="story-title" data-scroll-story>
+  <div class="story__intro section-shell">
+    <p class="eyebrow" data-reveal>{story.eyebrow}</p>
+    <div>
+      <h2 id="story-title" data-reveal>{story.title}</h2>
+      <p data-reveal>{story.introduction}</p>
+    </div>
+  </div>
+
+  <div class="story__body section-shell">
+    <div class="story__visual" aria-hidden="true">
+      <div class="story__media-stack">
+        {story.stages.map((stage, index) => (
+          <figure class:list={['story__media', { active: index === 0 }]} data-story-media={index}>
+            <Image
+              src={stage.media}
+              alt=""
+              widths={[720, 1080, 1440]}
+              sizes="(max-width: 899px) 100vw, 58vw"
+              format="avif"
+              quality={82}
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+          </figure>
+        ))}
+        <div class="story__progress" aria-hidden="true">
+          <span data-story-progress></span>
+        </div>
+        <div class="story__counter" aria-hidden="true">
+          <span data-story-current>01</span><span>/ 04</span>
+        </div>
+      </div>
+    </div>
+
+    <ol class="story__steps">
+      {story.stages.map((stage, index) => (
+        <li class:list={['story__step', { active: index === 0 }]} data-story-step={index}>
+          <figure class="story__step-media">
+            <Image
+              src={stage.media}
+              alt={stage.alt}
+              widths={[480, 720, 960]}
+              sizes="100vw"
+              format="avif"
+              quality={80}
+              loading="lazy"
+            />
+          </figure>
+          <div class="story__step-copy">
+            <span>{stage.number}</span>
+            <h3>{stage.title}</h3>
+            <p>{stage.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

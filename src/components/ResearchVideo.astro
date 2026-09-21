@@ -1,0 +1,95 @@
+---
+import type { PlayableVideo } from '../data/videos';
+
+interface Props {
+  video: PlayableVideo;
+  preview?: boolean;
+  label?: string;
+}
+
+const { video, preview = false, label = video.title } = Astro.props;
+const canRender = video.status === 'public';
+const usePreview = preview && Boolean(video.previewSrc);
+const source = usePreview ? video.previewSrc : video.src;
+---
+
+{
+  canRender && (
+    <div class="research-video__player" data-research-video data-autoplay={usePreview ? 'true' : 'false'}>
+      <video
+        autoplay={usePreview || undefined}
+        controls={usePreview ? undefined : true}
+        loop={usePreview || undefined}
+        muted={usePreview || undefined}
+        playsinline
+        preload={usePreview ? 'metadata' : 'none'}
+        poster={video.poster}
+        aria-label={label}
+      >
+        <source data-src={source} type="video/mp4" />
+      </video>
+      {!usePreview && (
+        <button class="research-video__play" type="button" data-video-play aria-label={`Play ${label}`}>
+          <span aria-hidden="true"></span>
+        </button>
+      )}
+    </div>
+  )
+}
+
+<script>
+  const players = document.querySelectorAll<HTMLElement>('[data-research-video]');
+
+  const initialisePlayer = (container: HTMLElement) => {
+    const video = container.querySelector<HTMLVideoElement>('video');
+    const source = container.querySelector<HTMLSourceElement>('source[data-src]');
+    const playButton = container.querySelector<HTMLButtonElement>('[data-video-play]');
+    if (!video || !source?.dataset.src) return;
+
+    const autoplay = container.dataset.autoplay === 'true';
+    let loaded = false;
+    const load = () => {
+      if (loaded) return;
+      source.src = source.dataset.src ?? '';
+      video.load();
+      loaded = true;
+    };
+
+    const updatePlayButton = () => {
+      if (!playButton) return;
+      const playing = !video.paused && !video.ended;
+      container.classList.toggle('is-playing', playing);
+      playButton.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${video.getAttribute('aria-label') ?? 'video'}`);
+    };
+
+    playButton?.addEventListener('click', () => {
+      load();
+      if (video.paused || video.ended) {
+        void video.play().catch(() => undefined);
+      } else {
+        video.pause();
+      }
+    });
+    video.addEventListener('play', updatePlayButton);
+    video.addEventListener('pause', updatePlayButton);
+    video.addEventListener('ended', updatePlayButton);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        if (entry.isIntersecting) {
+          load();
+          if (autoplay) void video.play().catch(() => undefined);
+        } else if (autoplay) {
+          video.pause();
+        }
+      },
+      { rootMargin: '180px 0px' },
+    );
+    observer.observe(container);
+    window.addEventListener('pagehide', () => observer.disconnect(), { once: true });
+  };
+
+  players.forEach(initialisePlayer);
+</script>

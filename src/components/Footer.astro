@@ -1,0 +1,20 @@
+---
+import { site } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer section-shell">
+  <div class="section-rule"></div>
+  <div class="site-footer__top">
+    <p>Ideas move forward through conversation.</p>
+    <a href={`mailto:${site.email}`}>{site.email}</a>
+  </div>
+  <div class="site-footer__bottom">
+    <p>© {year} Suhang Xia</p>
+    <nav aria-label="Social links">
+      {site.links.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+    <a href="#top">Back to top ↑</a>
+  </div>
+</footer>

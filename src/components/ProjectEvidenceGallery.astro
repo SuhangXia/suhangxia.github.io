@@ -1,0 +1,69 @@
+---
+import { Image } from 'astro:assets';
+import type { EvidenceCollection } from '../data/evidence';
+
+interface Props {
+  evidence: EvidenceCollection;
+  headingId?: string;
+  zoomable?: boolean;
+}
+
+const { evidence, headingId = 'project-evidence-gallery-title', zoomable = false } = Astro.props;
+const MediaContainer = zoomable ? 'a' : 'div';
+---
+
+<section class="project-evidence-gallery section-shell" aria-labelledby={headingId}>
+  <header class="project-evidence-gallery__heading">
+    <p class="eyebrow">{evidence.eyebrow}</p>
+    <div>
+      <h3 id={headingId}>{evidence.title}</h3>
+      <p>{evidence.introduction}</p>
+    </div>
+  </header>
+
+  <div class="project-evidence-gallery__grid">
+    {evidence.items.map((item, index) => (
+      <figure
+        id={item.id}
+        class:list={{
+          'repository-figure': true,
+          'repository-figure--wide': item.wide,
+          [`repository-figure--${item.presentation}`]: item.presentation,
+        }}
+      >
+        <MediaContainer
+          class:list={{ 'repository-figure__media': true, 'repository-figure__media--svg': item.media.format === 'svg' }}
+          href={zoomable ? item.media.src : undefined}
+          target={zoomable ? '_blank' : undefined}
+          rel={zoomable ? 'noopener' : undefined}
+          data-lightbox-src={zoomable ? item.media.src : undefined}
+          data-lightbox-title={zoomable ? item.title : undefined}
+          aria-label={zoomable ? `View full image: ${item.title}` : undefined}
+        >
+          {item.media.format === 'svg' ? (
+            <img src={item.media.src} alt={item.alt} loading="lazy" />
+          ) : (
+            <Image
+              src={item.media}
+              alt={item.alt}
+              widths={[640, 960, 1440, 1920]}
+              sizes={item.wide ? '100vw' : '(max-width: 767px) 100vw, 50vw'}
+              format="avif"
+              quality={82}
+              loading="lazy"
+            />
+          )}
+        </MediaContainer>
+        <figcaption>
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <h4>{item.title}</h4>
+            <p>{item.description}</p>
+            <small>{item.source}</small>
+            {item.link && <a class="text-link repository-figure__link" href={item.link.href}>{item.link.label} <span aria-hidden="true">↗</span></a>}
+          </div>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,23 @@
+---
+import { thesis } from '../data/site';
+---
+
+<section class="thesis section-shell" id="research-thesis" aria-labelledby="thesis-title">
+  <div class="section-rule" data-reveal-line></div>
+  <p class="eyebrow" data-reveal>{thesis.eyebrow}</p>
+  <div class="thesis__grid">
+    <h2 class="display-serif" id="thesis-title" data-reveal>{thesis.title}</h2>
+    <div class="thesis__body" data-reveal>
+      <p>{thesis.body}</p>
+      <a class="text-link" href="/research">Research overview <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+  <ol class="thesis__pillars" aria-label="Research pillars">
+    {thesis.pillars.map((pillar) => (
+      <li data-reveal>
+        <span>{pillar.number}</span>
+        <strong>{pillar.label}</strong>
+      </li>
+    ))}
+  </ol>
+</section>

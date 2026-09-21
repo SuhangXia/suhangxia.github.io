@@ -1,0 +1,154 @@
+---
+import { Image } from 'astro:assets';
+import budgetComparison from '../assets/media/vtla-budget-comparison.png';
+import endEffector from '../assets/media/vtla-end-effector.jpg';
+import fabricOmniDataset from '../assets/media/vtla-fabric-omni-dataset.png';
+import robotWorkcell from '../assets/media/vtla-robot-workcell.jpg';
+import singleTouchArchitecture from '../assets/media/vtla-single-touch-architecture.png';
+import touchUntilCertain from '../assets/media/vtla-touch-until-certain.png';
+import f007Front from '../assets/media/vtla-samples/f007-front.jpg';
+import f007Touch from '../assets/media/vtla-samples/f007-touch-peak.jpg';
+import f044Front from '../assets/media/vtla-samples/f044-front.jpg';
+import f044Touch from '../assets/media/vtla-samples/f044-touch-peak.jpg';
+import f095Front from '../assets/media/vtla-samples/f095-front.jpg';
+import f095Touch from '../assets/media/vtla-samples/f095-touch-peak.jpg';
+import f137Front from '../assets/media/vtla-samples/f137-front.jpg';
+import f137LabelCrop from '../assets/media/vtla-samples/f137-label-crop.jpg';
+import f137Touch from '../assets/media/vtla-samples/f137-touch-peak.jpg';
+
+const fabricSamples = [
+  { id: 'F007', name: 'Metallic yarn knit', values: '120 g/m² catalogue · 0.50 mm thickness', rgb: f007Front, tactile: f007Touch },
+  { id: 'F044', name: 'Synthetic composite leather', values: '320 g/m² catalogue · 0.55 mm thickness', rgb: f044Front, tactile: f044Touch },
+  { id: 'F095', name: 'Polyester–viscose tweed', values: '350 g/m² catalogue · 1.10 mm thickness', rgb: f095Front, tactile: f095Touch },
+  { id: 'F137', name: 'Daisy floral jacquard', values: '190 g/m² catalogue · 0.30 mm thickness', rgb: f137Front, tactile: f137Touch },
+] as const;
+---
+
+<div class="vtla-visual-story">
+  <section class="vtla-visual-section section-shell" aria-labelledby="vtla-dataset-title">
+    <header class="vtla-visual-heading">
+      <p class="eyebrow">Dataset / Fabric-Omni</p>
+      <div>
+        <h3 id="vtla-dataset-title">200 fabrics. Two sides. One traceable record.</h3>
+        <p>Catalogue provenance, RGB, GelSight video, and ≈500 Hz ATI force are linked press by press.</p>
+      </div>
+    </header>
+
+    <dl class="vtla-visual-stats" aria-label="Fabric-Omni dataset summary">
+      <div><dt>Fabrics</dt><dd>200</dd></div>
+      <div><dt>Side sessions</dt><dd>400</dd></div>
+      <div><dt>Valid presses</dt><dd>12,170</dd></div>
+      <div><dt>Force</dt><dd>≈500 Hz</dd></div>
+    </dl>
+
+    <figure class="vtla-paper-figure vtla-paper-figure--wide">
+      <Image src={fabricOmniDataset} alt="Fabric-Omni acquisition examples linking fabric RGB, GelSight contact, and ATI Nano17 force" widths={[720, 1080, 1440, 1920]} sizes="100vw" format="avif" quality={84} loading="lazy" />
+      <figcaption><span>Acquisition contract</span> RGB · tactile · force · provenance</figcaption>
+    </figure>
+
+    <div class="vtla-label-pages vtla-label-pages--single" aria-label="Fabric-Omni catalogue provenance example">
+      <figure>
+        <Image src={f137LabelCrop} alt="Fabric F137 swatch beside its original catalogue label" widths={[640, 960, 1440, 1920]} sizes="(max-width: 767px) 100vw, 72vw" format="avif" quality={86} loading="lazy" />
+        <figcaption><span>F137</span> Original swatch + adjacent catalogue label</figcaption>
+      </figure>
+    </div>
+
+    <div class="vtla-fabric-grid" aria-label="Fabric RGB and force-aligned GelSight samples">
+      {fabricSamples.map((sample) => (
+        <article class="vtla-fabric-sample">
+          <div class="vtla-fabric-sample__pair">
+            <figure>
+              <Image src={sample.rgb} alt={`${sample.id} ${sample.name} front-side RGB`} widths={[320, 480, 720]} sizes="(max-width: 767px) 50vw, 25vw" format="avif" quality={84} loading="lazy" />
+              <span>RGB</span>
+            </figure>
+            <figure>
+              <Image src={sample.tactile} alt={`${sample.id} GelSight frame near peak force`} widths={[320, 480, 720]} sizes="(max-width: 767px) 50vw, 25vw" format="avif" quality={84} loading="lazy" />
+              <span>GelSight</span>
+            </figure>
+          </div>
+          <div class="vtla-fabric-sample__caption">
+            <span>{sample.id}</span>
+            <div><h4>{sample.name}</h4><p>{sample.values}</p></div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <p class="vtla-visual-boundary">Private research collection · derived figures only · no dataset download.</p>
+  </section>
+
+  <section class="vtla-visual-section vtla-visual-section--dark section-shell" aria-labelledby="vtla-method-title">
+    <header class="vtla-visual-heading">
+      <p class="eyebrow">Method / TouchUntilCertain</p>
+      <div>
+        <h3 id="vtla-method-title">Predict once. Re-touch only when needed.</h3>
+        <p>Frozen tactile tokens estimate thickness and GSM; three target-free signals decide STOP or RETOUCH.</p>
+      </div>
+    </header>
+
+    <div class="vtla-method-figures">
+      <figure class="vtla-paper-figure">
+        <Image src={singleTouchArchitecture} alt="Single-touch physical prediction architecture" widths={[720, 1080, 1440]} sizes="(max-width: 899px) 100vw, 50vw" format="avif" quality={86} loading="lazy" />
+        <figcaption><span>01</span> AnyTouch 2 → frozen 17×384 tokens → physical-property heads</figcaption>
+      </figure>
+      <figure class="vtla-paper-figure">
+        <Image src={touchUntilCertain} alt="TouchUntilCertain target-free reliability method" widths={[720, 1080, 1440]} sizes="(max-width: 899px) 100vw, 50vw" format="avif" quality={86} loading="lazy" />
+        <figcaption><span>02</span> Scale + disagreement + novelty → STOP / RETOUCH</figcaption>
+      </figure>
+    </div>
+
+    <ol class="vtla-signal-strip" aria-label="TouchUntilCertain reliability signals">
+      <li><span>01</span>Predictive scale</li>
+      <li><span>02</span>Model disagreement</li>
+      <li><span>03</span>Contact novelty</li>
+    </ol>
+  </section>
+
+  <section class="vtla-visual-section section-shell" aria-labelledby="vtla-results-title">
+    <header class="vtla-visual-heading">
+      <p class="eyebrow">Evaluation / Development-170</p>
+      <div><h3 id="vtla-results-title">Half the extra touches. Most of the gain.</h3></div>
+    </header>
+
+    <figure class="vtla-paper-figure vtla-paper-figure--wide">
+      <Image src={budgetComparison} alt="Budgeted active-touch policy comparison for thickness and GSM" widths={[720, 1080, 1440, 1920]} sizes="100vw" format="avif" quality={86} loading="lazy" />
+      <figcaption><span>Budget 0.5</span> Grouped held-out evaluation</figcaption>
+    </figure>
+
+    <div class="vtla-result-strip">
+      <article><span>One touch</span><strong>0.1043 <small>mm</small></strong></article>
+      <article><span>1.5 touches</span><strong>0.0935 <small>mm</small></strong></article>
+      <article class="vtla-result-strip__accent"><span>Thickness MAE</span><strong>−10.4%</strong></article>
+    </div>
+    <p class="vtla-visual-boundary">95% CI: [0.0038, 0.0193] mm · 78.8% of the fixed two-touch point gain. GSM remains descriptive because its interval crosses zero.</p>
+  </section>
+
+  <section class="vtla-visual-section vtla-visual-section--integration section-shell" aria-labelledby="vtla-integration-title">
+    <header class="vtla-visual-heading">
+      <p class="eyebrow">Integration / Guarded execution</p>
+      <div>
+        <h3 id="vtla-integration-title">Perception decides evidence. Scripts own motion.</h3>
+        <p>TouchUntilCertain selects touch count; Qwen returns Yes / No / Abstain; registered waypoints move Franka.</p>
+      </div>
+    </header>
+
+    <div class="vtla-system-images">
+      <figure>
+        <Image src={robotWorkcell} alt="Franka cloth-sorting workcell" widths={[640, 960, 1440]} sizes="(max-width: 767px) 100vw, 64vw" format="avif" quality={84} loading="lazy" />
+        <figcaption>Franka workcell</figcaption>
+      </figure>
+      <figure class="vtla-system-images__end-effector">
+        <Image src={endEffector} alt="GelSight and ATI Nano17 tactile-force end effector" widths={[480, 720, 960]} sizes="(max-width: 767px) 100vw, 36vw" format="avif" quality={84} loading="lazy" />
+        <figcaption>GelSight + ATI Nano17</figcaption>
+      </figure>
+    </div>
+
+    <div class="vtla-role-strip" aria-label="Project contributions">
+      <article><span>Suhang Xia</span><p>Dataset concept, label design, two-sided RGB, back-side tactile–force.</p></article>
+      <article><span>Muye Yuan</span><p>Catalogue sourcing, label imaging, front-side tactile–force.</p></article>
+      <article><span>Joint</span><p>Acquisition pipeline and algorithms.</p></article>
+    </div>
+
+    <p class="vtla-visual-boundary">Six qualitative demonstrations used RETOUCH. π0.5 was trained but not deployed for inference.</p>
+  </section>
+</div>

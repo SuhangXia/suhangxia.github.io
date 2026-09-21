@@ -1,0 +1,30 @@
+---
+import { researchOutputs } from '../data/publications';
+---
+
+<section class="outputs section-shell" aria-labelledby="outputs-title">
+  <div class="section-rule" data-reveal-line></div>
+  <header class="outputs__header">
+    <div>
+      <p class="eyebrow" data-reveal>Publications / reports</p>
+      <h2 id="outputs-title" data-reveal>Selected research outputs</h2>
+    </div>
+    <a class="text-link" href="/publications" data-reveal>View all <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <ol class="output-list">
+    {researchOutputs.map((output) => (
+      <li class="output-row" data-reveal>
+        <p class="output-row__year">{output.year}</p>
+        <div class="output-row__main">
+          <h3>{output.title}</h3>
+          <p class="output-row__authors"><strong>Suhang Xia</strong>{output.authors.replace('Suhang Xia', '')}</p>
+          <p class="output-row__context">{output.context}</p>
+        </div>
+        <div class="output-row__links" aria-label={`${output.title} links`}>
+          {output.links.map((link) => <a href={link.href}>{link.label}</a>)}
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>

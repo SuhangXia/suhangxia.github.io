@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { projects } from '../data/projects';
+---
+
+<BaseLayout
+  title="Research — Suhang Xia"
+  description="Research projects by Suhang Xia across visuotactile learning, cloth manipulation, surgical robotics, human–robot interaction, and autonomous navigation."
+  pageClass="inner-page"
+>
+  <PageHero
+    eyebrow="Research"
+    index="01"
+    title="Research begins with a physical question."
+    introduction="Across cloth manipulation, tactile perception, surgical systems, video understanding, and autonomous navigation, I am interested in how a machine builds a useful account of the world—and turns it into careful action."
+  />
+
+  <section class="research-directory section-shell" aria-labelledby="research-directory-title">
+    <div class="research-directory__heading">
+      <p class="eyebrow">Project directory</p>
+      <h2 id="research-directory-title">Each project is a complete research record.</h2>
+    </div>
+
+    <div class="research-directory__list">
+      {projects.map((project) => (
+        <a class="research-directory__item" href={`/research/${project.slug}/`}>
+          <span class="research-directory__index">{project.index}</span>
+          <div>
+            <p>{project.field}</p>
+            <h3>{project.title}</h3>
+            <span>{project.question}</span>
+          </div>
+          <span class="research-directory__action">Open project <b aria-hidden="true">↗</b></span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

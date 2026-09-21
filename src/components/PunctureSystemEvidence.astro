@@ -1,0 +1,199 @@
+---
+import EvidenceFigure from './EvidenceFigure.astro';
+import PunctureWorkflow from './PunctureWorkflow.astro';
+import fixtureCad from '../assets/media/percutaneous/evidence/fixture-cad-p34.png';
+import fixtureWorkbench from '../assets/media/percutaneous/evidence/fixture-workbench-p34.png';
+import leicaTracker from '../assets/media/percutaneous/evidence/leica-tracker-p33.png';
+import robotWorkspace from '../assets/media/percutaneous/evidence/robot-workspace-p33.png';
+import robotRequirements from '../assets/media/percutaneous/evidence/robot-requirements-p33.png';
+import systemRequirements from '../assets/media/percutaneous/evidence/system-requirements-p34.png';
+import geometricMeasurement from '../assets/media/percutaneous/evidence/geometric-measurement-p10.jpg';
+import toolCalibration from '../assets/media/percutaneous/evidence/tool-calibration-p11.png';
+import animalResults from '../assets/media/percutaneous/evidence/animal-results-p13.png';
+import animalCtA from '../assets/media/percutaneous/evidence/animal-ct-p12-a.jpg';
+import animalCtB from '../assets/media/percutaneous/evidence/animal-ct-p12-b.jpg';
+import animalWorkcell from '../assets/media/percutaneous/animal-study-workcell.jpg';
+import animalTeam from '../assets/media/percutaneous/animal-study-team.jpg';
+
+const results = [
+  ['Mean error', '0.54 mm', '4.63 mm'],
+  ['Standard deviation', '1.109 mm', '6.529 mm'],
+  ['First-attempt puncture success', '27/30 (90%)', '16/30 (53.3%)'],
+  ['Total puncture attempts', '34', '52'],
+  ['Mean attempts per target', '1.13', '1.73'],
+];
+---
+
+<div class="puncture-story">
+  <section class="puncture-section section-shell" id="my-contribution" aria-labelledby="puncture-contribution-title">
+    <header class="puncture-heading">
+      <p class="eyebrow">My contribution</p>
+      <div><h2 id="puncture-contribution-title">From calibration algorithms<br />to a registered product.</h2><p>I led the puncture-robot project at Lancet Robotics, combining hands-on algorithm development with responsibility for system validation and the animal-study programme.</p></div>
+    </header>
+    <div class="puncture-role-grid">
+      <article><span>Independent technical work</span><h3>Calibration & metrology</h3><p>I independently implemented the robot calibration, fixture and TCP calibration, and system-accuracy measurement algorithms. I also performed the Leica laser-tracker inspection and produced the measurement reports.</p></article>
+      <article><span>Project leadership</span><h3>Study design & delivery</h3><p>I designed and led the animal experiments, taking the team to work with Silver Snake Clinical Center in Guangzhou and coordinating the on-site engineering and experimental work.</p></article>
+    </div>
+    <nav class="puncture-section-nav" aria-label="Puncture project evidence">
+      <a href="#system-calibration">Calibration & accuracy ↓</a>
+      <a href="#animal-study">Animal-study results ↓</a>
+      <a href="#project-demos-title">Engineering recordings ↓</a>
+      <a href="/about/#patent-applications">Patent applications ↗</a>
+    </nav>
+  </section>
+
+  <section class="puncture-section section-shell" id="system-calibration" aria-labelledby="puncture-calibration-title">
+    <header class="puncture-heading">
+      <p class="eyebrow">Method · Calibration, navigation, metrology</p>
+      <div><h2 id="puncture-calibration-title">System Calibration & Accuracy Verification</h2><p>The same geometric account connects manufactured fixtures, CT landmarks, tracked instruments, and robot motion. An independent laser-tracker measurement then checks where the tool actually arrived.</p></div>
+    </header>
+    <PunctureWorkflow />
+
+    <div class="puncture-subheading"><span>01 / Fixture & image registration</span><h3>Six sockets. Six divots.<br />Two distinct jobs.</h3></div>
+    <div class="puncture-prose-grid">
+      <p>The machined fixture has six removable pillars with hemispherical sockets <strong>A–F</strong>, and six sampling divots <strong>a–f</strong>. Coordinate measuring machine (CMM) measurements establish the assembled socket-centre and divot coordinates as geometric ground truth.</p>
+      <p>Metal spheres seated on the pillars make their centres recoverable in CT. The six divots are selected directly in CT and sampled with a pivot-calibrated NDI probe for landmark registration. Twenty additional surface samples refine the image-to-fixture alignment through ICP.</p>
+    </div>
+    <div class="puncture-evidence-grid">
+      <EvidenceFigure media={fixtureCad} title="System-accuracy fixture" alt="CAD view of the six-pillar system-accuracy fixture labelled A through F, with its optical reference marker" description="Pillar sockets define the target sphere centres. The separate a–f divots provide the six corresponding landmarks for image registration." source="Lancet product technical presentation · slide 34" compact />
+      <EvidenceFigure media={fixtureWorkbench} title="Tracked fixture and instrument" alt="Robot-mounted tracked instrument above the physical system-accuracy fixture with optical reference markers and an overlaid line" description="The physical fixture and robot-mounted tool retain their own NDI reference markers. Optical tracking supports the navigation chain; it is not the final Leica measurement." source="Lancet product technical presentation · slide 34" />
+    </div>
+
+    <div class="puncture-subheading"><span>02 / Tool geometry & robot calibration</span><h3>A calibrated origin.<br />A selected tool axis.</h3></div>
+    <div class="puncture-prose-grid">
+      <p>The cross-shaped metal tool carries three hemispherical sockets and three adjacent conical divots. CMM measurements establish the socket centres and conical apices. Sampling those three apices with the calibrated NDI probe registers the known tool geometry to the tool’s tracked marker.</p>
+      <p>Robot hand–eye calibration connects optical tracking to robot motion. One selected tool sphere centre becomes the TCP origin; another defines the axis. The target is an origin and a direction—not a requirement that both tool sphere centres coincide with both fixture targets, and not a complete six-degree-of-freedom orientation defined by two points alone.</p>
+    </div>
+    <div class="puncture-evidence-grid">
+      <EvidenceFigure media={toolCalibration} title="Tool and socket coordinate definitions" alt="Annotated tool-calibration photograph identifying three steel-ball centres, conical divots, reflective marker balls, and the tool reference coordinate frame" description="The original annotations distinguish steel-ball geometry, conical probing locations, and the optical marker frame. All coordinate labels are retained." source="About Me · slide 11" wide />
+    </div>
+
+    <div class="puncture-subheading"><span>03 / Independent measurement</span><h3>Remove the pillars.<br />Keep the reference.</h3></div>
+    <div class="puncture-prose-grid">
+      <p>Before removing any pillars, a Leica spherically mounted retroreflector (SMR) is placed into each pillar socket in turn to measure and store its centre position. The fixture base remains fixed while the pillars are unscrewed, leaving the target space clear for the robot-mounted tool.</p>
+      <p>The robot moves the selected TCP origin to the planned target and aligns the tool axis with the planned line. Once it arrives, an SMR seated in the tool sockets measures the actual tool sphere centres. Reference and actual coordinates are compared in the same valid Leica measurement frame, independently of the NDI navigation estimate.</p>
+    </div>
+    <p class="puncture-source-link"><a href="https://hexagon.com/resources/resource-library/tracking-progress-re-evalutating-laser-tracker-technology" target="_blank" rel="noopener">Instrument principle: Leica / Hexagon laser-tracker metrology ↗</a></p>
+    <div class="puncture-evidence-grid puncture-evidence-grid--metrology">
+      <EvidenceFigure media={leicaTracker} title="Leica laser-tracker inspection" alt="Leica laser tracker on a tripod, retained as the original inspection-video poster from slide 33" description="The independent metrology instrument used for inspection and report generation. An SMR is a laser-tracker target, distinct from an NDI optical marker ball." source="Lancet product technical presentation · slide 33 · video poster" compact />
+      <EvidenceFigure media={geometricMeasurement} title="Geometric measurement workspace" alt="Original measurement-software photograph showing labelled planes, a reference line AF, and a three-dimensional angle measurement" description="The retained software view exposes point, line, and plane geometry used during the accuracy-verification work. View the original to inspect its annotations." source="About Me · slide 10" compact />
+    </div>
+
+    <div class="puncture-metrics" aria-labelledby="puncture-metrics-title">
+      <h3 id="puncture-metrics-title">Three errors. One measurement frame.</h3>
+      <p>Let p<sub>A</sub> and p<sub>B</sub> be the pre-removal Leica reference centres, and q<sub>0</sub> and q<sub>1</sub> the measured tool centres after arrival. Unit vectors u and v follow the corresponding reference and tool axes, with consistent origin-to-second-point ordering.</p>
+      <div class="puncture-metric-grid">
+        <article><span>01 / Position · mm</span><h4>Point-to-point</h4><p class="puncture-equation" aria-label="Point-to-point error equals the norm of q zero minus p A">d<sub>pp</sub> = ‖q<sub>0</sub> − p<sub>A</sub>‖</p><p>Euclidean distance from the actual TCP origin to the target origin.</p></article>
+        <article><span>02 / Offset · mm</span><h4>Point-to-line</h4><p class="puncture-equation" aria-label="Point-to-line error equals the norm of the cross product of q zero minus p A with the reference unit direction u">d<sub>pl</sub> = ‖(q<sub>0</sub> − p<sub>A</sub>) × u‖</p><p>Perpendicular distance from the actual TCP origin to the planned reference line.</p></article>
+        <article><span>03 / Direction · degrees</span><h4>Axis angular error</h4><p class="puncture-equation" aria-label="Angular error is the inverse cosine of the dot product of unit direction vectors u and v, expressed in degrees">θ = cos<sup>−1</sup>(u · v)</p><p>Angle between the reference and measured tool axes, expressed in degrees.</p></article>
+      </div>
+      <p class="puncture-boundary">These definitions explain the inspection algorithm. The retained slide requirements below are not a table of measured Leica results; no unprovided inspection values are inferred.</p>
+    </div>
+
+    <div class="puncture-subheading"><span>04 / Retained performance requirements</span><h3>Specifications, kept separate<br />from measured outcomes.</h3></div>
+    <div class="puncture-specifications">
+      <div><span>Robot positioning</span><strong>≤0.5 mm</strong><p>Position accuracy requirement</p><strong>≤0.2 mm</strong><p>Position repeatability requirement</p></div>
+      <div><span>System position</span><strong>≤1.0 mm</strong><p>Point-to-point and point-to-line distance requirements</p></div>
+      <div><span>System direction</span><strong>≤1.0°</strong><p>Line-to-line angular error requirement</p></div>
+    </div>
+    <div class="puncture-evidence-grid">
+      <EvidenceFigure media={robotWorkspace} title="Robot workspace and test locations" alt="Original robot-workspace diagram showing cube vertices C1 through C8, test positions P1 through P5, and the robot-base coordinate system" description="Retained workspace and test-position geometry from the robot-positioning performance slide; no unverified standard designation or test statistics are added." source="Lancet product technical presentation · slide 33" wide />
+      <EvidenceFigure media={robotRequirements} title="Robot-positioning requirements — original excerpt" alt="Original Chinese requirements stating robot position accuracy at most 0.5 millimetres and position repeatability at most 0.2 millimetres" source="Lancet product technical presentation · slide 33 · transcribed above for readability" compact />
+      <EvidenceFigure media={systemRequirements} title="System-accuracy requirements — original excerpt" alt="Original Chinese requirements specifying point-to-line and point-to-point errors at most 1.0 millimetre, and line-to-line angular error at most 1.0 degree" source="Lancet product technical presentation · slide 34 · transcribed above for readability" compact />
+    </div>
+  </section>
+
+  <section class="puncture-section puncture-animal section-shell" id="animal-study" aria-labelledby="puncture-animal-title">
+    <header class="puncture-heading">
+      <p class="eyebrow">Preclinical Animal Study</p>
+      <div><h2 id="puncture-animal-title">Designed and led<br />beyond the bench.</h2><p>I designed and led the animal experiments as project leader, taking the team to collaborate with Silver Snake Clinical Center in Guangzhou. The reported comparison recorded lower mean error and higher first-attempt puncture success for robot assistance than for conventional CT guidance.</p></div>
+    </header>
+    <div class="puncture-result-highlights">
+      <div><span>Robot-assisted mean error</span><strong>0.54 <small>mm</small></strong><p>vs 4.63 mm · conventional CT guidance</p></div>
+      <div><span>Robot-assisted first-attempt success</span><strong>90<small>%</small></strong><p>27/30 targets vs 16/30 (53.3%)</p></div>
+    </div>
+    <div class="puncture-results-table">
+      <table>
+        <caption>Reported animal-study results · About Me, slide 13</caption>
+        <thead><tr><th scope="col">Measure</th><th scope="col">Robot-assisted</th><th scope="col">Conventional CT-guided</th></tr></thead>
+        <tbody>{results.map(([label, robot, control]) => <tr><th scope="row">{label}</th><td>{robot}</td><td>{control}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <p class="puncture-boundary">The success fractions refer to target evaluations, not animal counts. Standard deviations are reproduced separately from the means. These are animal-study results, distinct from bench specifications and human clinical outcomes; no statistical-significance claim is added.</p>
+    <div class="puncture-evidence-grid">
+      <EvidenceFigure media={animalResults} title="Original animal-study report excerpt" alt="Original report table comparing robot-assisted and conventional CT-guided animal-study errors, first-attempt success, and puncture counts" description="The report excerpt is retained alongside the readable comparison above, including the original standard deviations and attempt counts." source="About Me · slide 13 · supplied report excerpt" compact wide />
+      <EvidenceFigure media={animalCtA} title="Animal-study CT record — view 01" alt="Retained axial CT image from the animal-study presentation with an instrument approach visible" source="About Me · slide 12" />
+      <EvidenceFigure media={animalCtB} title="Animal-study CT record — view 02" alt="Second retained CT image showing the instrument and target region during the animal-study work" source="About Me · slide 12" />
+      <EvidenceFigure media={animalWorkcell} title="The integrated animal-study workcell" alt="Animal-study workcell showing CT imaging, the puncture robot, optical tracking, navigation display, and the experimental team" description="The experimental setup brought the complete imaging, navigation, and robotic system into the animal-study environment." source="Lancet Robotics · animal-study archive" wide />
+      <EvidenceFigure media={animalTeam} title="Leading the on-site collaboration" alt="Suhang Xia and the engineering and experimental team at Silver Snake Clinical Center following the animal-study work" description="As project leader, I organised and led the team’s collaboration with Silver Snake Clinical Center in Guangzhou, from study design to on-site implementation." source="Lancet Robotics · Guangzhou animal-study team" wide />
+    </div>
+  </section>
+</div>
+
+<style>
+  .puncture-section { padding-block: var(--space-8); border-top: 1px solid var(--line); scroll-margin-top: calc(var(--header-height) + 1.5rem); }
+  .puncture-heading { display: grid; grid-template-columns: 1fr 3fr; gap: clamp(1.5rem, 4vw, 5rem); }
+  .puncture-heading h2 { max-width: 18em; font-family: var(--font-serif); font-size: clamp(2.8rem, 5.2vw, 5.5rem); font-weight: 450; letter-spacing: -.04em; line-height: 1; }
+  .puncture-heading > div > p { margin-top: 1.5rem; max-width: 56rem; font-size: 1rem; line-height: 1.8; color: var(--ink-soft); }
+  .puncture-role-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; margin-top: 3rem; }
+  .puncture-role-grid article { padding: clamp(1.5rem, 3vw, 3rem); border: 1px solid var(--line); background: var(--paper-raised); }
+  .puncture-role-grid span, .puncture-subheading > span, .puncture-metric-grid article > span { font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-dark); }
+  .puncture-role-grid h3 { margin: 1rem 0; font-size: clamp(1.5rem, 2.5vw, 2.4rem); letter-spacing: -.025em; }
+  .puncture-role-grid p { font-size: .95rem; line-height: 1.8; color: var(--ink-soft); }
+  .puncture-section-nav { display: flex; flex-wrap: wrap; gap: .75rem 2rem; margin-top: 2rem; }
+  .puncture-section-nav a { padding-block: .65rem; border-bottom: 1px solid var(--line); font-size: .85rem; font-weight: 650; }
+  .puncture-subheading { margin: clamp(3rem, 7vw, 7rem) 0 2rem; }
+  .puncture-subheading h3 { margin-top: 1rem; font-family: var(--font-serif); font-size: clamp(2.1rem, 4vw, 4.25rem); font-weight: 450; letter-spacing: -.035em; line-height: 1.05; }
+  .puncture-prose-grid, .puncture-evidence-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.5rem, 3vw, 3rem); }
+  .puncture-prose-grid p { font-size: 1rem; line-height: 1.8; color: var(--ink-soft); }
+  .puncture-evidence-grid { margin-top: 2.5rem; row-gap: 3rem; align-items: start; }
+  .puncture-source-link { margin-top: 1.25rem; font-size: .8rem; text-decoration: underline; text-underline-offset: .25em; }
+  .puncture-evidence-grid--metrology { grid-template-columns: 1fr 2fr; }
+  .puncture-evidence-grid--metrology :global(.evidence-figure__image) { min-height: 32rem; }
+  .puncture-metrics { margin-top: 3rem; padding: clamp(1.25rem, 3vw, 3rem); border: 1px solid var(--line); background: var(--paper-raised); }
+  .puncture-metrics > h3 { font-size: clamp(1.5rem, 2.5vw, 2.5rem); line-height: 1.2; }
+  .puncture-metrics > p { margin-top: 1rem; max-width: 58rem; font-size: .9rem; line-height: 1.75; color: var(--ink-soft); }
+  .puncture-metric-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .puncture-metric-grid article { min-width: 0; border-top: 1px solid var(--line); padding-top: 1.25rem; }
+  .puncture-metric-grid h4 { margin: .9rem 0; font-size: 1.1rem; }
+  .puncture-metric-grid p { font-size: .85rem; color: var(--ink-soft); line-height: 1.7; }
+  .puncture-metric-grid .puncture-equation { margin: 1.2rem 0; font-family: var(--font-serif); font-size: clamp(1.1rem, 1.9vw, 1.8rem); color: var(--ink); white-space: nowrap; }
+  sub, sup { font-size: .65em; }
+  .puncture-boundary { max-width: 62rem; margin-top: 1.5rem; font-size: .8rem; color: var(--muted); line-height: 1.7; }
+  .puncture-specifications { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid var(--line); }
+  .puncture-specifications > div { padding: 1.5rem; }
+  .puncture-specifications > div + div { border-left: 1px solid var(--line); }
+  .puncture-specifications span { display: block; font-size: .75rem; font-weight: 700; }
+  .puncture-specifications strong { display: block; margin-top: 1rem; font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 500; letter-spacing: -.04em; }
+  .puncture-specifications p { margin-top: .5rem; font-size: .85rem; color: var(--muted); line-height: 1.5; }
+  .puncture-animal { background: var(--paper-deep); }
+  .puncture-result-highlights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; margin-top: 3rem; padding-block: 2.5rem; border-block: 1px solid var(--line); }
+  .puncture-result-highlights span { font-size: .85rem; font-weight: 650; }
+  .puncture-result-highlights strong { display: block; margin-block: 1rem; font-family: var(--font-serif); font-size: clamp(4rem, 9vw, 9rem); font-weight: 450; letter-spacing: -.06em; line-height: 1; }
+  .puncture-result-highlights small { font-size: .35em; letter-spacing: -.02em; }
+  .puncture-result-highlights p { color: var(--ink-soft); font-size: .9rem; line-height: 1.65; }
+  .puncture-results-table { margin-top: 2.5rem; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: .95rem; }
+  caption { text-align: left; padding-bottom: 1rem; font-size: .8rem; color: var(--muted); }
+  th, td { padding: 1.1rem .75rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+  thead th { font-size: .8rem; }
+  th:first-child { width: 42%; }
+  tbody th { font-weight: 500; }
+  tbody td:nth-child(2) { font-weight: 700; }
+  @media(max-width: 1099px) {
+    .puncture-heading { grid-template-columns: 1fr; gap: 1.25rem; }
+    .puncture-metric-grid { grid-template-columns: 1fr; }
+  }
+  @media(max-width: 767px) {
+    .puncture-role-grid, .puncture-prose-grid, .puncture-evidence-grid, .puncture-result-highlights, .puncture-specifications { grid-template-columns: 1fr; }
+    .puncture-role-grid { gap: 1rem; }
+    .puncture-specifications > div + div { border-left: 0; border-top: 1px solid var(--line); }
+    .puncture-specifications > div { padding-inline: 0; }
+    .puncture-evidence-grid--metrology :global(.evidence-figure__image) { min-height: auto; }
+    .puncture-result-highlights > div + div { border-top: 1px solid var(--line); padding-top: 2rem; }
+    th, td { padding: .8rem .35rem; font-size: .78rem; line-height: 1.55; }
+    thead th { font-size: .72rem; }
+    th:first-child { width: 38%; }
+    .puncture-equation { white-space: normal; }
+  }
+</style>
