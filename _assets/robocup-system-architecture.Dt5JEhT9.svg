@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 760" role="img" aria-labelledby="title desc">
+  <title id="title">RoboCup UR5e object sorting system architecture</title>
+  <desc id="desc">A finite-state controller coordinates search, detection, scoring, grasping, placement and recovery, connected to YOLO perception, GraspNet estimation, MoveIt planning and UR5e motion control.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#cfd0ca"/>
+    </marker>
+    <style>
+      .head { font: 700 18px Arial, sans-serif; letter-spacing: 2px; fill: #c36a45; }
+      .title { font: 700 25px Arial, sans-serif; fill: #f3f1e9; }
+      .copy { font: 500 17px Arial, sans-serif; fill: #bfc1ba; }
+      .state { fill: #242723; stroke: #747770; stroke-width: 2; rx: 10; }
+      .module { fill: #20231f; stroke: #c36a45; stroke-width: 2; rx: 12; }
+      .flow { fill: none; stroke: #cfd0ca; stroke-width: 3; marker-end: url(#arrow); }
+      .recover { fill: none; stroke: #c36a45; stroke-width: 3; stroke-dasharray: 10 8; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1600" height="760" fill="#151814"/>
+  <text class="head" x="70" y="58">ROS NOETIC · SYSTEM ORCHESTRATION</text>
+  <text class="title" x="70" y="102">RoboCup brain / finite-state control</text>
+
+  <g>
+    <rect class="state" x="70" y="165" width="190" height="86"/>
+    <text class="title" x="165" y="203" text-anchor="middle">Search</text>
+    <text class="copy" x="165" y="229" text-anchor="middle">scene acquisition</text>
+    <rect class="state" x="310" y="165" width="190" height="86"/>
+    <text class="title" x="405" y="203" text-anchor="middle">Detect</text>
+    <text class="copy" x="405" y="229" text-anchor="middle">YCB + colour</text>
+    <rect class="state" x="550" y="165" width="190" height="86"/>
+    <text class="title" x="645" y="203" text-anchor="middle">Score</text>
+    <text class="copy" x="645" y="229" text-anchor="middle">target selection</text>
+    <rect class="state" x="790" y="165" width="190" height="86"/>
+    <text class="title" x="885" y="203" text-anchor="middle">Grasp</text>
+    <text class="copy" x="885" y="229" text-anchor="middle">pose request</text>
+    <rect class="state" x="1030" y="165" width="190" height="86"/>
+    <text class="title" x="1125" y="203" text-anchor="middle">Place</text>
+    <text class="copy" x="1125" y="229" text-anchor="middle">bin execution</text>
+    <rect class="state" x="1290" y="165" width="240" height="86" stroke="#c36a45"/>
+    <text class="title" x="1410" y="203" text-anchor="middle">Recovery</text>
+    <text class="copy" x="1410" y="229" text-anchor="middle">error handling</text>
+    <path class="flow" d="M260 208 H310"/>
+    <path class="flow" d="M500 208 H550"/>
+    <path class="flow" d="M740 208 H790"/>
+    <path class="flow" d="M980 208 H1030"/>
+    <path class="recover" d="M1220 208 H1290"/>
+    <path class="recover" d="M1410 251 V295 H165 V251"/>
+  </g>
+
+  <path class="flow" d="M405 295 V365"/>
+  <path class="flow" d="M1005 295 V365"/>
+
+  <rect class="module" x="70" y="365" width="500" height="270"/>
+  <text class="head" x="105" y="410">PERCEPTION</text>
+  <rect class="state" x="105" y="452" width="195" height="118"/>
+  <text class="title" x="202" y="494" text-anchor="middle">YOLOv8</text>
+  <text class="copy" x="202" y="524" text-anchor="middle">YCB detection</text>
+  <text class="copy" x="202" y="550" text-anchor="middle">3-D localisation</text>
+  <rect class="state" x="340" y="452" width="195" height="118"/>
+  <text class="title" x="437" y="494" text-anchor="middle">GraspNet</text>
+  <text class="copy" x="437" y="524" text-anchor="middle">point clouds</text>
+  <text class="copy" x="437" y="550" text-anchor="middle">grasp quality</text>
+  <path class="flow" d="M300 511 H340"/>
+
+  <rect class="module" x="650" y="365" width="880" height="270"/>
+  <text class="head" x="685" y="410">PLANNING + EXECUTION</text>
+  <rect class="state" x="685" y="452" width="235" height="118"/>
+  <text class="title" x="802" y="494" text-anchor="middle">MoveIt / OMPL</text>
+  <text class="copy" x="802" y="524" text-anchor="middle">collision-aware path</text>
+  <text class="copy" x="802" y="550" text-anchor="middle">trajectory planning</text>
+  <rect class="state" x="970" y="452" width="235" height="118"/>
+  <text class="title" x="1087" y="494" text-anchor="middle">Motion control</text>
+  <text class="copy" x="1087" y="524" text-anchor="middle">IK / FK</text>
+  <text class="copy" x="1087" y="550" text-anchor="middle">trajectory execution</text>
+  <rect class="state" x="1255" y="452" width="235" height="118"/>
+  <text class="title" x="1372" y="494" text-anchor="middle">UR5e</text>
+  <text class="copy" x="1372" y="524" text-anchor="middle">arm + gripper</text>
+  <text class="copy" x="1372" y="550" text-anchor="middle">physical sorting</text>
+  <path class="flow" d="M920 511 H970"/>
+  <path class="flow" d="M1205 511 H1255"/>
+  <path class="flow" d="M535 511 H685"/>
+
+  <text class="copy" x="70" y="705">Repository-derived architecture · interfaces coordinated through ROS topics and a recoverable competition workflow</text>
+</svg>
