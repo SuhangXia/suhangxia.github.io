@@ -32,10 +32,12 @@ jobs:
       - name: Check and build Astro site
         run: npm run build
 
+      - name: Disable Jekyll processing
+        run: touch dist/.nojekyll
+
       - name: Publish to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: dist
           clean: true
-
