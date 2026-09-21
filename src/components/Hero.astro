@@ -2,9 +2,10 @@
 import { Image } from 'astro:assets';
 import { heroMedia } from '../data/projects';
 import { site } from '../data/site';
+import SubmissionUpdate from './SubmissionUpdate.astro';
 ---
 
-<section class="hero" aria-labelledby="hero-title" data-hero>
+<section class="hero hero--with-update" aria-labelledby="hero-title" data-hero>
   <svg class="hero__filter-definitions" aria-hidden="true" focusable="false">
     <filter id="kcl-white-logo" color-interpolation-filters="sRGB">
       <feColorMatrix
@@ -53,6 +54,8 @@ import { site } from '../data/site';
         loading="eager"
       />
     </a>
+
+    <SubmissionUpdate />
 
     <div class="hero__statement" data-hero-meta>
       <p>{site.role}</p>

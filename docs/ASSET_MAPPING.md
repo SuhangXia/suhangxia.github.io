@@ -38,3 +38,9 @@ ClothUMI is currently represented by intentionally empty media fields. No image,
 ## VTLA for Cloth Sorting
 
 The project page uses final figures exported from the MSc thesis plus a small, explicitly sourced visual sample from the private collection. Fabric-Omni is presented as the dataset, TouchUntilCertain as the allocation method, and the workcell imagery as qualitative integration evidence. The website retains the thesis limitations alongside the reported Development-170 metrics and does not provide data files or download links.
+
+## ICRA submission status
+
+- `src/assets/brand/icra-white.svg`: complete white primary mark extracted as vector paths from page 5 of the [official ICRA brand guidelines](https://2026.ieee-icra.org/wp-content/uploads/2024/11/23-TA-11-019-FExD-ICRA-Brand-Guidelines-1-RGB.pdf), linked by the [ICRA 2027 brand page](https://2027.ieee-icra.org/about/brand-identity-and-guidelines/). The black demonstration background is excluded; the original proportions, subtitle and trademark are retained. The year is independent HTML text, not an alteration of the mark.
+- `src/assets/brand/ras-white.png`: transparent white [RAS mark supplied by the ICRA 2027 website](https://2027.ieee-icra.org/wp-content/uploads/sites/4/2024/04/ras-white-logo.png), retained alongside the primary mark. Both marks are served locally, with surrounding whitespace.
+- `src/data/site.ts` holds the conference, year, submission status and public copy. The card represents a co-authored submission under review, not acceptance, publication or conference endorsement. No manuscript details or author ranking are disclosed.

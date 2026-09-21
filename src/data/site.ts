@@ -17,6 +17,14 @@ export const site = {
   ],
 } as const;
 
+export const researchUpdate = {
+  conference: 'ICRA',
+  year: 2027,
+  status: 'Under review',
+  description: 'A co-authored manuscript submitted to ICRA 2027.',
+  note: 'Details withheld during review.',
+} as const;
+
 export const thesis = {
   eyebrow: 'Research thesis',
   title: 'How can robots turn perception into precise physical action?',
