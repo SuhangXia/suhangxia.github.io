@@ -89,9 +89,7 @@ function initialiseMotion() {
       intro
         .to(heroMeta, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08 }, 0.65);
 
-      const flowingHero = hero.classList.contains('hero--with-update') &&
-        window.matchMedia('(max-width: 767px), (max-height: 640px)').matches;
-      if (heroMedia && heroImage && !flowingHero) {
+      if (heroMedia && heroImage) {
         const settledClip = mobile ? 'inset(34% 0% 0% 11%)' : 'inset(22% 2% 2% 40%)';
         gsap
           .timeline({

@@ -37,43 +37,60 @@ const featuredVideo = publicFeaturedVideoForProject(project.slug);
               project.title
             )}
           </h3>
-          {project.organisation && (
-            <a
-              class="project-feature__organisation"
-              href={project.organisation.href}
-              aria-label={`${project.organisation.product} official product page`}
-            >
-              {project.organisation.logo ? (
-                <Image
-                  src={project.organisation.logo}
-                  alt={project.organisation.logoAlt ?? project.organisation.product}
-                  widths={[240, 360, 480]}
-                  sizes="(max-width: 767px) 9rem, 14rem"
-                  format="webp"
-                  quality={90}
-                  loading="lazy"
-                />
-              ) : (
-                <>
-                  <strong>{project.organisation.name}</strong>
-                  <span>{project.organisation.product}</span>
-                </>
-              )}
-            </a>
-          )}
         </div>
-        {project.achievement && (
-          <a class="project-feature__achievement" href={project.achievement.href}>
-            <span class="project-feature__achievement-authority">{project.achievement.authority}</span>
-            <span class="project-feature__achievement-copy">
-              <small>Regulatory status</small>
-              <strong>{project.achievement.label}</strong>
-              <span>Registration no. {project.achievement.value}</span>
-            </span>
-            <span class="project-feature__achievement-action">
-              View certificate <b aria-hidden="true">↗</b>
-            </span>
-          </a>
+        {(project.organisation || project.achievement) && (
+          <div class="project-feature__credentials">
+            {project.organisation && (
+              <a
+                class="project-feature__organisation"
+                href={project.organisation.href}
+                aria-label={`${project.organisation.product} official product page`}
+              >
+                <span class="project-feature__organisation-label">Developed at</span>
+                {project.organisation.logo ? (
+                  <Image
+                    src={project.organisation.logo}
+                    alt={project.organisation.logoAlt ?? project.organisation.product}
+                    widths={[240, 360, 480]}
+                    sizes="(max-width: 599px) 10rem, 12rem"
+                    format="webp"
+                    quality={90}
+                    loading="lazy"
+                  />
+                ) : (
+                  <>
+                    <strong>{project.organisation.name}</strong>
+                    <span>{project.organisation.product}</span>
+                  </>
+                )}
+              </a>
+            )}
+            {project.achievement && (
+              <a class="project-feature__achievement" href={project.achievement.href}>
+                {project.achievement.logo ? (
+                  <Image
+                    class="project-feature__authority-logo"
+                    src={project.achievement.logo}
+                    alt={project.achievement.logoAlt ?? project.achievement.authority}
+                    widths={[325, 650]}
+                    sizes="(max-width: 599px) 75vw, 20rem"
+                    format="webp"
+                    quality={95}
+                    loading="lazy"
+                  />
+                ) : (
+                  <span class="project-feature__achievement-authority">{project.achievement.authority}</span>
+                )}
+                <span class="project-feature__achievement-copy">
+                  <strong>{project.achievement.label}</strong>
+                  <span>Registration no. <span class="project-feature__registration-number">{project.achievement.value}</span></span>
+                </span>
+                <span class="project-feature__achievement-action">
+                  View certificate <b aria-hidden="true">↗</b>
+                </span>
+              </a>
+            )}
+          </div>
         )}
       </div>
     </header>

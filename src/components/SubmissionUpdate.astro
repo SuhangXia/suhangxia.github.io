@@ -1,66 +1,77 @@
 ---
-import icraLogo from '../assets/brand/icra-white.svg';
-import rasLogo from '../assets/brand/ras-white.png';
+import icraLogo from '../assets/brand/icra-black.svg';
+import rasLogo from '../assets/brand/ras-black.png';
 import { researchUpdate } from '../data/site';
 ---
 
-<aside class="submission-update" aria-labelledby="submission-update-title" data-hero-meta>
-  <div class="submission-update__heading">
-    <p id="submission-update-title">Research update</p>
-    <span class="submission-update__year">{researchUpdate.year}</span>
-  </div>
+<aside class="submission-update" aria-labelledby="submission-update-title" data-reveal>
   <div class="submission-update__marks">
-    <img class="submission-update__icra" src={icraLogo.src} width="156" height="71"
-      alt={`${researchUpdate.conference} — IEEE International Conference on Robotics and Automation`}
-      loading="eager" decoding="async" />
+    <img class="submission-update__icra" src={icraLogo.src} width="104" height="47"
+      alt="IEEE International Conference on Robotics and Automation"
+      loading="lazy" decoding="async" />
     <img class="submission-update__ras" src={rasLogo.src} width={rasLogo.width} height={rasLogo.height}
-      alt="IEEE Robotics and Automation Society" loading="eager" decoding="async" />
+      alt="IEEE Robotics and Automation Society" loading="lazy" decoding="async" />
   </div>
-  <p class="submission-update__status"><span aria-hidden="true"></span>{researchUpdate.status}</p>
-  <p class="submission-update__description">{researchUpdate.description}</p>
-  <p class="submission-update__note">{researchUpdate.note}</p>
+  <div class="submission-update__copy">
+    <p class="submission-update__label">Research update</p>
+    <div class="submission-update__heading">
+      <h3 id="submission-update-title">{researchUpdate.conference} {researchUpdate.year}</h3>
+      <p class="submission-update__status"><span aria-hidden="true"></span>{researchUpdate.status}</p>
+    </div>
+    <p class="submission-update__description">{researchUpdate.description}</p>
+    <p class="submission-update__note">{researchUpdate.note}</p>
+  </div>
 </aside>
 
 <style>
   .submission-update {
-    position: absolute;
-    top: clamp(15rem, 32svh, 24rem);
-    left: var(--page-gutter);
-    width: 20rem;
-    max-width: calc(100% - 2 * var(--page-gutter));
-    padding: 1rem 0 0.25rem;
-    border-top: 1px solid var(--line-inverse);
-    background: var(--night);
-    color: var(--white);
+    display: grid;
+    grid-template-columns: 15rem minmax(0, 1fr);
+    align-items: center;
+    gap: 2rem;
+    width: min(100%, 46rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+    color: var(--ink);
   }
-  .submission-update__heading {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    color: #c3c7bc;
-    font-size: 0.625rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    line-height: 1.5;
-    text-transform: uppercase;
-  }
-  .submission-update__year { font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
   .submission-update__marks {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-    padding-block: 1.375rem;
+    justify-content: flex-start;
+    gap: 1.25rem;
+    min-height: 7rem;
+    padding: 0.875rem 1.5rem 0.875rem 0;
+    border-right: 1px solid var(--line);
   }
-  .submission-update__icra { width: 156px; height: auto; flex-shrink: 0; }
-  .submission-update__ras { width: 76px; height: auto; }
-  .submission-update__status {
+  .submission-update__icra { width: 132px; height: auto; flex-shrink: 0; }
+  .submission-update__ras { width: 56px; height: auto; flex-shrink: 0; }
+  .submission-update__label {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+  .submission-update__heading {
     display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    color: #e89a80;
-    font-size: 0.875rem;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 1.25rem;
+    margin-top: 0.4rem;
+  }
+  .submission-update__heading h3 {
+    font-size: 1.5rem;
     font-weight: 650;
+    line-height: 1.5;
+    letter-spacing: -0.025em;
+  }
+  .submission-update__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-dark);
+    font-size: 1rem;
+    font-weight: 600;
     line-height: 1.5;
   }
   .submission-update__status span {
@@ -71,38 +82,29 @@ import { researchUpdate } from '../data/site';
     flex-shrink: 0;
   }
   .submission-update__description {
-    max-width: 19rem;
-    margin-top: 0.6rem;
-    font-size: 0.8125rem;
+    margin-top: 0.55rem;
+    color: var(--ink-soft);
+    font-size: 1rem;
     line-height: 1.6;
   }
   .submission-update__note {
-    margin-top: 0.375rem;
-    color: #b9bdb3;
-    font-size: 0.6875rem;
-    line-height: 1.5;
+    margin-top: 0.25rem;
+    color: var(--muted);
+    font-size: 0.8125rem;
+    line-height: 1.6;
   }
-  @media (max-width: 767px), (max-height: 640px) {
+  @media (max-width: 599px) {
     .submission-update {
-      position: relative;
-      top: auto;
-      left: auto;
-      width: min(20rem, 100%);
-      max-width: 100%;
-      flex-shrink: 0;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.875rem;
+      padding-left: 1rem;
+      border-left: 1px solid var(--line);
     }
-  }
-  @media (max-width: 767px) {
-    .submission-update { isolation: isolate; }
-    .submission-update::before {
-      content: '';
-      position: absolute;
-      z-index: -1;
-      top: 0;
-      bottom: -1rem;
-      left: calc(-1 * var(--page-gutter));
-      width: 100vw;
-      background: var(--night);
+    .submission-update__marks {
+      justify-self: start;
+      min-height: 3.5rem;
+      padding: 0;
+      border-right: 0;
     }
   }
 </style>

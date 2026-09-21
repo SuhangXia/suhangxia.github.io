@@ -1,5 +1,6 @@
 import type { ImageMetadata } from 'astro';
 import heroRobot from '../assets/media/hero-surgical-robot.jpg';
+import labSelfie from '../assets/media/lab-selfie.jpg';
 import surgicalImaging from '../assets/media/surgical-imaging.jpg';
 import surgicalTarget from '../assets/media/surgical-target.jpg';
 import robotPlatform from '../assets/media/robot-platform.jpg';
@@ -12,6 +13,7 @@ import uavSimulation from '../assets/media/uav-simulation.png';
 import uavSystem from '../assets/media/uav-system.png';
 import animalStudyWorkcell from '../assets/media/percutaneous/animal-study-workcell.jpg';
 import lancetRoboticsLogo from '../assets/media/percutaneous/lancet-robotics-logo.png';
+import nmpaOfficialLogo from '../assets/brand/nmpa-official-cropped.png';
 
 export type ProjectLink = {
   label: string;
@@ -44,16 +46,18 @@ export type Project = {
   };
   achievement?: {
     authority: string;
+    logo?: ImageMetadata;
+    logoAlt?: string;
     label: string;
     value: string;
     href: string;
   };
-  theme: 'light' | 'dark' | 'paper';
+  theme: 'light' | 'dark' | 'paper' | 'white';
   layout: 'wide' | 'split' | 'editorial';
   links: ProjectLink[];
 };
 
-export const heroMedia = heroRobot;
+export const heroMedia = labSelfie;
 
 export const story = {
   eyebrow: 'Industry systems · Surgical robotics',
@@ -119,7 +123,7 @@ export const projects: Project[] = [
     question: 'How can hand-held visuotactile demonstrations become inspectable, robot-ready trajectories?',
     description:
       'A geometrically and temporally calibrated pipeline that aligns Quest motion, wrist RGB, dual-fingertip tactile video, and gripper state. Raw demonstrations remain auditable before conversion into camera-relative 7D actions; frozen UniForce contact tokens then condition a Diffusion Policy deployed on a Franka FR3.',
-    theme: 'paper',
+    theme: 'light',
     layout: 'wide',
     links: [
       { label: 'View research', href: '/research/tactile-umi/' },
@@ -151,11 +155,13 @@ export const projects: Project[] = [
     },
     achievement: {
       authority: 'NMPA',
+      logo: nmpaOfficialLogo,
+      logoAlt: 'National Medical Products Administration — 国家药品监督管理局',
       label: 'Registered medical device',
       value: '20263011303',
       href: '/research/percutaneous-puncture-surgical-robot/#nmpa-registration',
     },
-    theme: 'dark',
+    theme: 'white',
     layout: 'wide',
     links: [
       { label: 'View research', href: '/research/percutaneous-puncture-surgical-robot/' },
@@ -178,7 +184,7 @@ export const projects: Project[] = [
     mediaAlt: 'Neurosurgical robot, tracking equipment, and navigation workstation in the laboratory',
     evidenceNote:
       'The retained system record keeps the planning workstation, tracked anatomy, navigation coordinate chain, and physical robot platform visible as separate but connected parts of the navigation problem.',
-    theme: 'paper',
+    theme: 'dark',
     layout: 'wide',
     links: [{ label: 'View research', href: '/research/neurosurgical-robot/' }],
   },
@@ -227,7 +233,7 @@ export const projects: Project[] = [
     secondaryAlt: 'ROS and PX4 simulation platform architecture diagram',
     evidenceNote:
       'The simulation environment combines reconstructed geometry with controller and trajectory-planning analysis.',
-    theme: 'light',
+    theme: 'dark',
     layout: 'editorial',
     links: [{ label: 'View research', href: '/research/uav-navigation/' }],
   },
@@ -242,7 +248,7 @@ export const projects: Project[] = [
       'As Team Leader and System Architect, I designed the ROS 1 Noetic control structure for autonomous YCB sorting on UR5e, connecting YOLOv8, GraspNet, MoveIt, execution, scoring, and recovery in one modular workflow.',
     evidenceNote:
       'King’s College London Robotics Group Project · 2026. I led the team and owned the system architecture and finite-state orchestration across perception, scoring, planning, execution, and recovery.',
-    theme: 'dark',
+    theme: 'light',
     layout: 'wide',
     links: [
       { label: 'View research', href: '/research/robocup-ur5e/' },

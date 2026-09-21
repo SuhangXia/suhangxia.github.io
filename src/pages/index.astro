@@ -5,6 +5,7 @@ import ResearchThesis from '../components/ResearchThesis.astro';
 import ScrollStory from '../components/ScrollStory.astro';
 import ProjectFeature from '../components/ProjectFeature.astro';
 import AboutPreview from '../components/AboutPreview.astro';
+import SubmissionUpdate from '../components/SubmissionUpdate.astro';
 import { projects } from '../data/projects';
 
 const homeProjectOrder = [
@@ -27,6 +28,7 @@ const homeProjects = homeProjectOrder.flatMap((slug) => projects.filter((project
     <div class="section-rule" data-reveal-line></div>
     <p class="eyebrow" data-reveal>Selected research</p>
     <h2 id="featured-title" data-reveal>Systems, models, and the questions between them.</h2>
+    <SubmissionUpdate />
   </section>
 
   <div class="featured-projects">

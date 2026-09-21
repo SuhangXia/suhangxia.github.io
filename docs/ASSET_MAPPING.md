@@ -4,7 +4,8 @@ Every published media asset has an explicit project-owned or legacy source. No s
 
 | New path | Legacy read-only source | Used in | Treatment |
 |---|---|---|---|
-| `src/assets/media/hero-surgical-robot.jpg` | `assets/img/Project2/LP_needle.jpg` | Home Hero; scroll story | Responsive AVIF/WebP generation; CSS object crop and slow scale |
+| `src/assets/media/lab-selfie.jpg` | `/home/suhang/datasets2/video/实验室自拍.jpg` | Home Hero | Exact copy; responsive AVIF/WebP generation, CSS object crop and slow scale |
+| `src/assets/media/hero-surgical-robot.jpg` | `assets/img/Project2/LP_needle.jpg` | Surgical robotics scroll story | Responsive AVIF/WebP generation; CSS object crop |
 | `src/assets/media/surgical-imaging.jpg` | `assets/img/Project2/LP_MITK.jpg` | Scroll story | Responsive image; editorial crop |
 | `src/assets/media/surgical-target.jpg` | `assets/img/Project2/LP_target.jpg` | Scroll story | Responsive image; editorial crop |
 | `src/assets/media/robot-platform.jpg` | `assets/img/Project2/NS_Robot.jpg` | Scroll story; Research | Responsive image; wide crop |
@@ -41,6 +42,13 @@ The project page uses final figures exported from the MSc thesis plus a small, e
 
 ## ICRA submission status
 
+- The compact update now sits below the Selected research heading on the paper background. `src/assets/brand/icra-black.svg` contains the complete black primary mark extracted from page 5 of the [official guidelines linked by ICRA 2027](https://2027.ieee-icra.org/wp-content/uploads/2024/11/23-TA-11-019-FExD-ICRA-Brand-Guidelines-1-RGB.pdf), preserving its vector geometry and black fill. Its background is transparent.
+- `src/assets/brand/ras-black.png` is the original transparent [black RAS mark from the ICRA 2027 website](https://2027.ieee-icra.org/wp-content/uploads/sites/4/2024/04/ras-black-logo.png). The light-background layout uses both black marks without a background panel or CSS color filters. The earlier white assets below remain available for dark layouts.
 - `src/assets/brand/icra-white.svg`: complete white primary mark extracted as vector paths from page 5 of the [official ICRA brand guidelines](https://2026.ieee-icra.org/wp-content/uploads/2024/11/23-TA-11-019-FExD-ICRA-Brand-Guidelines-1-RGB.pdf), linked by the [ICRA 2027 brand page](https://2027.ieee-icra.org/about/brand-identity-and-guidelines/). The black demonstration background is excluded; the original proportions, subtitle and trademark are retained. The year is independent HTML text, not an alteration of the mark.
 - `src/assets/brand/ras-white.png`: transparent white [RAS mark supplied by the ICRA 2027 website](https://2027.ieee-icra.org/wp-content/uploads/sites/4/2024/04/ras-white-logo.png), retained alongside the primary mark. Both marks are served locally, with surrounding whitespace.
 - `src/data/site.ts` holds the conference, year, submission status and public copy. The card represents a co-authored submission under review, not acceptance, publication or conference endorsement. No manuscript details or author ranking are disclosed.
+
+## NMPA registration identity
+
+- `src/assets/brand/nmpa-official.png` is the complete header wordmark used by the [official NMPA English website](https://english.nmpa.gov.cn/), downloaded from its [linked asset](https://subsites.chinadaily.com.cn/nmpa/att/3120.files/i/logo.png). The original emblem, Chinese and English names, proportions and colours are preserved. It appears alongside the registration record with a link to the existing masked certificate.
+- The Lancet company link and NMPA registration record share a restrained, transparent information strip below the puncture project title. Thin rules integrate it with the dark project theme; only the two official raster marks retain compact white grounds required for contrast. Desktop and tablet layouts place the brands side by side; narrow screens stack them to keep the authority name and registration number readable. No certification seal is drawn or generated.

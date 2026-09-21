@@ -328,6 +328,11 @@ button {
   transform: scale(1.035);
 }
 
+.hero__media-image {
+  height: 100%;
+  transform: scaleX(-1);
+}
+
 .hero__media-shade {
   position: absolute;
   inset: 0;
@@ -739,6 +744,10 @@ button {
   --accent: #df775a;
 }
 
+.project-feature--white {
+  --feature-bg: #fff;
+}
+
 .project-feature--paper {
   --feature-bg: var(--paper-raised);
 }
@@ -805,124 +814,193 @@ button {
   text-decoration: underline;
 }
 
+.project-feature__credentials {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.75fr) minmax(0, 2.25fr);
+  align-items: stretch;
+  max-width: 60rem;
+  margin-top: clamp(1.75rem, 3vw, 3rem);
+  padding-block: 1.25rem;
+  color: var(--feature-text);
+  border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+}
+
 .project-feature__organisation {
-  display: inline-flex;
-  min-width: clamp(10.5rem, 15vw, 14rem);
-  align-items: center;
-  padding: 0.72rem 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: inherit;
-  background: #f8faf7;
-  line-height: 1;
-  transition: border-color 220ms ease, transform 220ms ease;
-}
-
-.project-feature__organisation img {
-  width: clamp(9.5rem, 14vw, 13rem);
-  height: auto;
-}
-
-.project-feature__organisation strong {
-  font-size: clamp(1.35rem, 2vw, 2rem);
-  font-weight: 820;
-  letter-spacing: -0.055em;
-}
-
-.project-feature__organisation span {
-  margin-top: 0.35rem;
-  font-size: 0.52rem;
-  font-weight: 750;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.project-feature__organisation:hover {
-  border-color: #2b7d40;
-  transform: translateY(-0.12rem);
-}
-
-.project-feature__achievement {
-  display: grid;
-  max-width: 46rem;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 1rem clamp(1.25rem, 2.5vw, 2.5rem);
-  align-items: center;
-  margin-top: clamp(1.5rem, 2.5vw, 2.5rem);
-  padding-block: clamp(1rem, 1.7vw, 1.4rem);
-  color: inherit;
-  border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, currentColor 28%, transparent);
-  transition: color 220ms ease, border-color 220ms ease;
-}
-
-.project-feature__achievement-authority {
-  display: grid;
-  min-width: 4.75rem;
-  min-height: 4.75rem;
-  place-items: center;
-  color: #f6fff7;
-  background: #2b7d40;
-  border-radius: 50%;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.project-feature__achievement-copy {
   display: flex;
   min-width: 0;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
+  gap: 0.85rem;
+  padding-right: clamp(1rem, 2vw, 2rem);
+  color: var(--feature-text);
+  border-right: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  transition: opacity 220ms ease;
 }
 
-.project-feature__achievement-copy small {
+.project-feature__organisation img {
+  width: auto;
+  max-width: min(100%, 13rem);
+  height: 2.75rem;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.project-feature__organisation strong { font-size: 1.35rem; }
+
+.project-feature__organisation-label {
   color: var(--feature-muted);
-  font-size: 0.57rem;
-  font-weight: 720;
-  letter-spacing: 0.13em;
+  font-size: 0.625rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.project-feature__organisation:hover { opacity: 0.72; }
+
+.project-feature__achievement {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(18rem, 1.4fr) minmax(9rem, 0.8fr);
+  align-content: center;
+  align-items: center;
+  gap: 0.5rem clamp(1rem, 2vw, 2rem);
+  padding-left: clamp(1rem, 2vw, 2rem);
+  color: var(--feature-text);
+}
+
+.project-feature__authority-logo {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  display: block;
+  width: auto;
+  max-width: min(100%, 25rem);
+  height: 2.75rem;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.project-feature--dark .project-feature__organisation img,
+.project-feature--dark .project-feature__authority-logo {
+  filter: brightness(0) invert(1);
+}
+
+.project-feature__achievement-authority {
+  grid-column: 1 / -1;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.project-feature__achievement-copy {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
 }
 
 .project-feature__achievement-copy strong {
-  margin-top: 0.35rem;
-  font-size: clamp(1.05rem, 1.55vw, 1.4rem);
-  font-weight: 650;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
 }
 
 .project-feature__achievement-copy > span {
-  margin-top: 0.38rem;
   color: var(--feature-muted);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
+  font-weight: 450;
+  line-height: 1.6;
+}
+
+.project-feature__registration-number {
+  color: var(--feature-text);
   font-weight: 600;
-  letter-spacing: 0.035em;
+  font-variant-numeric: tabular-nums;
 }
 
 .project-feature__achievement-action {
-  display: flex;
+  grid-column: 2;
+  grid-row: 2;
+  display: inline-flex;
+  justify-self: start;
   align-items: center;
-  gap: 0.55rem;
-  font-size: 0.62rem;
-  font-weight: 720;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  color: var(--feature-text);
+  font-size: 0.75rem;
+  font-weight: 550;
+  line-height: 1.5;
+  text-underline-offset: 0.25em;
 }
 
 .project-feature__achievement-action b {
-  color: #4da861;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 400;
   transition: transform 220ms ease;
 }
 
-.project-feature__achievement:hover {
-  color: #7fd590;
-  border-color: #4da861;
+.project-feature__achievement:hover .project-feature__achievement-action {
+  text-decoration: underline;
 }
 
 .project-feature__achievement:hover .project-feature__achievement-action b {
-  transform: translate(0.18rem, -0.18rem);
+  transform: translate(0.15rem, -0.15rem);
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  .project-feature__achievement {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-feature__authority-logo,
+  .project-feature__achievement-copy,
+  .project-feature__achievement-action {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 599px) {
+  .project-feature__credentials {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1.25rem;
+  }
+
+  .project-feature__organisation {
+    gap: 0.6rem;
+    padding: 0 0 1.25rem;
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  }
+
+  .project-feature__organisation img {
+    width: auto;
+    max-width: 12rem;
+    height: 2.5rem;
+  }
+
+  .project-feature__authority-logo {
+    width: auto;
+    max-width: 100%;
+    height: 2.5rem;
+  }
+  .project-feature__achievement {
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: 0;
+  }
+
+  .project-feature__authority-logo,
+  .project-feature__achievement-copy,
+  .project-feature__achievement-action {
+    grid-column: 1;
+    grid-row: auto;
+  }
 }
 
 .project-feature__media {
@@ -3214,7 +3292,8 @@ button {
     grid-column: 1 / -1;
   }
 
-  .capture-plan__heading {
+  .capture-plan__heading,
+  .project-demos__heading {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
@@ -3471,30 +3550,6 @@ button {
 
   .project-feature__title-row {
     align-items: flex-start;
-  }
-
-  .project-feature__organisation {
-    min-width: 8.75rem;
-  }
-
-  .project-feature__organisation img {
-    width: 8.5rem;
-  }
-
-  .project-feature__achievement {
-    max-width: none;
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .project-feature__achievement-authority {
-    min-width: 3.9rem;
-    min-height: 3.9rem;
-    font-size: 0.62rem;
-  }
-
-  .project-feature__achievement-action {
-    grid-column: 2;
-    justify-self: start;
   }
 
   .project-feature__header > .eyebrow {
