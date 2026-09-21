@@ -364,7 +364,7 @@ button {
 .hero__kcl-logo {
   position: absolute;
   z-index: 2;
-  top: clamp(6.75rem, 11.5vh, 9rem);
+  top: calc(clamp(6.75rem, 11.5vh, 9rem) - 1cm);
   right: var(--page-gutter);
   display: block;
   color: var(--white);
@@ -3381,7 +3381,7 @@ button {
   }
 
   .hero__kcl-logo {
-    top: 10.8rem;
+    top: calc(10.8rem - 1cm);
   }
 
   .hero__kcl-logo img {
