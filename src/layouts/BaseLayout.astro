@@ -39,9 +39,9 @@ const localizedBody = localizeHtml(await Astro.slots.render('default'), locale);
     <meta name="color-scheme" content="light" />
     <script is:inline>document.documentElement.classList.add('has-js');</script>
     {noindex && <meta name="robots" content="noindex" />}
-    <link rel="canonical" href={canonicalURL} />
-    <link rel="alternate" hreflang="en" href={locale === 'en' ? canonicalURL : alternateURL} />
-    <link rel="alternate" hreflang="zh-CN" href={locale === 'zh' ? canonicalURL : alternateURL} />
+    {!noindex && <link rel="canonical" href={canonicalURL} />}
+    {!noindex && <link rel="alternate" hreflang="en" href={locale === 'en' ? canonicalURL : alternateURL} />}
+    {!noindex && <link rel="alternate" hreflang="zh-CN" href={locale === 'zh' ? canonicalURL : alternateURL} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{translate(title, locale)}</title>
   </head>
