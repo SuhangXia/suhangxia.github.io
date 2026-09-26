@@ -26,7 +26,7 @@ const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astr
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-locale="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -47,7 +47,9 @@ const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astr
     </main>
     <Footer />
     <script>
+      import { initialiseLanguage } from '../scripts/language.ts';
       import '../scripts/site.ts';
+      initialiseLanguage();
     </script>
   </body>
 </html>

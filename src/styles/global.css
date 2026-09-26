@@ -226,6 +226,29 @@ button {
   transform-origin: left;
 }
 
+.site-nav__language {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.site-nav__language span { opacity: 0.38; transition: opacity 180ms ease, color 180ms ease; }
+.site-nav__language i { opacity: 0.35; font-style: normal; }
+.site-nav__language[data-locale='en'] span:last-child,
+.site-nav__language[data-locale='zh'] span:first-child { opacity: 1; color: var(--accent); }
+.site-nav__language:hover span { opacity: 0.82; }
+.site-nav__language:focus-visible { outline: 2px solid currentColor; outline-offset: 0.35rem; }
+
 .site-nav .site-nav__github {
   width: 2.65rem;
   min-height: 2.65rem;
@@ -812,6 +835,13 @@ button {
 .project-feature__title-link:hover {
   color: var(--accent);
   text-decoration: underline;
+}
+
+/* Chinese project titles retain the official English name in parentheses.
+   Let a long Latin name break cleanly on narrow screens instead of widening
+   the entire document. */
+html[data-locale='zh'] .project-feature__title-link {
+  overflow-wrap: anywhere;
 }
 
 .project-feature__credentials {
@@ -2632,30 +2662,31 @@ button {
 
 .repository-figure figcaption > span {
   color: var(--accent);
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 700;
 }
 
 .repository-figure figcaption h4 {
-  font-size: 0.82rem;
+  font-size: clamp(1.1rem, 1.35vw, 1.35rem);
   font-weight: 700;
+  line-height: 1.35;
 }
 
 .repository-figure figcaption p {
   max-width: 48rem;
   margin-top: 0.55rem;
   color: var(--ink-soft);
-  font-size: 0.74rem;
-  line-height: 1.58;
+  font-size: clamp(0.95rem, 1.05vw, 1.06rem);
+  line-height: 1.68;
 }
 
 .repository-figure figcaption small {
   display: block;
   margin-top: 0.85rem;
   color: var(--muted);
-  font-size: 0.6rem;
+  font-size: 0.72rem;
   font-weight: 650;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -3367,6 +3398,13 @@ button {
     height: var(--header-height);
   }
 
+  /* A backdrop filter establishes a containing block for fixed descendants.
+     Drop it while the full-screen menu is open so the menu (and language row)
+     is fixed to the viewport rather than the header's own height. */
+  .site-header.menu-active {
+    backdrop-filter: none;
+  }
+
   .menu-toggle {
     display: block;
   }
@@ -3419,6 +3457,16 @@ button {
     border: 0;
     border-bottom: 1px solid var(--line);
     border-radius: 0;
+  }
+
+  .site-nav__language {
+    min-height: 4.4rem;
+    justify-content: flex-start;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 440;
+    letter-spacing: -0.025em;
   }
 
   .site-nav__github svg {

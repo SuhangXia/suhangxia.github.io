@@ -59,7 +59,10 @@ const source = usePreview ? video.previewSrc : video.src;
       if (!playButton) return;
       const playing = !video.paused && !video.ended;
       container.classList.toggle('is-playing', playing);
-      playButton.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${video.getAttribute('aria-label') ?? 'video'}`);
+      const chinese = document.documentElement.dataset.locale === 'zh';
+      const action = playing ? (chinese ? '暂停' : 'Pause') : (chinese ? '播放' : 'Play');
+      const fallback = chinese ? '视频' : 'video';
+      playButton.setAttribute('aria-label', `${action} ${video.getAttribute('aria-label') ?? fallback}`);
     };
 
     playButton?.addEventListener('click', () => {
@@ -73,6 +76,7 @@ const source = usePreview ? video.previewSrc : video.src;
     video.addEventListener('play', updatePlayButton);
     video.addEventListener('pause', updatePlayButton);
     video.addEventListener('ended', updatePlayButton);
+    document.addEventListener('suhangxia:localechange', updatePlayButton);
 
     const observer = new IntersectionObserver(
       (entries) => {

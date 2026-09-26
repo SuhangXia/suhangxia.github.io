@@ -111,6 +111,7 @@ export const repositoryEvidence: Record<string, EvidenceCollection> = {
         source: 'Shaoxing News · original video poster · Lancet technical presentation, slide 34',
         media: televisionInterview,
         alt: 'Suhang Xia demonstrating the percutaneous puncture robot during a Shaoxing television interview',
+        wide: true,
       },
     ],
   },

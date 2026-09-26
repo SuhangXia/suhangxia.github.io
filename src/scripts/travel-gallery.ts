@@ -1,3 +1,6 @@
+import { currentLocale } from './language';
+import { translate } from '../data/i18n';
+
 const gallery = document.querySelector<HTMLElement>('[data-travel-gallery]');
 
 if (gallery) {
@@ -46,8 +49,8 @@ if (gallery) {
       const link = links[current]!;
       picture.src = link.href;
       picture.alt = link.querySelector('img')?.alt ?? '';
-      city.textContent = link.dataset.city ?? '';
-      country.textContent = link.dataset.country ?? '';
+      city.textContent = translate(link.dataset.city ?? '', currentLocale());
+      country.textContent = translate(link.dataset.country ?? '', currentLocale());
       counter.textContent = String(current + 1).padStart(2, '0');
     };
 
@@ -97,6 +100,9 @@ if (gallery) {
       picture.removeAttribute('src');
       pointerStart = null;
       trigger?.focus({ preventScroll: true });
+    });
+    document.addEventListener('suhangxia:localechange', () => {
+      if (viewer.open) showPhoto(current);
     });
   }
 }

@@ -8,6 +8,9 @@
 </dialog>
 
 <script>
+  import { currentLocale } from '../scripts/language';
+  import { translate } from '../data/i18n';
+
   const lightbox = document.querySelector<HTMLDialogElement>('#evidence-lightbox');
   if (lightbox) {
     const picture = lightbox.querySelector<HTMLImageElement>('img')!;
@@ -22,7 +25,7 @@
         trigger = link;
         picture.src = link.dataset.lightboxSrc!;
         picture.alt = link.querySelector('img')?.alt ?? link.dataset.lightboxTitle ?? '';
-        title.textContent = link.dataset.lightboxTitle ?? 'Evidence image';
+        title.textContent = translate(link.dataset.lightboxTitle ?? 'Evidence image', currentLocale());
         original.href = picture.src;
         previousOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
@@ -36,6 +39,11 @@
       document.body.style.overflow = previousOverflow;
       picture.removeAttribute('src');
       trigger?.focus({ preventScroll: true });
+    });
+    document.addEventListener('suhangxia:localechange', () => {
+      if (lightbox.open && trigger) {
+        title.textContent = translate(trigger.dataset.lightboxTitle ?? 'Evidence image', currentLocale());
+      }
     });
   }
 </script>

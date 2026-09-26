@@ -32,7 +32,8 @@ function initialiseNavigation() {
     document.body.classList.toggle('menu-open', open);
     backgroundRegions.forEach((region) => region.toggleAttribute('inert', open));
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    const chinese = document.documentElement.dataset.locale === 'zh';
+    toggle.setAttribute('aria-label', open ? (chinese ? '关闭导航' : 'Close navigation') : (chinese ? '打开导航' : 'Open navigation'));
 
     if (open) {
       navigation.querySelector<HTMLAnchorElement>('a')?.focus();
@@ -57,6 +58,12 @@ function initialiseNavigation() {
 
   window.matchMedia('(min-width: 768px)').addEventListener('change', (event) => {
     if (event.matches) setMenu(false);
+  });
+
+  document.addEventListener('suhangxia:localechange', () => {
+    const chinese = document.documentElement.dataset.locale === 'zh';
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-label', open ? (chinese ? '关闭导航' : 'Close navigation') : (chinese ? '打开导航' : 'Open navigation'));
   });
 }
 

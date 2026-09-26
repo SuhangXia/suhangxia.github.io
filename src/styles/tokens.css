@@ -34,6 +34,11 @@
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+html[data-locale='zh'] {
+  --font-sans: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif;
+  --font-serif: 'Songti SC', STSong, 'Noto Serif CJK SC', 'Source Han Serif SC', serif;
+}
+
 @media (max-width: 767px) {
   :root {
     --page-gutter: 1.25rem;
