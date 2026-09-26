@@ -1,5 +1,9 @@
 ---
 import { site } from '../data/site';
+import { localePath, translate, type Locale } from '../data/i18n';
+
+interface Props { locale?: Locale; }
+const { locale = 'en' } = Astro.props;
 
 const year = new Date().getFullYear();
 ---
@@ -7,14 +11,14 @@ const year = new Date().getFullYear();
 <footer class="site-footer section-shell">
   <div class="section-rule"></div>
   <div class="site-footer__top">
-    <p>Ideas move forward through conversation.</p>
+    <p>{translate('Ideas move forward through conversation.', locale)}</p>
     <a href={`mailto:${site.email}`}>{site.email}</a>
   </div>
   <div class="site-footer__bottom">
     <p>© {year} Suhang Xia</p>
-    <nav aria-label="Social links">
-      {site.links.map((link) => <a href={link.href}>{link.label}</a>)}
+    <nav aria-label={translate('Social links', locale)}>
+      {site.links.map((link) => <a href={localePath(link.href, locale)}>{translate(link.label, locale)}</a>)}
     </nav>
-    <a href="#top">Back to top ↑</a>
+    <a href="#top">{translate('Back to top ↑', locale)}</a>
   </div>
 </footer>

@@ -6,19 +6,33 @@ export type OutputLink = {
 export type ResearchOutput = {
   id: string;
   title: string;
-  authors: string;
+  authors?: string;
+  summary?: { en: string; zh: string };
   context: string;
   year: string;
-  kind: 'report' | 'dissertation';
+  kind: 'preprint' | 'report' | 'dissertation';
   topics: string[];
   links: OutputLink[];
 };
 
 // The legacy repository's papers.bib contains al-folio demonstration entries
 // about Albert Einstein, not verified publications by Suhang Xia. They are
-// intentionally excluded. Only outputs supported by personal project pages
-// in that repository are listed here.
+// intentionally excluded. Entries below link to the original public records.
 export const researchOutputs: ResearchOutput[] = [
+  {
+    id: 'avt-fabric',
+    title: 'AVT-Fabric: Active Visuo-Tactile Perception via Adaptive Evidence Selection for Efficient Robotic Fabric Comparison',
+    authors: 'Chang Gao, Zhuo Chen, Suhang Xia, Jihong Zhu, Jiankang Deng, Shan Luo',
+    summary: {
+      en: 'An RGB-first framework that adaptively selects tactile evidence for robotic fabric comparison.',
+      zh: '面向机器人织物比较的 RGB 优先视触觉框架，按比较难度自适应选择触觉证据。',
+    },
+    context: 'arXiv preprint · 2026',
+    year: '2026',
+    kind: 'preprint',
+    topics: ['Visuotactile learning', 'Robotic fabric comparison'],
+    links: [{ label: 'Paper', href: 'https://arxiv.org/abs/2609.21377' }],
+  },
   {
     id: 'deco-mae-report',
     title: "DeCo-MAE: Teaching Robots to ‘Understand’ Unseen Actions",

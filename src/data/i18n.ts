@@ -1,18 +1,30 @@
 export type Locale = 'en' | 'zh';
 
-export const localeStorageKey = 'suhangxia-locale';
-
-export const localeMeta = {
-  en: { code: 'en', label: 'EN', toggleLabel: '切换为中文' },
-  zh: { code: 'zh-CN', label: '中', toggleLabel: 'Switch to English' },
-} as const;
-
 /**
  * The English site remains the source document. These exact-text pairs are
  * intentionally local: the language switch never calls a translation service.
  */
 export const zhTranslations: Record<string, string> = {
   'Page not found — Suhang Xia': '页面未找到 — 夏苏杭',
+  'Suhang Xia — Robotics & Embodied AI': '夏苏杭 — 机器人与具身智能',
+  'VLA, visuotactile learning, robot manipulation, and real-world robotic systems by Suhang Xia.': '夏苏杭的 VLA、视触觉学习、机器人操作与真实机器人系统研究。',
+  'Publications & Preprints — Suhang Xia': '论文与预印本 — 夏苏杭',
+  'Public preprints, technical reports, and dissertations by Suhang Xia.': '夏苏杭的公开预印本、技术报告与学位论文。',
+  'Research record': '研究记录',
+  'Publications & Preprints': '论文与预印本',
+  'Public preprints, technical reports, and dissertation records. Preprint status is distinct from peer-reviewed publication.': '公开的预印本、技术报告与学位论文；预印本不等同于同行评审发表。',
+  'arXiv preprint · 2026': 'arXiv 预印本 · 2026',
+  'Technical report · Human–robot interaction': '技术报告 · 人机交互',
+  'Undergraduate dissertation · Zhejiang College of Tongji University': '本科毕业论文 · 同济大学浙江学院',
+  Paper: '论文',
+  'Robotics & Embodied AI.': '机器人与具身智能。',
+  'I build multimodal robot-learning systems, from data collection and representation learning to policy integration and real-robot evaluation, while retaining an engineering interest in image-guided robotic systems.': '我从多模态数据采集、表征学习与策略接入一直做到真机评估，同时关注影像引导机器人系统的工程实现。',
+  VLA: 'VLA',
+  'Visuotactile Learning': '视触觉学习',
+  'Robot Manipulation': '机器人操作',
+  'Research supervised by Prof. Shan Luo': '硕士研究由罗珊教授（Prof. Shan Luo）指导',
+  'I am an MSc Robotics student at King’s College London. My master’s research is supervised by Prof. Shan Luo, and my interests centre on VLA, visuotactile learning, and robot manipulation.': '我目前是伦敦国王学院（King’s College London）机器人学硕士生，硕士研究由罗珊教授（Prof. Shan Luo）指导；研究兴趣聚焦 VLA、视触觉学习与机器人操作。',
+  'I collected hand-held demonstrations with Quest motion, wrist RGB, dual-fingertip tactile video, and gripper state; calibrated and synchronised these streams into auditable camera-relative 7D actions; then integrated frozen UniForce contact tokens with a Diffusion Policy evaluated on a Franka FR3. The 222-episode corpus is distinct from the 77-demonstration controlled subset.': '我采集包含 Quest 位姿、腕部 RGB、双指触觉视频与夹爪状态的手持示教，完成时空标定和同步，将其整理为可审查的相机相对 7D 动作；随后把冻结的 UniForce 接触表征接入 Diffusion Policy，并在 Franka FR3 上评估。完整语料的 222 条示教与受控对照所用的 77 条示教并不混同。',
   'Suhang Xia — Robotics Researcher': '夏苏杭 — 机器人研究者',
   'Research — Suhang Xia': '研究项目 — 夏苏杭',
   'About — Suhang Xia': '关于 — 夏苏杭',
@@ -717,4 +729,51 @@ export function normaliseI18nText(value: string) {
 export function translate(value: string, locale: Locale) {
   if (locale === 'en') return value;
   return zhTranslations[normaliseI18nText(value)] ?? value;
+}
+
+export function localePath(path: string, locale: Locale): string {
+  if (locale === 'en' || !path.startsWith('/')) return path;
+  if (path === '/') return '/zh/';
+  if (/^\/(?:research|about|publications)(?:\/|$)/.test(path)) return `/zh${path}`;
+  return path;
+}
+
+export function alternatePath(path: string, locale: Locale): string {
+  return locale === 'zh' ? path.replace(/^\/zh(?=\/|$)/, '') || '/' : localePath(path, 'zh');
+}
+
+function decodeEntities(value: string): string {
+  return value.replace(/&(?:amp|quot|apos|lt|gt|nbsp|#\d+|#x[\da-f]+);/gi, (entity) => {
+    const named: Record<string, string> = { '&amp;': '&', '&quot;': '"', '&apos;': "'", '&lt;': '<', '&gt;': '>', '&nbsp;': '\u00a0' };
+    const replacement = named[entity.toLowerCase()];
+    if (replacement !== undefined) return replacement;
+    const point = entity[2]?.toLowerCase() === 'x' ? Number.parseInt(entity.slice(3, -1), 16) : Number.parseInt(entity.slice(2, -1), 10);
+    return Number.isFinite(point) ? String.fromCodePoint(point) : entity;
+  });
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/** Translate the existing page markup at build time without changing its layout. */
+export function localizeHtml(html: string, locale: Locale): string {
+  if (locale === 'en') return html;
+  const tokens = /<script\b[\s\S]*?<\/script>|<style\b[\s\S]*?<\/style>|<svg\b[\s\S]*?<\/svg>|<!--[\s\S]*?-->|<[^>]*>|[^<]+/gi;
+  return (html.match(tokens) ?? []).map((token) => {
+    if (!token.startsWith('<')) {
+      const value = decodeEntities(token);
+      const key = normaliseI18nText(value);
+      const result = translate(key, locale);
+      return result === key ? token : `${token.match(/^\s*/)?.[0] ?? ''}${escapeHtml(result)}${token.match(/\s*$/)?.[0] ?? ''}`;
+    }
+    if (/^<(?:script|style|svg|!--)/i.test(token)) return token;
+    return token.replace(/\b(href|alt|aria-label|title|placeholder|data-lightbox-title|data-city|data-country)=("([^"]*)"|'([^']*)')/gi,
+      (_whole, name: string, quoted: string, doubleValue: string | undefined, singleValue: string | undefined) => {
+        const quote = quoted[0];
+        const decoded = decodeEntities(doubleValue ?? singleValue ?? '');
+        const value = name.toLowerCase() === 'href' ? localePath(decoded, locale) : translate(decoded, locale);
+        return `${name}=${quote}${escapeHtml(value)}${quote}`;
+      });
+  }).join('');
 }

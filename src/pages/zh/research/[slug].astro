@@ -1,0 +1,10 @@
+---
+import ProjectPage from '../../research/[slug].astro';
+import { projects } from '../../../data/projects';
+const RenderProject = ProjectPage as unknown as (props: Record<string, never>) => unknown;
+
+export function getStaticPaths() {
+  return projects.map((project) => ({ params: { slug: project.slug } }));
+}
+---
+<RenderProject />

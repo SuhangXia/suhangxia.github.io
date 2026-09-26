@@ -5,7 +5,7 @@ import ResearchThesis from '../components/ResearchThesis.astro';
 import ScrollStory from '../components/ScrollStory.astro';
 import ProjectFeature from '../components/ProjectFeature.astro';
 import AboutPreview from '../components/AboutPreview.astro';
-import SubmissionUpdate from '../components/SubmissionUpdate.astro';
+import PublicationsPreview from '../components/PublicationsPreview.astro';
 import { projects } from '../data/projects';
 
 const homeProjectOrder = [
@@ -22,18 +22,18 @@ const homeProjects = homeProjectOrder.flatMap((slug) => projects.filter((project
 <BaseLayout pageClass="home-page">
   <Hero />
   <ResearchThesis />
-  <ScrollStory />
 
   <section class="featured-heading section-shell" aria-labelledby="featured-title">
     <div class="section-rule" data-reveal-line></div>
     <p class="eyebrow" data-reveal>Selected research</p>
     <h2 id="featured-title" data-reveal>Systems, models, and the questions between them.</h2>
-    <SubmissionUpdate />
   </section>
 
   <div class="featured-projects">
     {homeProjects.map((project) => <ProjectFeature project={project} />)}
   </div>
+  <PublicationsPreview />
+  <ScrollStory />
   <AboutPreview />
 </BaseLayout>
 
@@ -44,7 +44,7 @@ const homeProjects = homeProjectOrder.flatMap((slug) => projects.filter((project
   document.addEventListener('click', (event) => {
     if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
     const anchor = (event.target as Element).closest<HTMLAnchorElement>('a[href]');
-    if (!anchor || anchor.origin !== window.location.origin || !anchor.pathname.startsWith('/research/')) return;
+    if (!anchor || anchor.origin !== window.location.origin || !/^\/(?:zh\/)?research\//.test(anchor.pathname)) return;
 
     try {
       window.sessionStorage.setItem(homeNavigationKey, anchor.pathname);

@@ -1,16 +1,21 @@
 ---
 import { site } from '../data/site';
+import { alternatePath, localePath, translate, type Locale } from '../data/i18n';
 
 interface Props {
   currentPath?: string;
+  locale?: Locale;
 }
 
-const { currentPath = '/' } = Astro.props;
-const isCurrent = (href: string) => href === '/' ? currentPath === '/' : currentPath === href || currentPath.startsWith(`${href}/`);
+const { currentPath = '/', locale = 'en' } = Astro.props;
+const isCurrent = (href: string) => {
+  const path = localePath(href, locale);
+  return currentPath === path || currentPath.startsWith(`${path}/`);
+};
 ---
 
 <header class="site-header" data-site-header>
-  <a class="site-mark" href="/" aria-label="Suhang Xia, home">
+  <a class="site-mark" href={localePath('/', locale)} aria-label={translate('Suhang Xia, home', locale)}>
     <span>Suhang Xia</span>
   </a>
 
@@ -19,35 +24,33 @@ const isCurrent = (href: string) => href === '/' ? currentPath === '/' : current
     type="button"
     aria-expanded="false"
     aria-controls="site-navigation"
-    aria-label="Open navigation"
+    aria-label={translate('Open navigation', locale)}
     data-menu-toggle
   >
     <span></span>
     <span></span>
   </button>
 
-  <nav class="site-nav" id="site-navigation" aria-label="Primary navigation" data-site-nav>
+  <nav class="site-nav" id="site-navigation" aria-label={translate('Primary navigation', locale)} data-site-nav>
     <div class="site-nav__inner">
       {site.navigation.map((item) => (
         <>
           <a
-            href={item.href}
+            href={localePath(item.href, locale)}
             class:list={{ active: isCurrent(item.href) }}
             aria-current={isCurrent(item.href) ? 'page' : undefined}
           >
-            <span>{item.label}</span>
+            <span>{translate(item.label, locale)}</span>
           </a>
           {item.href === '/research' && (
             <>
-              <button class="site-nav__language" type="button" data-language-toggle data-i18n-skip data-locale="en" aria-label="Switch to Chinese">
-                <span lang="zh-CN">中</span><i aria-hidden="true">/</i><span>EN</span>
-              </button>
+              <a class="site-nav__language" href={alternatePath(Astro.url.pathname, locale)} hreflang={locale === 'en' ? 'zh-CN' : 'en'} aria-label={locale === 'en' ? '切换为中文' : 'Switch to English'}>{locale === 'en' ? '中文' : 'EN'}</a>
               <a
                 class="site-nav__github"
                 href="https://github.com/suhangxia"
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Suhang Xia on GitHub"
+                aria-label={translate('Suhang Xia on GitHub', locale)}
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path

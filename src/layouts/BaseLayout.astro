@@ -3,6 +3,7 @@ import '@fontsource-variable/manrope';
 import '@fontsource-variable/newsreader';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { alternatePath, localizeHtml, translate, type Locale } from '../data/i18n';
 import '../styles/tokens.css';
 import '../styles/global.css';
 import '../styles/motion.css';
@@ -15,41 +16,44 @@ interface Props {
 }
 
 const {
-  title = 'Suhang Xia — Robotics Researcher',
-  description = 'Robotics research across perception, robot learning, interaction, and surgical robotic systems.',
+  title = 'Suhang Xia — Robotics & Embodied AI',
+  description = 'VLA, visuotactile learning, robot manipulation, and real-world robotic systems by Suhang Xia.',
   pageClass = '',
   noindex = false,
 } = Astro.props;
 
 const pathname = Astro.url.pathname === '/' ? '/' : Astro.url.pathname.replace(/\/$/, '');
+const locale: Locale = pathname === '/zh' || pathname.startsWith('/zh/') ? 'zh' : 'en';
 const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
+const alternateURL = Astro.site ? new URL(alternatePath(Astro.url.pathname, locale), Astro.site) : Astro.url;
+const localizedBody = localizeHtml(await Astro.slots.render('default'), locale);
 ---
 
 <!doctype html>
-<html lang="en" data-locale="en">
+<html lang={locale === 'zh' ? 'zh-CN' : 'en'} data-locale={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
+    <meta name="description" content={translate(description, locale)} />
     <meta name="theme-color" content="#161816" />
     <meta name="color-scheme" content="light" />
     <script is:inline>document.documentElement.classList.add('has-js');</script>
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonicalURL} />
+    <link rel="alternate" hreflang="en" href={locale === 'en' ? canonicalURL : alternateURL} />
+    <link rel="alternate" hreflang="zh-CN" href={locale === 'zh' ? canonicalURL : alternateURL} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <title>{title}</title>
+    <title>{translate(title, locale)}</title>
   </head>
   <body class={pageClass} id="top">
-    <a class="skip-link" href="#main-content">Skip to content</a>
-    <Header currentPath={pathname} />
+    <a class="skip-link" href="#main-content">{translate('Skip to content', locale)}</a>
+    <Header currentPath={pathname} locale={locale} />
     <main id="main-content">
-      <slot />
+      <Fragment set:html={localizedBody} />
     </main>
-    <Footer />
+    <Footer locale={locale} />
     <script>
-      import { initialiseLanguage } from '../scripts/language.ts';
       import '../scripts/site.ts';
-      initialiseLanguage();
     </script>
   </body>
 </html>

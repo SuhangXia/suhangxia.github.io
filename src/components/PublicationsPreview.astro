@@ -1,28 +1,34 @@
 ---
 import { researchOutputs } from '../data/publications';
+import type { Locale } from '../data/i18n';
+interface Props { full?: boolean; }
+const { full = false } = Astro.props;
+const locale: Locale = Astro.url.pathname.startsWith('/zh') ? 'zh' : 'en';
+const outputs = full ? researchOutputs : researchOutputs.filter((output) => output.kind === 'preprint');
 ---
 
 <section class="outputs section-shell" aria-labelledby="outputs-title">
   <div class="section-rule" data-reveal-line></div>
   <header class="outputs__header">
     <div>
-      <p class="eyebrow" data-reveal>Publications / reports</p>
-      <h2 id="outputs-title" data-reveal>Selected research outputs</h2>
+      <p class="eyebrow" data-reveal>{full ? (locale === 'zh' ? '研究成果' : 'Research outputs') : (locale === 'zh' ? '论文与预印本' : 'Publications / preprints')}</p>
+      <h2 id="outputs-title" data-reveal>{full ? (locale === 'zh' ? '预印本、报告与学位论文。' : 'Preprints, reports, and dissertations.') : (locale === 'zh' ? '已公开的研究工作。' : 'Research in the open.')}</h2>
     </div>
-    <a class="text-link" href="/publications" data-reveal>View all <span aria-hidden="true">↗</span></a>
+    {!full && <a class="text-link" href={locale === 'zh' ? '/zh/publications/' : '/publications/'} data-reveal>{locale === 'zh' ? '查看全部' : 'View all'} <span aria-hidden="true">↗</span></a>}
   </header>
 
   <ol class="output-list">
-    {researchOutputs.map((output) => (
+    {outputs.map((output) => (
       <li class="output-row" data-reveal>
         <p class="output-row__year">{output.year}</p>
         <div class="output-row__main">
           <h3>{output.title}</h3>
-          <p class="output-row__authors"><strong>Suhang Xia</strong>{output.authors.replace('Suhang Xia', '')}</p>
+          {output.summary && <p class="output-row__authors">{output.summary[locale]}</p>}
+          {output.kind !== 'preprint' && output.authors && <p class="output-row__authors">{output.authors}</p>}
           <p class="output-row__context">{output.context}</p>
         </div>
         <div class="output-row__links" aria-label={`${output.title} links`}>
-          {output.links.map((link) => <a href={link.href}>{link.label}</a>)}
+          {output.links.map((link) => <a href={link.href}>{link.label} ↗</a>)}
         </div>
       </li>
     ))}

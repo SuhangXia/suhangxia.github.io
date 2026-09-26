@@ -122,7 +122,7 @@ export const projects: Project[] = [
     field: 'Research system · Calibrated visuotactile demonstrations',
     question: 'How can hand-held visuotactile demonstrations become inspectable, robot-ready trajectories?',
     description:
-      'A geometrically and temporally calibrated pipeline that aligns Quest motion, wrist RGB, dual-fingertip tactile video, and gripper state. Raw demonstrations remain auditable before conversion into camera-relative 7D actions; frozen UniForce contact tokens then condition a Diffusion Policy deployed on a Franka FR3.',
+      'I collected hand-held demonstrations with Quest motion, wrist RGB, dual-fingertip tactile video, and gripper state; calibrated and synchronised these streams into auditable camera-relative 7D actions; then integrated frozen UniForce contact tokens with a Diffusion Policy evaluated on a Franka FR3. The 222-episode corpus is distinct from the 77-demonstration controlled subset.',
     theme: 'light',
     layout: 'wide',
     links: [

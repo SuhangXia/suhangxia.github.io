@@ -1,3 +1,10 @@
 ---
-return Astro.redirect('/', 301);
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import PublicationsPreview from '../components/PublicationsPreview.astro';
 ---
+
+<BaseLayout title="Publications & Preprints — Suhang Xia" description="Public preprints, technical reports, and dissertations by Suhang Xia." pageClass="inner-page">
+  <PageHero eyebrow="Research record" index="02" title="Publications & Preprints" introduction="Public preprints, technical reports, and dissertation records. Preprint status is distinct from peer-reviewed publication." />
+  <PublicationsPreview full />
+</BaseLayout>

@@ -184,9 +184,9 @@ const punctureEngineering = isPuncture && projectRepositoryEvidence ? {
     // A directly opened project can have no same-tab history entry. In that
     // exceptional case, keep the Home link as a safe fallback.
     window.setTimeout(() => {
-      if (window.location.pathname === new URL(returnHome.href).pathname.replace(/\/$/, '')
-        || window.location.pathname === '/') return;
-      window.location.assign('/');
+      const homePath = new URL(returnHome.href).pathname;
+      if (window.location.pathname === homePath || window.location.pathname === homePath.replace(/\/$/, '')) return;
+      window.location.assign(homePath);
     }, 350);
   });
 </script>
