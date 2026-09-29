@@ -24,7 +24,7 @@ if (!project) {
   throw new Error(`Unknown research project: ${Astro.params.slug}`);
 }
 
-const managedProjectVideos = publicVideosForProject(project.slug);
+const managedProjectVideos = publicVideosForProject(project.slug).filter((video) => video.id !== 'tactile-umi-audit-screen-recording');
 const projectVideos = [...managedProjectVideos, ...publicLocalVideosForProject(project.slug)];
 const projectDemoDetails = {
   'tactile-umi': {

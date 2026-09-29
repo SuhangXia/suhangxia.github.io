@@ -90,6 +90,18 @@ const cosVideoRecords: readonly VideoRecord[] = [
     "objectKey": "public/videos/demos/robocup-ur5e-object-sorting.mp4",
     "previewKey": "public/videos/previews/robocup-ur5e-object-sorting-midpoint.mp4",
     "posterKey": "public/posters/robocup-ur5e-object-sorting-midpoint.webp"
+  },
+  {
+    "id": "tactile-umi-audit-screen-recording",
+    "title": "Tactile UMI audit viewer screen recording",
+    "project": "tactile-umi",
+    "description": "A cropped, read-only 42-second screen recording of the audit visualisation. This separate archived episode is not the interactive replay and does not establish task success.",
+    "src": "https://suhangxia-media-1255615484.cos.ap-hongkong.myqcloud.com/public/videos/demos/tactile-umi-audit-screen-recording.mp4",
+    "poster": "https://suhangxia-media-1255615484.cos.ap-hongkong.myqcloud.com/public/posters/tactile-umi-audit-screen-recording.webp",
+    "duration": 42,
+    "status": "public",
+    "objectKey": "public/videos/demos/tactile-umi-audit-screen-recording.mp4",
+    "posterKey": "public/posters/tactile-umi-audit-screen-recording.webp"
   }
 ];
 /* COS_VIDEO_RECORDS_END */
