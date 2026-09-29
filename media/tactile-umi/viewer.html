@@ -7,9 +7,10 @@
     <title>Tactile UMI · One-trajectory audit replay</title>
     <style>
       html, body, #viewer { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #171917; }
-      #status { position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; padding: 1rem; color: #f1efe8; font: 14px/1.6 system-ui, sans-serif; text-align: center; }
+      #status { position: absolute; z-index: 1; inset: 0; display: grid; place-content: center; gap: .8rem; padding: 1rem; background: #171917; color: #f1efe8; font: 14px/1.6 system-ui, sans-serif; text-align: center; }
       #status[hidden] { display: none; }
       #status a { color: #f1efe8; text-underline-offset: .25em; }
+      #status nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; }
     </style>
   </head>
   <body>
@@ -18,14 +19,49 @@
     <script type="module">
       const status = document.getElementById('status');
       const viewerElement = document.getElementById('viewer');
-      let failureReported = false;
+      const backend = new URLSearchParams(location.search).get('backend');
+      let failureShown = false;
 
-      function reportFailure(reason) {
-        if (failureReported) return;
-        failureReported = true;
-        if (window.parent !== window) {
-          window.parent.postMessage({ source: 'tactile-umi-audit-viewer', state: 'failed', reason }, location.origin);
+      async function showFailure(error) {
+        if (failureShown) return;
+        failureShown = true;
+        status.hidden = false;
+        const message = document.createElement('p');
+        message.textContent = /webgl|wgpu|gpu|surface|canvas/i.test(String(error))
+          ? 'The original Rerun replay could not initialize a graphics backend in this browser.'
+          : 'The original Rerun replay could not start.';
+        status.replaceChildren(message);
+
+        let webglAvailable = false;
+        let webgpuAvailable = false;
+        try {
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('webgl2');
+          webglAvailable = Boolean(context);
+          context?.getExtension('WEBGL_lose_context')?.loseContext();
+          webgpuAvailable = Boolean(await navigator.gpu?.requestAdapter());
+        } catch {
+          // A disabled browser graphics process can reject both probes.
         }
+        if (!webglAvailable && !webgpuAvailable) {
+          const guidance = document.createElement('p');
+          guidance.textContent = 'WebGL2 and WebGPU are both unavailable in this browser session. Enable graphics acceleration in Chrome settings and fully restart Chrome, or use a browser with a working graphics backend. The archived video remains a manual option on the project page.';
+          status.append(guidance);
+          return;
+        }
+
+        const options = document.createElement('nav');
+        for (const [label, target, available] of [
+          ['Try WebGPU', '?backend=webgpu', webgpuAvailable],
+          ['Try WebGL', '?backend=webgl', webglAvailable],
+        ]) {
+          if (!available || target === `?backend=${backend}`) continue;
+          const link = document.createElement('a');
+          link.href = target;
+          link.textContent = label;
+          options.append(link);
+        }
+        if (options.childElementCount) status.append(options);
       }
 
       function containsStartFailure(root) {
@@ -37,32 +73,20 @@
       }
 
       try {
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('webgl2');
-        context?.getExtension('WEBGL_lose_context')?.loseContext();
-        const adapter = context ? true : await navigator.gpu?.requestAdapter();
-        if (!adapter) throw new Error('WebGL2 and WebGPU are unavailable in this browser.');
-
-        // Match the Rerun Python SDK version used to export this .rrd recording.
+        // Keep the original Tactile UMI WebViewer and match the .rrd export version.
         const { WebViewer } = await import('https://esm.sh/@rerun-io/web-viewer@0.31.4');
         const recording = new URL('./audit-episode-000001.rrd', location.href).href;
         const viewer = new WebViewer();
-        await viewer.start(recording, viewerElement, { width: '100%', height: '100%', theme: 'dark' });
+        const options = { width: '100%', height: '100%', theme: 'dark' };
+        if (backend === 'webgpu' || backend === 'webgl') options.render_backend = backend;
+        await viewer.start(recording, viewerElement, options);
         status.hidden = true;
         // Rerun can report a GPU-surface error inside its own UI after start() resolves.
         setInterval(() => {
-          if (containsStartFailure(viewerElement)) reportFailure('load');
+          if (containsStartFailure(viewerElement)) showFailure('graphics surface');
         }, 2000);
       } catch (error) {
-        const reason = /webgl|wgpu|gpu|surface/i.test(String(error)) ? 'gpu' : 'load';
-        status.textContent = reason === 'gpu'
-          ? 'This browser cannot render the 3D replay. '
-          : 'The interactive replay could not load. ';
-        const fallbackLink = document.createElement('a');
-        fallbackLink.href = '/research/tactile-umi/#audit-replay-title';
-        fallbackLink.textContent = 'Watch the video fallback on the project page ↗';
-        status.append(fallbackLink);
-        reportFailure(reason);
+        showFailure(error);
         console.error('Tactile UMI audit replay:', error);
       }
     </script>
