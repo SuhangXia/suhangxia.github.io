@@ -6,6 +6,22 @@ import datasetCollection from '../assets/media/tactile-umi/dataset-collection.pn
 import datasetAudit from '../assets/media/tactile-umi/dataset-audit.png';
 import gripperCalibration from '../assets/media/tactile-umi/gripper-calibration.png';
 import tactileLatency from '../assets/media/tactile-umi/tactile-latency.png';
+import cylinderPreview from '../assets/media/clothumi-taichi/cylinder.gif';
+import cylinderStill from '../assets/media/clothumi-taichi/cylinder-still.png';
+import spherePreview from '../assets/media/clothumi-taichi/sphere.gif';
+import sphereStill from '../assets/media/clothumi-taichi/sphere-still.png';
+import pacmanPreview from '../assets/media/clothumi-taichi/pacman.gif';
+import pacmanStill from '../assets/media/clothumi-taichi/pacman-still.png';
+import wavePreview from '../assets/media/clothumi-taichi/wave.gif';
+import waveStill from '../assets/media/clothumi-taichi/wave-still.png';
+
+const simulationDatasetUrl = 'https://huggingface.co/datasets/LancetRobotics/uniforce_loading_only_30f_rect_safe_500k_v2_gray_jpeg30k';
+const simulationPreviews = [
+  { name: 'Cylinder', animated: cylinderPreview, still: cylinderStill },
+  { name: 'Sphere', animated: spherePreview, still: sphereStill },
+  { name: 'Pacman', animated: pacmanPreview, still: pacmanStill },
+  { name: 'Wave', animated: wavePreview, still: waveStill },
+] as const;
 
 const stages = [
   {
@@ -82,6 +98,45 @@ const calibrationMetrics = [
     </figcaption>
   </figure>
 
+  <section class="tactile-training" aria-labelledby="tactile-training-title">
+    <header class="tactile-training__heading">
+      <p class="eyebrow">UniForce · Two-stage tactile representation learning</p>
+      <h3 id="tactile-training-title">Simulation first. Physical contact second.</h3>
+      <p>
+        UniForce is not trained directly on UMI demonstrations alone. A Taichi-generated loading-only dataset
+        establishes the tactile representation; paired real-sensor presses then adapt it to the physical fingertips.
+        The adapted encoder is frozen before Diffusion Policy training.
+      </p>
+    </header>
+
+    <div class="tactile-training__stages">
+      <article>
+        <span>01 / Simulation pretraining</span>
+        <h4>Learn from controlled indentation.</h4>
+        <p>Taichi simulates marker-field deformation under varied indenter shapes and loading trajectories. The four loops below are selected, compressed previews—not the complete training dataset.</p>
+        <a class="text-link" href={simulationDatasetUrl} target="_blank" rel="noreferrer">Explore the public simulation dataset ↗</a>
+      </article>
+      <article>
+        <span>02 / Real-sensor fine-tuning</span>
+        <h4>Adapt to measured fingertip contact.</h4>
+        <p>Physical indenter presses provide paired, frame-aligned images from the custom GelSight and GelSight Mini. The collection shown in the meeting slide covers six indenters with 1,000 frames each; this is distinct from the public simulation dataset and the UMI demonstration corpus.</p>
+      </article>
+    </div>
+
+    <div class="tactile-training__previews" aria-label="Selected Taichi simulation previews">
+      {simulationPreviews.map((preview) => (
+        <figure>
+          <picture>
+            <source media="(prefers-reduced-motion: reduce)" srcset={preview.still.src} />
+            <img src={preview.animated.src} alt={`${preview.name} indenter: simulated tactile marker deformation and loading trajectory`} width="760" height="341" loading="lazy" decoding="async" />
+          </picture>
+          <figcaption>{preview.name} · loading-only simulation</figcaption>
+        </figure>
+      ))}
+    </div>
+    <p class="tactile-training__note">These GIFs show ten short example episodes per indenter. The linked Hugging Face repository hosts the public JPEG-format simulation dataset, not the real-sensor recordings.</p>
+  </section>
+
   <div class="tactile-operations" aria-labelledby="tactile-operations-title">
     <div class="tactile-operations__heading">
       <p class="eyebrow">Operational tooling</p>
@@ -156,6 +211,23 @@ const calibrationMetrics = [
   .architecture-figure figcaption { padding: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .72rem; line-height: 1.65; }
   .architecture-figure--algorithm { margin-top: clamp(5rem, 9vw, 9rem); background: #efeee8; }
   .architecture-figure--algorithm figcaption { max-width: none; color: var(--ink-soft); }
+  .tactile-training { margin-top: clamp(5rem, 9vw, 9rem); padding-top: 1.25rem; border-top: 1px solid var(--line); }
+  .tactile-training__heading { display: grid; grid-template-columns: 4fr 8fr; column-gap: var(--page-gutter); }
+  .tactile-training__heading .eyebrow { grid-row: 1 / 3; }
+  .tactile-training__heading h3 { max-width: 13em; font-family: var(--font-serif); font-size: clamp(2.3rem, 4.3vw, 4.8rem); font-weight: 440; letter-spacing: -.045em; line-height: 1; }
+  .tactile-training__heading > p:last-child { max-width: 47rem; margin-top: 1.5rem; color: var(--muted); font-size: .85rem; line-height: 1.72; }
+  .tactile-training__stages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-top: 3rem; border: 1px solid var(--line); background: var(--line); }
+  .tactile-training__stages article { padding: clamp(1.5rem, 3vw, 3rem); background: var(--paper-deep); }
+  .tactile-training__stages article > span { color: var(--accent); font-size: .7rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+  .tactile-training__stages h4 { max-width: 18em; margin-top: 2.5rem; font-family: var(--font-serif); font-size: clamp(1.7rem, 2.6vw, 2.8rem); font-weight: 450; letter-spacing: -.035em; line-height: 1.07; }
+  .tactile-training__stages p { max-width: 35rem; margin-top: 1rem; color: var(--muted); font-size: .78rem; line-height: 1.7; }
+  .tactile-training__stages .text-link { display: inline-block; margin-top: 1.7rem; font-size: .8rem; }
+  .tactile-training__previews { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .tactile-training__previews figure { min-width: 0; border: 1px solid var(--line); background: var(--night); }
+  .tactile-training__previews picture, .tactile-training__previews img { display: block; width: 100%; }
+  .tactile-training__previews img { height: auto; aspect-ratio: 760 / 341; object-fit: contain; }
+  .tactile-training__previews figcaption { padding: .8rem 1rem; color: var(--paper); font-size: .7rem; }
+  .tactile-training__note { max-width: 55rem; margin-top: 1rem; color: var(--muted); font-size: .72rem; line-height: 1.65; }
   .tactile-stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin-top: 1px; border: 1px solid var(--line); background: var(--line); list-style: none; }
   .tactile-stages li { min-height: 15rem; padding: clamp(1.4rem, 2.7vw, 2.6rem); background: var(--paper); }
   .tactile-stages li > span { color: var(--accent); font-size: .66rem; font-weight: 750; letter-spacing: .08em; }
@@ -193,14 +265,15 @@ const calibrationMetrics = [
   .tactile-acknowledgement p { max-width: 48rem; color: var(--ink-soft); font-size: .8rem; line-height: 1.7; }
   .tactile-acknowledgement strong { color: var(--ink); }
   @media (max-width: 1023px) {
-    .tactile-heading, .tactile-calibration, .tactile-acknowledgement { grid-template-columns: 1fr; gap: 2.5rem; }
+    .tactile-heading, .tactile-training__heading, .tactile-calibration, .tactile-acknowledgement { grid-template-columns: 1fr; gap: 2.5rem; }
+    .tactile-training__heading .eyebrow { grid-row: auto; }
     .tactile-heading > div { grid-template-columns: 1fr; gap: 2rem; }
     .tactile-operations__heading { grid-template-columns: 1fr 1.4fr; }
     .tactile-operations__heading > p:last-child { grid-column: 2; }
   }
   @media (max-width: 767px) {
     .architecture-figure__bar { align-items: flex-start; flex-direction: column; }
-    .tactile-stages, .tactile-operations__grid, .tactile-calibration__metrics, .tactile-calibration__visuals { grid-template-columns: 1fr; }
+    .tactile-stages, .tactile-training__stages, .tactile-operations__grid, .tactile-calibration__metrics, .tactile-calibration__visuals { grid-template-columns: 1fr; }
     .tactile-stages li { min-height: auto; }
     .tactile-stages h3 { margin-top: 2.5rem; }
     .tactile-operations__heading { grid-template-columns: 1fr; gap: 1.5rem; }
@@ -210,6 +283,7 @@ const calibrationMetrics = [
     .tactile-calibration__metrics > div { min-height: 10rem; }
     .tactile-acknowledgement > div { grid-template-columns: 1fr; }
   }
+  @media (max-width: 599px) { .tactile-training__previews { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) {
     .architecture-figure__image img, .tactile-operations__grid :global(img) { transition: none; }
   }
