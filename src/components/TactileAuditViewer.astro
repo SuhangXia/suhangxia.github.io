@@ -1,0 +1,76 @@
+<section class="audit-replay section-shell" aria-labelledby="audit-replay-title">
+  <header class="audit-replay__heading">
+    <p class="eyebrow">Dataset Audit · One recorded trajectory</p>
+    <div>
+      <h3 id="audit-replay-title">Inspect a demonstration across space, time, and touch.</h3>
+      <p>
+        A read-only export of episode 000001 from the Tactile UMI audit viewer. Scrub one 18-second recording
+        alongside its camera trajectory, wrist RGB, two tactile streams, and gripper-width trace. No local dataset
+        path or audit controls are exposed on this public page.
+      </p>
+    </div>
+  </header>
+
+  <div class="audit-replay__frame" data-audit-replay>
+    <div class="audit-replay__poster" data-audit-poster>
+      <img src="/media/tactile-umi/audit-episode-000001-preview.png" alt="Read-only Rerun audit preview showing a 3D trajectory, wrist camera, dual tactile views, camera-position plots, and gripper-width trace" width="1400" height="900" loading="lazy" />
+      <div class="audit-replay__poster-shade"></div>
+      <div class="audit-replay__poster-label">
+        <span>Episode 000001 · Read-only replay</span>
+        <button type="button" data-audit-open aria-controls="audit-replay-viewer" aria-expanded="false">Explore trajectory <span aria-hidden="true">↗</span></button>
+      </div>
+    </div>
+    <iframe id="audit-replay-viewer" title="Interactive Tactile UMI audit replay of one trajectory" allow="fullscreen" loading="lazy" hidden data-audit-frame></iframe>
+  </div>
+
+  <div class="audit-replay__foot">
+    <p>
+      The archived audit ran relative-action checks with IK checks disabled. This replay demonstrates synchronized
+      records, not robot IK feasibility or task success.
+    </p>
+    <a href="/media/tactile-umi/viewer.html" target="_blank" rel="noreferrer">Open replay full screen ↗</a>
+  </div>
+</section>
+
+<script>
+  const openButton = document.querySelector<HTMLButtonElement>('[data-audit-open]');
+  openButton?.addEventListener('click', () => {
+    const root = openButton.closest<HTMLElement>('[data-audit-replay]');
+    const frame = root?.querySelector<HTMLIFrameElement>('[data-audit-frame]');
+    const poster = root?.querySelector<HTMLElement>('[data-audit-poster]');
+    if (!frame || !poster) return;
+    frame.src = '/media/tactile-umi/viewer.html';
+    frame.hidden = false;
+    poster.hidden = true;
+    openButton.setAttribute('aria-expanded', 'true');
+  }, { once: true });
+</script>
+
+<style>
+  .audit-replay { padding-block: var(--space-9) var(--space-10); }
+  .audit-replay__heading { display: grid; grid-template-columns: 4fr 8fr; gap: var(--page-gutter); padding-top: 1.25rem; border-top: 1px solid var(--line); }
+  .audit-replay__heading h3 { max-width: 13em; font-family: var(--font-serif); font-size: clamp(2.5rem, 4.6vw, 5.2rem); font-weight: 440; letter-spacing: -.045em; line-height: 1; }
+  .audit-replay__heading > div > p { max-width: 48rem; margin-top: 1.5rem; color: var(--muted); font-size: .83rem; line-height: 1.72; }
+  .audit-replay__frame { position: relative; min-height: 28rem; margin-top: 3rem; overflow: hidden; background: var(--night); }
+  .audit-replay__poster { position: relative; min-height: 28rem; aspect-ratio: 16 / 9; }
+  .audit-replay__poster[hidden], .audit-replay__frame iframe[hidden] { display: none; }
+  .audit-replay__poster img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+  .audit-replay__poster-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(8, 10, 8, .9), transparent 46%); pointer-events: none; }
+  .audit-replay__poster-label { position: absolute; inset: auto 0 0; display: flex; align-items: end; justify-content: space-between; gap: 1rem; padding: clamp(1.5rem, 3vw, 3rem); color: #f3f0e9; }
+  .audit-replay__poster-label > span { font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+  .audit-replay__poster-label button { min-height: 3.4rem; padding: .8rem 1.2rem; border: 1px solid rgba(255,255,255,.68); background: #f3f0e9; color: var(--night); cursor: pointer; font: inherit; font-size: .8rem; font-weight: 750; }
+  .audit-replay__poster-label button:hover, .audit-replay__poster-label button:focus-visible { background: #fff; }
+  .audit-replay__poster-label button span { margin-left: 1.2rem; }
+  .audit-replay__frame iframe { display: block; width: 100%; height: min(75vw, 760px); min-height: 34rem; border: 0; }
+  .audit-replay__foot { display: flex; justify-content: space-between; gap: 2rem; margin-top: 1rem; color: var(--muted); font-size: .72rem; line-height: 1.6; }
+  .audit-replay__foot p { max-width: 49rem; }
+  .audit-replay__foot a { flex: none; align-self: start; color: var(--ink); text-decoration: underline; text-underline-offset: .22em; }
+  @media (max-width: 1023px) { .audit-replay__heading { grid-template-columns: 1fr; gap: 2rem; } }
+  @media (max-width: 767px) {
+    .audit-replay__frame, .audit-replay__poster { min-height: 0; }
+    .audit-replay__poster { aspect-ratio: 4 / 5; }
+    .audit-replay__poster img { object-position: 40% top; }
+    .audit-replay__poster-label, .audit-replay__foot { flex-direction: column; align-items: start; }
+    .audit-replay__frame iframe { min-height: 35rem; height: 75vh; }
+  }
+</style>
