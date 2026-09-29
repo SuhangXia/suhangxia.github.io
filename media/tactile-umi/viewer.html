@@ -9,6 +9,7 @@
       html, body, #viewer { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #171917; }
       #status { position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; padding: 1rem; color: #f1efe8; font: 14px/1.6 system-ui, sans-serif; text-align: center; }
       #status[hidden] { display: none; }
+      #status a { color: #f1efe8; text-underline-offset: .25em; }
     </style>
   </head>
   <body>
@@ -16,15 +17,52 @@
     <div id="viewer"></div>
     <script type="module">
       const status = document.getElementById('status');
+      const viewerElement = document.getElementById('viewer');
+      let failureReported = false;
+
+      function reportFailure(reason) {
+        if (failureReported) return;
+        failureReported = true;
+        if (window.parent !== window) {
+          window.parent.postMessage({ source: 'tactile-umi-audit-viewer', state: 'failed', reason }, location.origin);
+        }
+      }
+
+      function containsStartFailure(root) {
+        if (root.textContent?.includes('Failed to start')) return true;
+        for (const element of root.querySelectorAll('*')) {
+          if (element.shadowRoot && containsStartFailure(element.shadowRoot)) return true;
+        }
+        return false;
+      }
+
       try {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('webgl2');
+        context?.getExtension('WEBGL_lose_context')?.loseContext();
+        const adapter = context ? true : await navigator.gpu?.requestAdapter();
+        if (!adapter) throw new Error('WebGL2 and WebGPU are unavailable in this browser.');
+
         // Match the Rerun Python SDK version used to export this .rrd recording.
         const { WebViewer } = await import('https://esm.sh/@rerun-io/web-viewer@0.31.4');
         const recording = new URL('./audit-episode-000001.rrd', location.href).href;
         const viewer = new WebViewer();
-        await viewer.start(recording, document.getElementById('viewer'), { width: '100%', height: '100%', theme: 'dark' });
+        await viewer.start(recording, viewerElement, { width: '100%', height: '100%', theme: 'dark' });
         status.hidden = true;
+        // Rerun can report a GPU-surface error inside its own UI after start() resolves.
+        setInterval(() => {
+          if (containsStartFailure(viewerElement)) reportFailure('load');
+        }, 2000);
       } catch (error) {
-        status.textContent = 'The interactive replay could not load. Please check your connection or try again later.';
+        const reason = /webgl|wgpu|gpu|surface/i.test(String(error)) ? 'gpu' : 'load';
+        status.textContent = reason === 'gpu'
+          ? 'This browser cannot render the 3D replay. '
+          : 'The interactive replay could not load. ';
+        const fallbackLink = document.createElement('a');
+        fallbackLink.href = '/research/tactile-umi/#audit-replay-title';
+        fallbackLink.textContent = 'Watch the video fallback on the project page ↗';
+        status.append(fallbackLink);
+        reportFailure(reason);
         console.error('Tactile UMI audit replay:', error);
       }
     </script>
