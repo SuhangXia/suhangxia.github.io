@@ -48,8 +48,6 @@ const fallbackVideo = publicVideos.find((video) => video.id === 'tactile-umi-aud
         <span>42 s · MP4 <span aria-hidden="true">↗</span></span>
       </summary>
       <div class="audit-replay__fallback-content">
-        <p class="audit-replay__unavailable" data-audit-gpu-unavailable hidden>This browser cannot start the 3D replay because GPU rendering is unavailable. The video is shown instead.</p>
-        <p class="audit-replay__unavailable" data-audit-load-unavailable hidden>The interactive replay could not start. The video is shown instead.</p>
         <video controls playsinline preload="none" width="1530" height="960" poster={fallbackVideo.poster} src={fallbackVideo.src} aria-label="Tactile UMI audit visualisation screen recording"></video>
         <p>This video shows a separate archived episode, not episode 000001 in the interactive replay. It is a viewing alternative for the trajectory and sensor panels, not a task-success or audit-quality result.</p>
         <a href={fallbackVideo.src} target="_blank" rel="noreferrer">Open MP4 directly ↗</a>
@@ -65,55 +63,20 @@ const fallbackVideo = publicVideos.find((video) => video.id === 'tactile-umi-aud
   const frame = replayRoot?.querySelector<HTMLIFrameElement>('[data-audit-frame]');
   const poster = replayRoot?.querySelector<HTMLElement>('[data-audit-poster]');
   const fallback = document.querySelector<HTMLDetailsElement>('[data-audit-fallback]');
-  const fullScreenLink = document.querySelector<HTMLAnchorElement>('[data-audit-fullscreen]');
 
-  function showVideoFallback(reason: 'gpu' | 'load' | 'manual') {
-    if (!replayRoot || !fallback) return;
-    if (frame) {
-      frame.hidden = true;
-      frame.removeAttribute('src');
-    }
-    if (poster) poster.hidden = true;
-    replayRoot.hidden = true;
+  videoButton?.addEventListener('click', () => {
+    if (!fallback) return;
     fallback.open = true;
-    if (fullScreenLink && reason !== 'manual') fullScreenLink.hidden = true;
-    fallback.querySelector<HTMLElement>('[data-audit-gpu-unavailable]')!.hidden = reason !== 'gpu';
-    fallback.querySelector<HTMLElement>('[data-audit-load-unavailable]')!.hidden = reason !== 'load';
-    fallback.querySelector<HTMLElement>('summary')?.focus({ preventScroll: true });
-  }
-
-  async function hasGpuBackend() {
-    try {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('webgl2');
-      context?.getExtension('WEBGL_lose_context')?.loseContext();
-      if (context) return true;
-      const gpu = (navigator as Navigator & { gpu?: { requestAdapter: () => Promise<unknown> } }).gpu;
-      return Boolean(await gpu?.requestAdapter());
-    } catch {
-      return false;
-    }
-  }
-
-  videoButton?.addEventListener('click', () => showVideoFallback('manual'));
-  openButton?.addEventListener('click', async () => {
+    fallback.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  openButton?.addEventListener('click', () => {
     if (!frame || !poster) return;
-    if (!(await hasGpuBackend())) {
-      showVideoFallback('gpu');
-      return;
-    }
+    frame.loading = 'eager';
     frame.src = '/media/tactile-umi/viewer.html';
     frame.hidden = false;
     poster.hidden = true;
     openButton.setAttribute('aria-expanded', 'true');
   }, { once: true });
-
-  window.addEventListener('message', (event) => {
-    if (event.origin !== location.origin || event.source !== frame?.contentWindow) return;
-    if (event.data?.source === 'tactile-umi-audit-viewer' && event.data?.state === 'failed') {
-      showVideoFallback(event.data.reason === 'gpu' ? 'gpu' : 'load');
-    }
-  });
 </script>
 
 <style>
@@ -139,7 +102,6 @@ const fallbackVideo = publicVideos.find((video) => video.id === 'tactile-umi-aud
   .audit-replay__foot { display: flex; justify-content: space-between; gap: 2rem; margin-top: 1rem; color: var(--muted); font-size: .72rem; line-height: 1.6; }
   .audit-replay__foot p { max-width: 49rem; }
   .audit-replay__foot a { flex: none; align-self: start; color: var(--ink); text-decoration: underline; text-underline-offset: .22em; }
-  .audit-replay__foot a[hidden] { display: none; }
   .audit-replay__fallback { margin-top: clamp(2rem, 4vw, 4rem); border-block: 1px solid var(--line); }
   .audit-replay__fallback summary { display: grid; grid-template-columns: 1fr 2fr auto; align-items: center; gap: 1.5rem; padding: 1.3rem 0; cursor: pointer; list-style: none; }
   .audit-replay__fallback summary::-webkit-details-marker { display: none; }
@@ -152,8 +114,6 @@ const fallbackVideo = publicVideos.find((video) => video.id === 'tactile-umi-aud
   .audit-replay__fallback-content { padding-bottom: 2rem; }
   .audit-replay__fallback video { display: block; width: 100%; height: auto; background: var(--night); }
   .audit-replay__fallback-content p { max-width: 55rem; margin-top: 1rem; color: var(--muted); font-size: .76rem; line-height: 1.7; }
-  .audit-replay__fallback-content .audit-replay__unavailable { max-width: none; margin: 0 0 1rem; padding: .8rem 1rem; background: #e9e6dd; color: var(--ink); }
-  .audit-replay__unavailable[hidden] { display: none; }
   .audit-replay__fallback-content a { display: inline-block; margin-top: 1rem; color: var(--ink); font-size: .75rem; text-decoration: underline; text-underline-offset: .22em; }
   @media (max-width: 1023px) { .audit-replay__heading { grid-template-columns: 1fr; gap: 2rem; } }
   @media (max-width: 767px) {

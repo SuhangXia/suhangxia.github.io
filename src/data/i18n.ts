@@ -427,8 +427,6 @@ export const zhTranslations: Record<string, string> = {
   'Video fallback': '视频备选',
   'Watch the archived screen recording': '观看存档录屏',
   '42 s · MP4': '42 秒 · MP4',
-  'This browser cannot start the 3D replay because GPU rendering is unavailable. The video is shown instead.': '当前浏览器无法使用 GPU 渲染三维回放；已改为显示视频。',
-  'The interactive replay could not start. The video is shown instead.': '交互回放未能启动；已改为显示视频。',
   'Tactile UMI audit visualisation screen recording': 'Tactile UMI 审查可视化录屏',
   'This video shows a separate archived episode, not episode 000001 in the interactive replay. It is a viewing alternative for the trajectory and sensor panels, not a task-success or audit-quality result.': '这段录屏展示的是另一条存档片段，并非交互回放中的第 000001 条示教。它只是轨迹与传感器画面的观看备选，不代表任务成功或审查质量结论。',
   'Open MP4 directly ↗': '直接打开 MP4 ↗',
