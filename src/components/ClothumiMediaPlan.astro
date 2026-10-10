@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import workflow from '../assets/media/tactile-umi/workflow.svg';
-import algorithm from '../assets/media/tactile-umi/algorithm.svg';
+import uniforceArchitecture from '../assets/media/tactile-umi/uniforce-architecture-original.png';
 import collectionGuiOriginal from '../assets/media/tactile-umi/collection-gui-original.png';
 import gripperCalibration from '../assets/media/tactile-umi/gripper-calibration.png';
 import tactileLatency from '../assets/media/tactile-umi/tactile-latency.png';
@@ -73,16 +73,16 @@ const calibrationMetrics = [
 
   <figure class="architecture-figure architecture-figure--algorithm">
     <div class="architecture-figure__bar">
-      <span>02 / Learning architecture</span>
-      <a href={algorithm.src} target="_blank" rel="noreferrer">Open full resolution ↗</a>
+      <span>02 / UniForce tactile architecture</span>
+      <a href={uniforceArchitecture.src} target="_blank" rel="noreferrer">Open full resolution ↗</a>
     </div>
-    <a class="architecture-figure__image" href={algorithm.src} target="_blank" rel="noreferrer" aria-label="Open the Tactile UMI learning architecture at full resolution">
-      <img src={algorithm.src} alt="Tactile UMI algorithm architecture showing temporal UniForce pretraining and real-sensor adaptation followed by frozen tactile conditioning for Diffusion Policy" loading="lazy" />
+    <a class="architecture-figure__image" href={uniforceArchitecture.src} target="_blank" rel="noreferrer" aria-label="Open the original UniForce architecture at full resolution">
+      <Image src={uniforceArchitecture} alt="Original UniForce architecture: causal spatiotemporal encoder, unified latent forces, equilibrium and KL losses, and self- and cross-sensor reconstruction" widths={[960, 1600, 2400, 4477]} sizes="(max-width: 767px) 100vw, 90vw" format="avif" quality={90} loading="lazy" />
     </a>
     <figcaption>
-      UniForce is pretrained on loading-only simulation, adapted with paired physical-sensor sequences, then
-      frozen during policy training. Six-frame histories from both tactile sensors become contact tokens beside
-      wrist RGB and robot state; the policy predicts an eight-step, camera-relative 7D action chunk.
+      <p><a href="https://arxiv.org/html/2602.01153v1#S3.F2" target="_blank" rel="noreferrer">Source: UniForce, Fig. 2 (Chen et al., 2026) ↗</a></p>
+      <p>The original UniForce architecture learns a shared latent force representation through a causal spatiotemporal encoder, force-equilibrium and KL losses, and self- and cross-sensor reconstruction.</p>
+      <p>In Tactile UMI, the adapted encoder is frozen: six-frame histories from each fingertip produce contact tokens that condition Diffusion Policy alongside wrist RGB and robot state. The policy predicts an eight-step, camera-relative 7D action chunk.</p>
     </figcaption>
   </figure>
 
@@ -203,11 +203,13 @@ const calibrationMetrics = [
   .architecture-figure__bar a { transition: color 180ms ease; }
   .architecture-figure__bar a:hover { color: var(--accent); }
   .architecture-figure__image { display: block; padding: clamp(.75rem, 2.2vw, 2rem); overflow: hidden; }
-  .architecture-figure__image img { display: block; width: 100%; transition: transform 700ms cubic-bezier(.2,.7,.2,1); }
+  .architecture-figure__image img { display: block; width: 100%; height: auto; transition: transform 700ms cubic-bezier(.2,.7,.2,1); }
   .architecture-figure__image:hover img { transform: scale(1.012); }
   .architecture-figure figcaption { padding: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .72rem; line-height: 1.65; }
   .architecture-figure--algorithm { margin-top: clamp(5rem, 9vw, 9rem); background: #efeee8; }
   .architecture-figure--algorithm figcaption { max-width: none; color: var(--ink-soft); }
+  .architecture-figure--algorithm .architecture-figure__image { background: #fff; }
+  .architecture-figure--algorithm figcaption p + p { margin-top: .65rem; }
   .tactile-training { margin-top: clamp(5rem, 9vw, 9rem); padding-top: 1.25rem; border-top: 1px solid var(--line); }
   .tactile-training__heading { display: grid; grid-template-columns: 4fr 8fr; column-gap: var(--page-gutter); }
   .tactile-training__heading .eyebrow { grid-row: 1 / 3; }
