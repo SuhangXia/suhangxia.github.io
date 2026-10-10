@@ -100,8 +100,8 @@ export const projects: Project[] = [
   {
     slug: 'touch-until-certain',
     index: '01',
-    title: 'VTLA for Cloth Sorting',
-    shortTitle: 'VTLA for Cloth Sorting',
+    title: 'TouchUntilCertain with the Fabric-Omni Dataset',
+    shortTitle: 'TouchUntilCertain with the Fabric-Omni Dataset',
     field: 'MSc thesis · Reliability-guided active tactile perception',
     question: 'When is a second touch worth its sensing cost for estimating fabric thickness and areal mass?',
     description:

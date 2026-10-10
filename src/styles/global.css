@@ -823,6 +823,12 @@ button {
   line-height: 0.9;
 }
 
+.project-feature--touch-until-certain .project-feature__header h3 {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 .project-feature__title-link {
   display: inline;
   color: inherit;
@@ -1511,6 +1517,7 @@ html[data-locale='zh'] .project-feature__title-link {
   font-weight: 440;
   letter-spacing: -0.045em;
   line-height: 0.94;
+  overflow-wrap: anywhere;
 }
 
 .research-directory__item > div > span {
@@ -3594,6 +3601,10 @@ html[data-locale='zh'] .project-feature__title-link {
   .project-feature__header h3 {
     margin-top: 2.5rem;
     font-size: clamp(3rem, 14.5vw, 5.25rem);
+  }
+
+  .project-feature--touch-until-certain .project-feature__header h3 {
+    font-size: clamp(1.8rem, 9.2vw, 4rem);
   }
 
   .project-feature__title-row {

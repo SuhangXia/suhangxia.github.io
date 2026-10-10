@@ -63,7 +63,7 @@ const cosVideoRecords: readonly VideoRecord[] = [
   },
   {
     "id": "fabric-omni-demo",
-    "title": "VTLA for Cloth Sorting — qualitative robot integration",
+    "title": "TouchUntilCertain — qualitative robot integration",
     "project": "touch-until-certain",
     "description": "A qualitative record of force-aligned fabric sensing and the guarded scripted robot workflow; it is not a robot success-rate or learned-policy evaluation.",
     "src": "https://suhangxia-media-1255615484.cos.ap-hongkong.myqcloud.com/public/videos/demos/fabric-omni-demo.mp4",
