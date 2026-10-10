@@ -32,7 +32,7 @@ const stages = [
 const calibrationMetrics = [
   { value: '40', label: 'Quest–camera pose pairs', note: 'PARK hand–eye solution; no pair rejected' },
   { value: '1.67 / 3.09 / 1.91 mm', label: 'Fixed-board translation spread', note: 'Axis-wise consistency check, not external ground truth' },
-  { value: '−56.738 / +25 ms', label: 'Measured stream offsets', note: 'Quest to RGB / right tactile to RGB' },
+  { value: '56.738 ms', label: 'Main-camera lag behind Quest', note: 'Left/right tactile offsets relative to RGB: 0 / +25 ms' },
   { value: '8.7–63.0 mm', label: 'Calibrated gripper range', note: 'Five-point lookup table used at runtime' },
 ] as const;
 ---
@@ -152,6 +152,26 @@ const calibrationMetrics = [
         </div>
       ))}
     </dl>
+    <div class="tactile-calibration__method" id="hand-eye-calibration">
+      <div>
+        <p class="eyebrow">Hand–eye calibration</p>
+        <h4>Two calibrated chains connect demonstration and execution.</h4>
+      </div>
+      <div>
+        <p>I calibrated the rigid UMI–Quest camera transform with 40 synchronized pose/image pairs and the PARK hand–eye solver. Reconstructing the stationary calibration board across these poses checks the transform and its direction; multiplying the Quest pose by this transform gives the demonstration camera trajectory.</p>
+        <p>The FR3 wrist camera has a separate eye-in-hand calibration. Together with the camera–TCP and flange–TCP transforms, it connects camera-relative policy actions to the robot and Robotiq tool frames.</p>
+      </div>
+    </div>
+    <div class="tactile-calibration__method" id="gripper-width-mapping">
+      <div>
+        <p class="eyebrow">UMI opening ↔ Robotiq gripper</p>
+        <h4>Map physical contact gaps from hand-held tool to robot.</h4>
+      </div>
+      <div>
+        <p>ArUco IDs 2 and 3 track the UMI opening in the main-camera image. Caliper measurements at 8.7, 20, 30, 40 and 63 mm establish five calibration points. Piecewise-linear LUT interpolation maps marker pixel distance to the true gap between the silicone contact surfaces; this measured gap becomes the gripper action label.</p>
+        <p>On the robot, the Robotiq adapter maps the predicted physical gap through a separate width-calibration LUT to the driver position command, with unit conversion and travel limits. The two calibrations connect UMI opening → physical gap → Robotiq command. The image-based mapping requires the calibrated camera mounting, resolution and zoom to remain fixed.</p>
+      </div>
+    </div>
     <div class="tactile-calibration__method">
       <div>
         <p class="eyebrow">Quest ↔ main camera · Motion-based latency</p>
@@ -161,6 +181,26 @@ const calibrationMetrics = [
         <p>With the camera and Quest rigidly mounted on the UMI, the device moves in view of a stationary ArUco marker. The main camera estimates the marker’s position from video and calibrated intrinsics; the Quest records the corresponding controller trajectory, transformed into the camera frame by the measured hand–eye transform.</p>
         <p>Following the one-axis trajectory alignment in <a href="https://proceedings.mlr.press/v305/xu25e.html" target="_blank" rel="noreferrer">exUMI ↗</a>, the calibration compares normalized motion along a matching axis, selecting the Quest-axis sign for the opposite apparent marker motion. This implementation uses smoothed velocity by default and searches for the scalar time offset that minimizes the overlapping signals’ mean-squared error.</p>
         <p>The accepted run estimated <strong>−56.738 ms</strong> in the convention “sample Quest at camera time + offset”: the main camera trails Quest by about <strong>56.7 ms</strong>. To align the recorded streams, Quest timestamps are shifted 56.738 ms later. This is a measured setup value, not a universal hardware latency.</p>
+      </div>
+    </div>
+    <div class="tactile-calibration__method" id="latency-compensation">
+      <div>
+        <p class="eyebrow">Tactile timing · Action lookahead</p>
+        <h4>Align sensor histories and select a future action.</h4>
+      </div>
+      <div>
+        <p>Relative to the main RGB camera, the left custom GelSight offset is 0 ms and the right GelSight Mini lags by 25 ms. A shared pseudorandom visual flicker and cross-correlation identify the camera delay. These offsets and the Quest–camera offset are applied to the recorded timestamps before resampling to the RGB timeline.</p>
+        <p>For inference-to-execution compensation, I compared action-chunk indices in robot trials and selected the second predicted action (zero-based index 1). This empirically chosen lookahead advances the target to account for processing and execution delay; it is separate from the measured sensor offsets.</p>
+      </div>
+    </div>
+    <div class="tactile-calibration__method" id="impedance-execution">
+      <div>
+        <p class="eyebrow">Polymetis · Impedance execution</p>
+        <h4>Policy targets run through compliant robot control.</h4>
+      </div>
+      <div>
+        <p>The execution platform is a Franka FR3 with a Robotiq gripper. Diffusion Policy updates motion targets through a custom TCP bridge while Polymetis runs the underlying impedance controller throughout execution. The bridge transforms camera-relative actions into robot targets and applies the calibrated Robotiq width mapping.</p>
+        <p><a href="https://droid-dataset.github.io/droid/docs/software-setup" target="_blank" rel="noreferrer">DROID also uses Polymetis for robot control ↗</a></p>
       </div>
     </div>
     <div class="tactile-calibration__visuals">
