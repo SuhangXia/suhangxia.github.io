@@ -1,0 +1,373 @@
+---
+import board from '../assets/media/tactile-umi/engineering/board-consistency.svg';
+import boardMobile from '../assets/media/tactile-umi/engineering/board-consistency-mobile.svg';
+import before from '../assets/media/tactile-umi/engineering/latency-before.svg';
+import beforeMobile from '../assets/media/tactile-umi/engineering/latency-before-mobile.svg';
+import after from '../assets/media/tactile-umi/engineering/latency-after.svg';
+import afterMobile from '../assets/media/tactile-umi/engineering/latency-after-mobile.svg';
+import gripper from '../assets/media/tactile-umi/engineering/gripper-lut.svg';
+import gripperMobile from '../assets/media/tactile-umi/engineering/gripper-lut-mobile.svg';
+import reuse from '../assets/media/tactile-umi/engineering/source-reuse.svg';
+import reuseMobile from '../assets/media/tactile-umi/engineering/source-reuse-mobile.svg';
+import tactileDelay from '../assets/media/tactile-umi/tactile-latency.png';
+import evidence from '../../public/data/tactile-umi-engineering.json';
+import { timingExample, selectTimingSample } from '../data/tactile-timing';
+
+const { summary, calibration } = evidence;
+const chinese = Astro.url.pathname.startsWith('/zh/');
+const spread = calibration.std_xyz_mm.map((v) => v.toFixed(2)).join(' / ');
+const heldMedian = calibration.held_out.distance_to_training_board_center_mm.median.toFixed(2);
+const leftReuse = (100 * summary.streams.left.source_reuse_fraction).toFixed(1);
+const rightReuse = (100 * summary.streams.right.source_reuse_fraction).toFixed(1);
+const maxAges = `${summary.windows.left.latest_age_ms.max.toFixed(1)} / ${summary.windows.right.latest_age_ms.max.toFixed(1)}`;
+const boardDetails = chinese
+  ? `使用保存的 PARK 解重建全部 40 组位姿／标定板观测，各轴总体标准差为 ${spread} mm。新增一致性检查以 32 组姿态拟合，每第五组留出，共 8 组；留出组重建板位置到训练组板位置中位数的距离中位数为 ${heldMedian} mm。这些均为内部一致性检查。`
+  : `All 40 recorded pose/board observations were reconstructed using the stored PARK solution. Axis-wise population SD is ${spread} mm. A new deterministic consistency check fits 32 poses and holds out every fifth pose; the eight held-out board positions have a median ${heldMedian} mm distance from the training-board median. These are internal consistency checks.`;
+const datasetDetails = chinese
+  ? `只读分析覆盖 ${summary.raw_episode_count} 条原始记录，以及现有导出中的 ${summary.episode_count} 条轨迹、${summary.policy_steps.toLocaleString('en-US')} 个策略时间步。原始主机时间戳无相邻重复或倒退；导出触觉窗口无跨轨迹索引，也没有时间晚于策略参考时刻的条目。这检查的是映射时间索引；读取／接收时间没有记录全部预处理的完成或策略决策截止时刻。`
+  : `The read-only analysis covers ${summary.raw_episode_count} raw episodes and the existing export of ${summary.episode_count} episodes / ${summary.policy_steps.toLocaleString('en-US')} policy steps. Raw host timestamps have no adjacent duplicates or backwards steps. Exported tactile windows have no out-of-episode indices or timestamps after their policy reference. This checks mapped-time indexing; read/receive timestamps do not log the completion of all preprocessing or a policy decision deadline.`;
+const windowDetails = chinese
+  ? `六帧窗口来自对齐后的触觉记录。源帧复用率左侧为 ${leftReuse}%，右侧为 ${rightReuse}%；最新帧相对参考时刻的最大映射时间年龄分别为 ${maxAges} ms。轨迹起始处的补齐保留有效性标记；原始导出与历史实验结果保持不变。`
+  : `Six-frame windows are drawn from aligned tactile records. Source reuse is ${leftReuse}% on the left and ${rightReuse}% on the right. Maximum latest-frame mapped ages are ${maxAges} ms. Episode-start padding retains validity masks. The original export and historical experiment results are unchanged.`;
+const versions = [
+  { name: 'available', label: 'Available at decision time', available: true },
+  { name: 'nearest', label: 'Offline nearest', available: false },
+];
+const formats = [{ name: 'wide', width: 740, left: 110 }, { name: 'compact', width: 400, left: 18 }];
+---
+
+<section class="tactile-engineering" id="calibration-temporal-alignment" aria-labelledby="tactile-calibration-title">
+  <header class="engineering-heading">
+    <p class="eyebrow">Geometry · Clocks · Policy inputs</p>
+    <div>
+      <h3 id="tactile-calibration-title">Calibration &amp; Temporal Alignment</h3>
+      <p>From a hand-held demonstration to robot execution, geometry and timing define what each observation means.</p>
+    </div>
+  </header>
+
+  <article class="engineering-row" id="hand-eye-calibration">
+    <div class="engineering-visual" data-engineering-switch>
+      <div class="engineering-tabs" role="tablist" aria-label="Spatial calibration views">
+        <button type="button" role="tab" id="spatial-tab-chain" aria-controls="spatial-chain" aria-selected="true">Coordinate chains</button>
+        <button type="button" role="tab" id="spatial-tab-validation" aria-controls="spatial-validation" aria-selected="false" tabindex="-1">Validation</button>
+        <button type="button" role="tab" id="spatial-tab-gripper" aria-controls="gripper-width-mapping" aria-selected="false" tabindex="-1">Gripper LUT</button>
+      </div>
+      <div class="engineering-panel chain-panel" id="spatial-chain" role="tabpanel" aria-labelledby="spatial-tab-chain">
+        <div class="coordinate-lane">
+          <p class="chain-label">DEMONSTRATION</p>
+          <div class="coordinate-chain">
+            <div class="coordinate-node"><b>W<sub>u</sub></b><span>Quest world</span></div>
+            <div class="coordinate-link"><span>←</span><small>tracked</small></div>
+            <div class="coordinate-node"><b>Q</b><span>Controller</span></div>
+            <div class="coordinate-link"><span>←</span><small>PARK</small></div>
+            <div class="coordinate-node"><b>C<sub>u</sub></b><span>Wrist camera</span></div>
+            <div class="coordinate-link"><span>←</span><small>tool geometry</small></div>
+            <div class="coordinate-node"><b>T<sub>u</sub></b><span>Demo TCP</span></div>
+          </div>
+        </div>
+        <div class="chain-divider"><span>Camera-relative action</span><span>Independent world frames</span></div>
+        <div class="coordinate-lane">
+          <p class="chain-label">EXECUTION</p>
+          <div class="coordinate-chain coordinate-chain--robot">
+            <div class="coordinate-node"><b>B</b><span>Franka base</span></div>
+            <div class="coordinate-link"><span>←</span><small>kinematics</small></div>
+            <div class="coordinate-node"><b>F</b><span>Flange</span></div>
+            <div class="coordinate-link"><span>←</span><small>calibrated</small></div>
+            <div class="coordinate-branches">
+              <div class="coordinate-node"><b>C<sub>r</sub></b><span>Robot camera</span></div>
+              <div class="coordinate-node"><b>T<sub>r</sub></b><span>Robot TCP</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="chain-key">Arrows map child-frame coordinates into the parent frame.</p>
+      </div>
+      <figure class="engineering-panel" id="spatial-validation" role="tabpanel" aria-labelledby="spatial-tab-validation" hidden>
+        <picture><source media="(max-width: 767px)" srcset={boardMobile.src} width="425" height="375" /><img src={board.src} width="750" height="375" loading="lazy" alt="All forty fixed-board reconstructions, centered on the median, with x y z standard deviations of 1.67, 3.09 and 1.91 millimetres" /></picture>
+        <figcaption>All 40 poses; axis-wise fixed-board spread, not absolute positioning accuracy.</figcaption>
+      </figure>
+      <figure class="engineering-panel" id="gripper-width-mapping" role="tabpanel" aria-labelledby="spatial-tab-gripper" hidden>
+        <picture><source media="(max-width: 767px)" srcset={gripperMobile.src} width="425" height="375" /><img src={gripper.src} width="750" height="375" loading="lazy" alt="Five measured gripper gaps from 8.7 to 63 millimetres connected by the runtime piecewise-linear lookup table" /></picture>
+        <figcaption>UMI marker separation → physical contact gap → separate Robotiq driver mapping.</figcaption>
+      </figure>
+    </div>
+    <div class="engineering-copy">
+      <p class="engineering-index">A / Spatial calibration &amp; reuse</p>
+      <h4>Calibrate the hardware.<br />Reuse the relationship.</h4>
+      <p>I calibrated camera intrinsics, Quest–camera hand–eye geometry, robot-side camera/tool relations, and gripper width. PARK reconstruction across 40 poses checks fixed-board consistency. Hardware updates between tasks triggered recalibration; the unchanged insertion setup reused its calibration across both collection days.</p>
+      <ol class="calibration-reuse" aria-label="Calibration reuse timeline">
+        <li>Hardware update</li><li>Recalibration</li><li><strong>0619 / 0623</strong><span>Shared calibration</span></li>
+      </ol>
+    </div>
+  </article>
+
+  <article class="engineering-row engineering-row--reverse" id="quest-camera-latency">
+    <div class="engineering-visual" data-engineering-switch>
+      <div class="engineering-tabs" role="tablist" aria-label="Latency calibration views">
+        <button type="button" role="tab" id="latency-tab-before" aria-controls="latency-before" aria-selected="false" tabindex="-1">Before alignment</button>
+        <button type="button" role="tab" id="latency-tab-after" aria-controls="latency-after" aria-selected="true">After alignment</button>
+        <button type="button" role="tab" id="latency-tab-tactile" aria-controls="latency-tactile" aria-selected="false" tabindex="-1">Tactile timing</button>
+      </div>
+      {[{ id: 'before', image: before, mobile: beforeMobile }, { id: 'after', image: after, mobile: afterMobile }].map((view) => (
+        <figure class="engineering-panel" id={`latency-${view.id}`} role="tabpanel" aria-labelledby={`latency-tab-${view.id}`} hidden={view.id !== 'after'}>
+          <picture><source media="(max-width: 767px)" srcset={view.mobile.src} width="425" height="415" /><img src={view.image.src} width="750" height="415" loading="lazy" alt={`${view.id === 'after' ? 'After' : 'Before'} time alignment: recorded camera and Quest motion, with a three-second detail and the full recording below, using identical axes`} /></picture>
+        </figure>
+      ))}
+      <figure class="engineering-panel tactile-delay-panel" id="latency-tactile" role="tabpanel" aria-labelledby="latency-tab-tactile" hidden>
+        <a href={tactileDelay.src} target="_blank" rel="noreferrer"><img src={tactileDelay.src} width="1760" height="1440" loading="lazy" alt="Original flicker signals and cross-correlation curve used for the 25 millisecond tactile-camera offset" /></a>
+      </figure>
+      <p class="engineering-caption">Recorded motion, identical scales. Quest timestamps shift +56.738 ms; this is the estimated offset. Full recording shown below the detail.</p>
+    </div>
+    <div class="engineering-copy">
+      <p class="engineering-index">B / exUMI-inspired latency calibration</p>
+      <h4>One motion.<br />Two sensor clocks.</h4>
+      <p>Rigidly mounted Quest and RGB observe the same sweep above a fixed ArUco marker. I match the single-axis sign, interpolate the trajectories, and search a time offset using smoothed-velocity MSE. The main camera trails Quest by approximately 56.7 ms. Tactile offsets of 0 / 25 ms are calibrated separately with shared flicker.</p>
+      <p class="method-credit">Quest–camera latency calibration adapted from <a href="https://proceedings.mlr.press/v305/xu25e.html" target="_blank" rel="noreferrer">exUMI (Xu et al., CoRL 2025) ↗</a>.</p>
+    </div>
+  </article>
+
+  <article class="engineering-row" id="latency-compensation">
+    <div class="engineering-visual" data-engineering-switch>
+      <div class="engineering-tabs" role="tablist" aria-label="Observation timing views">
+        <button type="button" role="tab" id="timing-tab-nearest" aria-controls="timing-nearest" aria-selected="false" tabindex="-1">Offline nearest</button>
+        <button type="button" role="tab" id="timing-tab-available" aria-controls="timing-available" aria-selected="true">Available at decision time</button>
+        <button type="button" role="tab" id="timing-tab-data" aria-controls="timing-data" aria-selected="false" tabindex="-1">Dataset timing</button>
+      </div>
+      {versions.map((version) => (
+        <figure class="engineering-panel timing-panel" id={`timing-${version.name}`} role="tabpanel" aria-labelledby={`timing-tab-${version.name}`} hidden={version.name !== 'available'}>
+          {formats.map((format) => {
+            const x = (value: number) => format.left + (value + 160) / 300 * (format.width - format.left - 18);
+            return (
+              <svg class={`timing-svg timing-svg--${format.name}`} viewBox={`0 0 ${format.width} 390`} role="img" aria-label={version.available ? 'Availability-constrained example: the late right-tactile sample is replaced by the closest sample already available at the decision deadline' : 'Offline-nearest example: the selected right-tactile sample arrives fifteen milliseconds after the decision deadline'}>
+                <rect x={x(80)} y="35" width={format.width - x(80) - 8} height="312" fill="#edece5" />
+                <line x1={x(0)} x2={x(0)} y1="32" y2="347" stroke="#8e9389" stroke-dasharray="3 4" />
+                <line x1={x(80)} x2={x(80)} y1="32" y2="347" stroke="#b54b32" stroke-width="1.5" />
+                <text x={x(0)-7} y="23" text-anchor="end" class="timing-reference">t_ref = 0</text>
+                <text x={x(80)+5} y="23" class="timing-reference">t_decision</text>
+                {timingExample.streams.map((stream, i) => {
+                  const y = 83 + i * 78;
+                  const selected = selectTimingSample(stream.observations, stream.delay, timingExample.reference, timingExample.decision, timingExample.tolerance, version.available);
+                  return (
+                    <g>
+                      <text x={format.name === 'wide' ? 4 : format.left} y={format.name === 'wide' ? y + 4 : y - 22} class="timing-stream">{stream.name}</text>
+                      <text x={format.width - 19} y={y - 22} text-anchor="end" class="timing-delay">+{stream.delay} ms</text>
+                      <line x1={format.left} x2={format.width - 15} y1={y} y2={y} stroke="#d8dcd3" />
+                      {stream.observations.map((time) => {
+                        const chosen = time === selected;
+                        const late = time + stream.delay > timingExample.decision;
+                        const color = chosen ? (late ? '#b54b32' : '#476b5a') : '#a8afa4';
+                        return (
+                          <g data-chosen={chosen || undefined} data-late={late || undefined}>
+                            <line x1={x(time)} x2={x(time + stream.delay)} y1={y} y2={y} stroke={color} stroke-width={chosen ? 2.5 : 1} stroke-opacity={chosen ? 1 : .45} />
+                            <circle cx={x(time)} cy={y} r={chosen ? 6 : 3.5} fill={chosen ? color : 'white'} stroke={color} stroke-width="1.5" />
+                            <rect x={x(time + stream.delay)-3.5} y={y-3.5} width="7" height="7" fill={color} />
+                            {chosen && <circle cx={x(time)} cy={y} r="10" fill="none" stroke={color} stroke-width="1" />}
+                          </g>
+                        );
+                      })}
+                    </g>
+                  );
+                })}
+                {[-120, -60, 0, 80, 140].map((time) => <text x={x(time)} y="364" text-anchor="middle" class="timing-tick">{time}</text>)}
+                <text x={format.width / 2} y="385" text-anchor="middle" class="timing-tick">Time relative to observation reference (ms)</text>
+              </svg>
+            );
+          })}
+          <div class="timing-legend"><span>○ Observation time</span><span>■ Available time</span><span>◎ Selected</span></div>
+          <figcaption class:list={['timing-outcome', version.available ? 'timing-outcome--available' : 'timing-outcome--late']}>
+            {version.available ? 'Right tactile: use the closest available observation (−45 ms), not the newest arrival.' : 'Right tactile: nearest observation (+5 ms) becomes available at +95 ms, after the +80 ms deadline.'}
+          </figcaption>
+        </figure>
+      ))}
+      <figure class="engineering-panel" id="timing-data" role="tabpanel" aria-labelledby="timing-tab-data" hidden>
+        <picture><source media="(max-width: 767px)" srcset={reuseMobile.src} width="425" height="375" /><img src={reuse.src} width="750" height="375" loading="lazy" alt="Measured source-reference reuse after alignment: RGB zero percent, Quest approximately zero, left tactile 15.9 percent and right tactile 38.2 percent" /></picture>
+        <figcaption>222 episodes. Lower-rate streams reuse source frames; six history records need not be six distinct images.</figcaption>
+      </figure>
+      <p class="engineering-caption">Illustrative timing example; latency assumptions shown. Reference: 0 ms. Decision: +80 ms. Matching tolerance: ±60 ms.</p>
+    </div>
+    <div class="engineering-copy">
+      <p class="engineering-index">C / Causal observation windows</p>
+      <h4>Aligned in time.<br />Available to the policy.</h4>
+      <p>Raw H5 preserves separate sensor records; alignment produces the training timeline. DP reads historical RGB/state and six tactile records per finger. Mapped-time ordering and decision-time availability are different checks: switch views to see a nearby frame arrive too late. Dataset timing shows measured source-frame reuse in the exported corpus.</p>
+      <p class="engineering-note">In robot trials, I selected action-chunk index 1 as an empirical lookahead.</p>
+    </div>
+  </article>
+
+  <details class="engineering-methods" id="engineering-methods">
+    <summary><span>Methods &amp; data details</span><span aria-hidden="true">+</span></summary>
+    <div class="engineering-methods__content">
+      <div>
+        <h4>Geometry and reuse</h4>
+        <p>With parent–child notation, A_T_B maps B-frame coordinates into A. The demonstration chain is W_T_C = W_T_Q · Q_T_C; camera and TCP poses remain distinct. Robot execution uses B_T_F, F_T_C and F_T_TCP. Quest/Unity axis conversion is a separate change of basis, not a hand–eye extrinsic.</p>
+        <p>{boardDetails}</p>
+        <p>The two collection days share the calibrated setup, as confirmed by the experimenter. The 0619 aligned files embed the matrix; 0623 uses the common Zarr export configuration. Serialized matrices agree within 10⁻⁷. The five-point UMI LUT maps pixel separation to physical gap; a separate Robotiq LUT maps that gap to driver position.</p>
+      </div>
+      <div>
+        <h4>Latency measurement</h4>
+        <p>The accepted calibration contains 437 ArUco detections and 1,814 Quest samples. The local implementation sign-adjusts the selected axis, interpolates Quest at camera time + δ, smooths with a one-sample Gaussian, derives velocity and minimizes normalized MSE. The recorded optimum is δ = −56.738 ms; timestamps are mapped as arrival − configured latency.</p>
+        <p>Before/after plots use the same recorded samples, axis limits and normalization. The full recording remains visible below a labelled detail. Tactile-camera flicker correlation is a separate calibration; offsets follow the recorded session/slot metadata. <a href="https://arxiv.org/html/2509.14688v1#A1.SS2" target="_blank" rel="noreferrer">exUMI §3.2 and Appendix A.2 ↗</a></p>
+      </div>
+      <div>
+        <h4>Dataset timing checks</h4>
+        <p>{datasetDetails}</p>
+        <p>{windowDetails}</p>
+        <p>The illustrative selector chooses the closest observation within ±60 ms of t_ref, subject to its assumed available time ≤ t_decision. States received after t_ref but before the decision can support an appropriate interpolation; taking each stream’s newest frame alone does not establish synchronization.</p>
+      </div>
+      <div id="impedance-execution">
+        <h4>Action labels and execution</h4>
+        <p>The export stores absolute future camera targets with action_target_offset_steps = 1. The dataset converts these into relative SE(3) actions; future targets are supervision, not observation inputs. The empirically selected action-chunk index 1 is separate from that label offset and is not a measured end-to-end delay. A TCP bridge maps camera-relative targets to Franka FR3 and Robotiq commands while Polymetis runs impedance control.</p>
+        <a class="engineering-data-link" href="/data/tactile-umi-engineering.json">Download compact analysis data ↗</a>
+        <a class="engineering-data-link" href="https://github.com/SuhangXia/suhangxia.github.io/blob/master/docs/tactile-umi-engineering-evidence.md" target="_blank" rel="noreferrer">Analysis methods &amp; reproduction ↗</a>
+      </div>
+    </div>
+  </details>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-engineering-switch]').forEach((group) => {
+    const tabs = Array.from(group.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const activate = (tab: HTMLButtonElement) => {
+      for (const button of tabs) {
+        const chosen = button === tab;
+        button.setAttribute('aria-selected', String(chosen));
+        button.tabIndex = chosen ? 0 : -1;
+        const panel = document.getElementById(button.getAttribute('aria-controls') ?? '');
+        if (panel) panel.hidden = !chosen;
+      }
+    };
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activate(tab));
+      tab.addEventListener('keydown', (event) => {
+        let next = index;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        const nextTab = tabs[next];
+        if (nextTab) {
+          activate(nextTab);
+          nextTab.focus();
+        }
+      });
+    });
+    group.dataset.ready = 'true';
+    const revealAnchor = () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      const target = id ? document.getElementById(id) : null;
+      if (!target) return;
+      const parentPanel = target.closest<HTMLElement>('[role="tabpanel"]');
+      const tab = tabs.find((t) => t.getAttribute('aria-controls') === parentPanel?.id);
+      if (tab) activate(tab);
+      const details = target.closest('details');
+      if (details) details.open = true;
+      if (tab || details) requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+    };
+    revealAnchor();
+    window.addEventListener('hashchange', revealAnchor);
+  });
+</script>
+
+<style>
+  .tactile-engineering { margin-top: clamp(4.5rem, 7vw, 7rem); scroll-margin-top: 7rem; }
+  .engineering-heading { display: grid; grid-template-columns: 4fr 8fr; gap: var(--page-gutter); padding-top: 1.25rem; border-top: 1px solid var(--line); }
+  .engineering-heading h3 { max-width: 14em; font: 440 clamp(2.5rem, 4.5vw, 5rem)/1 var(--font-serif); letter-spacing: -.04em; }
+  .engineering-heading > div > p { max-width: 43rem; margin-top: 1.4rem; color: var(--muted); font-size: 1rem; line-height: 1.7; }
+  .engineering-row { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: clamp(2rem, 4vw, 4rem); align-items: center; margin-top: clamp(3rem, 6vw, 6rem); padding-bottom: clamp(3rem, 4vw, 4rem); border-bottom: 1px solid var(--line); scroll-margin-top: 7rem; }
+  .engineering-row--reverse { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+  .engineering-row--reverse .engineering-visual { grid-column: 2; grid-row: 1; }
+  .engineering-row--reverse .engineering-copy { grid-column: 1; grid-row: 1; }
+  .engineering-visual, .engineering-copy { min-width: 0; }
+  .engineering-visual { display: grid; grid-template-columns: minmax(0,1fr); grid-template-rows: auto 1fr auto; align-items: start; background: #fff; border: 1px solid var(--line); }
+  .engineering-tabs { grid-area: 1 / 1; }
+  .engineering-panel { grid-area: 2 / 1; scroll-margin-top: calc(var(--header-height) + 1.5rem); }
+  .engineering-caption { grid-area: 3 / 1; }
+  .engineering-tabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--line); gap: .2rem; padding: .5rem .6rem; background: var(--paper-raised); }
+  .engineering-tabs button { border: 0; border-bottom: 2px solid transparent; padding: .65rem .6rem; color: var(--muted); font: 650 .75rem/1.4 var(--font-sans); cursor: pointer; background: transparent; min-height: 44px; }
+  .engineering-tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+  .engineering-tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .engineering-panel[hidden] { display: block; visibility: hidden; pointer-events: none; }
+  .engineering-panel picture, .engineering-panel img { display: block; width: 100%; height: auto; }
+  .engineering-panel { min-width: 0; }
+  .engineering-panel figcaption, .engineering-caption { margin: 0; padding: .8rem 1.1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .77rem; line-height: 1.65; }
+  .engineering-index { color: var(--accent); font-size: .77rem; font-weight: 750; line-height: 1.5; }
+  .engineering-copy h4 { margin: 1rem 0 1.5rem; font: 440 clamp(2rem, 3.2vw, 3.7rem)/1.03 var(--font-serif); letter-spacing: -.035em; }
+  .engineering-copy > p:not(.engineering-index) { color: var(--ink-soft); font-size: clamp(.95rem, 1.12vw, 1.07rem); line-height: 1.8; }
+  .engineering-copy .method-credit, .engineering-copy .engineering-note { margin-top: 1.3rem; font-size: .82rem !important; color: var(--muted) !important; }
+  .method-credit a, .engineering-data-link, .engineering-methods a { text-decoration: underline; text-underline-offset: .2em; }
+  .calibration-reuse { display: flex; gap: 0; margin-top: 1.8rem; list-style: none; padding: 0; border-top: 1px solid var(--line); }
+  .calibration-reuse li { flex: 1; position: relative; padding: 1.1rem .6rem 0 0; font-size: .71rem; line-height: 1.6; color: var(--muted); }
+  .calibration-reuse li::before { content: ''; position: absolute; top: -3px; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
+  .calibration-reuse strong { display: block; color: var(--ink); }
+  .chain-panel { padding: 1.5rem 1.2rem; }
+  .chain-label { margin: 0 0 1rem; color: var(--muted); font-size: .67rem; font-weight: 750; letter-spacing: .12em; }
+  .coordinate-chain { display: grid; grid-template-columns: 1fr .45fr 1fr .45fr 1fr .45fr 1fr; align-items: center; gap: .15rem; }
+  .coordinate-chain--robot { grid-template-columns: 1fr .45fr 1fr .45fr 1fr; }
+  .coordinate-node { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 5rem; background: #f1f4ee; padding: .65rem .25rem; border: 1px solid #dce2d7; }
+  .coordinate-node b { color: #476b5a; font: 450 2rem/1 var(--font-serif); }
+  .coordinate-node sub { font-size: .55em; }
+  .coordinate-node > span { margin-top: .65rem; text-align: center; font-size: .7rem; line-height: 1.4; }
+  .coordinate-link { text-align: center; align-self: center; }
+  .coordinate-link > span { font-size: 1.2rem; color: #747c6e; }
+  .coordinate-link small { display: block; font-size: .53rem; line-height: 1.3; overflow-wrap: anywhere; }
+  .coordinate-branches { display: grid; gap: .4rem; }
+  .coordinate-branches .coordinate-node { min-height: 4rem; }
+  .coordinate-branches .coordinate-node b { font-size: 1.5rem; }
+  .chain-divider { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .3rem; margin: 1.4rem 0; padding-block: .8rem; border-block: 1px dashed #c6cdbf; font-size: .63rem; color: var(--muted); }
+  .chain-key { margin-top: 1.1rem; font-size: .65rem; line-height: 1.6; color: var(--muted); }
+  .timing-svg { display: block; width: 100%; height: auto; font-family: var(--font-sans); }
+  .timing-svg--compact { display: none; }
+  .timing-reference { font-size: 12px; fill: #62665f; }
+  .timing-stream { font-size: 13px; fill: #343834; font-weight: 650; }
+  .timing-delay, .timing-tick { font-size: 11px; fill: #62665f; }
+  .timing-legend { display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; padding: .1rem 1rem 1rem; font-size: .7rem; color: var(--muted); }
+  .engineering-panel .timing-outcome--available { color: #365a47; background: #f1f4ee; }
+  .engineering-panel .timing-outcome--late { color: #8c3b29; background: #fbf0eb; }
+  .tactile-delay-panel { aspect-ratio: 750 / 415; }
+  .tactile-delay-panel a { display: block; height: 100%; }
+  .tactile-delay-panel img { height: 100%; object-fit: contain; }
+  .engineering-methods { margin-top: 1rem; border-bottom: 1px solid var(--line); }
+  .engineering-methods > summary { list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 1.4rem 0; cursor: pointer; font-size: .95rem; font-weight: 650; }
+  .engineering-methods > summary::-webkit-details-marker { display: none; }
+  .engineering-methods > summary > span:last-child { font: 400 1.8rem/1 var(--font-sans); }
+  .engineering-methods[open] > summary > span:last-child { transform: rotate(45deg); }
+  .engineering-methods__content { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 2rem 3rem; padding: 1rem 0 2.5rem; }
+  .engineering-methods h4 { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; }
+  .engineering-methods p { font-size: .9rem; color: var(--muted); line-height: 1.8; }
+  .engineering-methods p + p { margin-top: 1rem; }
+  .engineering-data-link { display: block; margin-top: 1rem; font-size: .85rem; }
+  @media (max-width: 1100px) and (min-width: 768px) {
+    .engineering-row, .engineering-row--reverse { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1.8rem; }
+    .engineering-row--reverse .engineering-visual { grid-column: 1; }
+    .engineering-row--reverse .engineering-copy { grid-column: 2; }
+    .coordinate-link small { display: none; }
+  }
+  @media (max-width: 767px) {
+    .engineering-heading, .engineering-row, .engineering-row--reverse, .engineering-methods__content { grid-template-columns: minmax(0,1fr); }
+    .engineering-heading { gap: 1.25rem; }
+    .engineering-row { gap: 1.7rem; }
+    .engineering-row--reverse .engineering-visual, .engineering-row--reverse .engineering-copy { grid-column: auto; grid-row: auto; }
+    .engineering-copy h4 { font-size: 2.5rem; }
+    .engineering-copy > p:not(.engineering-index) { font-size: 1rem; }
+    .engineering-tabs { padding: .3rem; }
+    .engineering-tabs button { padding-inline: .5rem; font-size: .7rem; }
+    .chain-panel { padding: 1.25rem .9rem; }
+    .coordinate-chain { grid-template-columns: 1fr; gap: .4rem; }
+    .coordinate-node { flex-direction: row; justify-content: flex-start; gap: 1rem; padding: .75rem 1rem; min-height: 3.4rem; }
+    .coordinate-node b { width: 2rem; flex-shrink: 0; font-size: 1.7rem; }
+    .coordinate-node > span { margin-top: 0; font-size: .85rem; }
+    .coordinate-link { display: flex; flex-direction: row; justify-content: center; gap: .7rem; align-items: center; }
+    .coordinate-link > span { transform: rotate(90deg); }
+    .coordinate-link small { font-size: .7rem; }
+    .coordinate-branches { grid-template-columns: 1fr 1fr; }
+    .coordinate-branches .coordinate-node { flex-direction: column; gap: .5rem; padding-inline: .25rem; }
+    .coordinate-branches .coordinate-node > span { font-size: .75rem; }
+    .chain-divider { font-size: .7rem; }
+    .chain-key { font-size: .75rem; }
+    .timing-svg--wide { display: none; }
+    .timing-svg--compact { display: block; }
+    .timing-reference { font-size: 12px; }
+    .timing-delay, .timing-tick { font-size: 11.5px; }
+    .engineering-methods__content { gap: 2.5rem; }
+  }
+</style>

@@ -3,9 +3,7 @@ import { Image } from 'astro:assets';
 import workflow from '../assets/media/tactile-umi/workflow.svg';
 import uniforceArchitecture from '../assets/media/tactile-umi/uniforce-architecture-original.png';
 import collectionGuiOriginal from '../assets/media/tactile-umi/collection-gui-original.png';
-import gripperCalibration from '../assets/media/tactile-umi/gripper-calibration.png';
-import tactileLatency from '../assets/media/tactile-umi/tactile-latency.png';
-import questCameraLatency from '../assets/media/tactile-umi/quest-camera-latency-alignment.png';
+import TactileEngineering from './TactileEngineering.astro';
 import pacmanPreview from '../assets/media/clothumi-taichi/pacman.gif';
 import pacmanStill from '../assets/media/clothumi-taichi/pacman-still.png';
 
@@ -25,16 +23,10 @@ const stages = [
   {
     number: '03',
     title: 'Audit before policy training',
-    body: 'CLI and web review expose missing streams, timing faults, and invalid episodes. Only accepted trajectories are promoted to the clean Zarr dataset consumed by training.',
+    body: 'CLI checks and web review inspect streams, timing, and trajectory segments before export to the Zarr dataset consumed by training.',
   },
 ] as const;
 
-const calibrationMetrics = [
-  { value: '40', label: 'Quest–camera pose pairs', note: 'PARK hand–eye solution; no pair rejected' },
-  { value: '1.67 / 3.09 / 1.91 mm', label: 'Fixed-board translation spread', note: 'Axis-wise consistency check, not external ground truth' },
-  { value: '56.738 ms', label: 'Main-camera lag behind Quest', note: 'Left/right tactile offsets relative to RGB: 0 / +25 ms' },
-  { value: '8.7–63.0 mm', label: 'Calibrated gripper range', note: 'Five-point lookup table used at runtime' },
-] as const;
 ---
 
 <section class="tactile-architecture section-shell" aria-labelledby="tactile-architecture-title">
@@ -137,87 +129,7 @@ const calibrationMetrics = [
     </div>
   </div>
 
-  <div class="tactile-calibration" aria-labelledby="tactile-calibration-title">
-    <div class="tactile-calibration__intro">
-      <p class="eyebrow">Calibration ledger</p>
-      <h3 id="tactile-calibration-title">Every transformation is measured before it is trusted.</h3>
-      <p>These checks establish reproducible operating values. They should be repeated whenever a camera or physical mounting changes.</p>
-    </div>
-    <dl class="tactile-calibration__metrics">
-      {calibrationMetrics.map((metric) => (
-        <div>
-          <dt>{metric.label}</dt>
-          <dd>{metric.value}</dd>
-          <p>{metric.note}</p>
-        </div>
-      ))}
-    </dl>
-    <div class="tactile-calibration__method" id="hand-eye-calibration">
-      <div>
-        <p class="eyebrow">Hand–eye calibration</p>
-        <h4>Two calibrated chains connect demonstration and execution.</h4>
-      </div>
-      <div>
-        <p>I calibrated the rigid UMI–Quest camera transform with 40 synchronized pose/image pairs and the PARK hand–eye solver. Reconstructing the stationary calibration board across these poses checks the transform and its direction; multiplying the Quest pose by this transform gives the demonstration camera trajectory.</p>
-        <p>The FR3 wrist camera has a separate eye-in-hand calibration. Together with the camera–TCP and flange–TCP transforms, it connects camera-relative policy actions to the robot and Robotiq tool frames.</p>
-      </div>
-    </div>
-    <div class="tactile-calibration__method" id="gripper-width-mapping">
-      <div>
-        <p class="eyebrow">UMI opening ↔ Robotiq gripper</p>
-        <h4>Map physical contact gaps from hand-held tool to robot.</h4>
-      </div>
-      <div>
-        <p>ArUco IDs 2 and 3 track the UMI opening in the main-camera image. Caliper measurements at 8.7, 20, 30, 40 and 63 mm establish five calibration points. Piecewise-linear LUT interpolation maps marker pixel distance to the true gap between the silicone contact surfaces; this measured gap becomes the gripper action label.</p>
-        <p>On the robot, the Robotiq adapter maps the predicted physical gap through a separate width-calibration LUT to the driver position command, with unit conversion and travel limits. The two calibrations connect UMI opening → physical gap → Robotiq command. The image-based mapping requires the calibrated camera mounting, resolution and zoom to remain fixed.</p>
-      </div>
-    </div>
-    <div class="tactile-calibration__method">
-      <div>
-        <p class="eyebrow">Quest ↔ main camera · Motion-based latency</p>
-        <h4>Align the same motion in two clocks.</h4>
-      </div>
-      <div>
-        <p>With the camera and Quest rigidly mounted on the UMI, the device moves in view of a stationary ArUco marker. The main camera estimates the marker’s position from video and calibrated intrinsics; the Quest records the corresponding controller trajectory, transformed into the camera frame by the measured hand–eye transform.</p>
-        <p>Following the one-axis trajectory alignment in <a href="https://proceedings.mlr.press/v305/xu25e.html" target="_blank" rel="noreferrer">exUMI ↗</a>, the calibration compares normalized motion along a matching axis, selecting the Quest-axis sign for the opposite apparent marker motion. This implementation uses smoothed velocity by default and searches for the scalar time offset that minimizes the overlapping signals’ mean-squared error.</p>
-        <p>The accepted run estimated <strong>−56.738 ms</strong> in the convention “sample Quest at camera time + offset”: the main camera trails Quest by about <strong>56.7 ms</strong>. To align the recorded streams, Quest timestamps are shifted 56.738 ms later. This is a measured setup value, not a universal hardware latency.</p>
-      </div>
-    </div>
-    <div class="tactile-calibration__method" id="latency-compensation">
-      <div>
-        <p class="eyebrow">Tactile timing · Action lookahead</p>
-        <h4>Align sensor histories and select a future action.</h4>
-      </div>
-      <div>
-        <p>Relative to the main RGB camera, the left custom GelSight offset is 0 ms and the right GelSight Mini lags by 25 ms. A shared pseudorandom visual flicker and cross-correlation identify the camera delay. These offsets and the Quest–camera offset are applied to the recorded timestamps before resampling to the RGB timeline.</p>
-        <p>For inference-to-execution compensation, I compared action-chunk indices in robot trials and selected the second predicted action (zero-based index 1). This empirically chosen lookahead advances the target to account for processing and execution delay; it is separate from the measured sensor offsets.</p>
-      </div>
-    </div>
-    <div class="tactile-calibration__method" id="impedance-execution">
-      <div>
-        <p class="eyebrow">Polymetis · Impedance execution</p>
-        <h4>Policy targets run through compliant robot control.</h4>
-      </div>
-      <div>
-        <p>The execution platform is a Franka FR3 with a Robotiq gripper. Diffusion Policy updates motion targets through a custom TCP bridge while Polymetis runs the underlying impedance controller throughout execution. The bridge transforms camera-relative actions into robot targets and applies the calibrated Robotiq width mapping.</p>
-        <p><a href="https://droid-dataset.github.io/droid/docs/software-setup" target="_blank" rel="noreferrer">DROID also uses Polymetis for robot control ↗</a></p>
-      </div>
-    </div>
-    <div class="tactile-calibration__visuals">
-      <figure>
-        <div><Image src={tactileLatency} alt="Tactile UMI timing-calibration plot aligning tactile and RGB contact signals" widths={[720, 1080, 1600]} sizes="(max-width: 767px) 100vw, 48vw" format="avif" quality={84} loading="lazy" /></div>
-        <figcaption>Cross-stream timing alignment</figcaption>
-      </figure>
-      <figure>
-        <div><Image src={gripperCalibration} alt="Tactile UMI gripper-width calibration interface and fitted lookup points" widths={[640, 960, 1280]} sizes="(max-width: 767px) 100vw, 40vw" format="avif" quality={84} loading="lazy" /></div>
-        <figcaption>Gripper-width lookup calibration</figcaption>
-      </figure>
-      <figure class="tactile-calibration__quest">
-        <a href={questCameraLatency.src} target="_blank" rel="noreferrer" aria-label="Open the Quest and main-camera latency alignment plot at full resolution"><Image src={questCameraLatency} alt="Quest and main-camera one-axis motion curves aligned by shifting Quest 0.0567 seconds later" widths={[720, 1080, 1440]} sizes="(max-width: 767px) 100vw, 90vw" format="avif" quality={84} loading="lazy" /></a>
-        <figcaption>Quest–main-camera alignment · Accepted calibration run, also shown in the 11 June meeting slide 6</figcaption>
-      </figure>
-    </div>
-  </div>
+  <TactileEngineering />
 
   <aside class="tactile-acknowledgement" aria-label="UniForce research acknowledgement">
     <span>Research acknowledgement</span>
@@ -274,46 +186,21 @@ const calibrationMetrics = [
   .tactile-stages p { max-width: 34rem; margin-top: 1.15rem; color: var(--muted); font-size: .76rem; line-height: 1.7; }
   .tactile-operations { margin-top: clamp(6rem, 10vw, 10rem); }
   .tactile-operations__heading { display: grid; grid-template-columns: 3fr 5fr 4fr; gap: var(--page-gutter); align-items: end; padding-top: 1.25rem; border-top: 1px solid var(--line); }
-  .tactile-operations__heading h3, .tactile-calibration__intro h3 { font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 4.5rem); font-weight: 440; letter-spacing: -.04em; line-height: 1; }
-  .tactile-operations__heading > p:last-child, .tactile-calibration__intro > p:last-child { color: var(--muted); font-size: .82rem; line-height: 1.7; }
+  .tactile-operations__heading h3 { font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 4.5rem); font-weight: 440; letter-spacing: -.04em; line-height: 1; }
+  .tactile-operations__heading > p:last-child { color: var(--muted); font-size: .82rem; line-height: 1.7; }
   .tactile-operations__grid { margin-top: 3rem; }
   .tactile-operations__grid figure { border: 1px solid var(--line); background: var(--paper-deep); }
   .tactile-operations__grid a { display: block; padding: clamp(.5rem, 1.4vw, 1.25rem); background: #171717; }
   .tactile-operations__grid :global(img) { display: block; width: 100%; height: auto; }
   .tactile-operations__grid figcaption { min-height: 5rem; padding: 1rem; color: var(--muted); font-size: .7rem; line-height: 1.6; }
   .tactile-operations__grid figcaption span { display: block; margin-bottom: .35rem; color: var(--ink); font-size: .62rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
-  .tactile-calibration { display: grid; grid-template-columns: 4fr 8fr; gap: var(--page-gutter); margin-top: clamp(6rem, 10vw, 10rem); padding: clamp(2rem, 4vw, 4rem); background: var(--night); color: var(--paper); }
-  .tactile-calibration__intro > .eyebrow { color: #a7b89f; }
-  .tactile-calibration__intro h3 { margin-top: 2rem; }
-  .tactile-calibration__intro > p:last-child { margin-top: 2rem; color: color-mix(in srgb, var(--paper) 62%, transparent); }
-  .tactile-calibration__metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid rgba(255,255,255,.17); border-left: 1px solid rgba(255,255,255,.17); }
-  .tactile-calibration__metrics > div { min-height: 12rem; padding: clamp(1rem, 2vw, 2rem); border-right: 1px solid rgba(255,255,255,.17); border-bottom: 1px solid rgba(255,255,255,.17); }
-  .tactile-calibration__metrics dt { color: rgba(255,255,255,.48); font-size: .62rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
-  .tactile-calibration__metrics dd { margin-top: 2rem; font-family: var(--font-serif); font-size: clamp(1.75rem, 3vw, 3.4rem); letter-spacing: -.04em; line-height: 1; }
-  .tactile-calibration__metrics p { margin-top: .75rem; color: rgba(255,255,255,.48); font-size: .65rem; line-height: 1.55; }
-  .tactile-calibration__method { grid-column: 1 / -1; display: grid; grid-template-columns: 4fr 8fr; gap: var(--page-gutter); padding-block: clamp(2rem, 4vw, 4rem); border-top: 1px solid rgba(255,255,255,.17); }
-  .tactile-calibration__method .eyebrow { color: #a7b89f; }
-  .tactile-calibration__method h4 { max-width: 13em; margin-top: 1.5rem; font-family: var(--font-serif); font-size: clamp(1.8rem, 3.2vw, 3.4rem); font-weight: 440; line-height: 1.05; letter-spacing: -.035em; }
-  .tactile-calibration__method > div:last-child { max-width: 48rem; }
-  .tactile-calibration__method > div:last-child p { color: rgba(255,255,255,.75); font-size: clamp(.82rem, 1.05vw, 1rem); line-height: 1.75; }
-  .tactile-calibration__method > div:last-child p + p { margin-top: 1.2rem; }
-  .tactile-calibration__method strong { color: var(--paper); }
-  .tactile-calibration__method a { color: var(--paper); text-decoration: underline; text-underline-offset: .2em; }
-  .tactile-calibration__visuals { grid-column: 1 / -1; display: grid; grid-template-columns: 1.15fr .85fr; gap: 1px; margin-top: 1rem; background: rgba(255,255,255,.17); }
-  .tactile-calibration__visuals figure { background: #f0f0ec; color: var(--ink); overflow: hidden; }
-  .tactile-calibration__visuals figure > div { display: grid; aspect-ratio: 4 / 3; place-items: center; overflow: hidden; }
-  .tactile-calibration__visuals :global(img) { display: block; width: 100%; height: 100%; object-fit: contain; }
-  .tactile-calibration__visuals figcaption { padding: .8rem 1rem; border-top: 1px solid rgba(0,0,0,.14); color: var(--muted); font-size: .65rem; }
-  .tactile-calibration__quest { grid-column: 1 / -1; }
-  .tactile-calibration__quest a { display: block; padding: clamp(.5rem, 1.5vw, 1.25rem); }
-  .tactile-calibration__quest :global(img) { width: 100%; height: auto; }
   .tactile-acknowledgement { display: grid; grid-template-columns: 4fr 8fr; gap: var(--page-gutter); margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
   .tactile-acknowledgement > span { color: var(--accent); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
   .tactile-acknowledgement > div { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(12rem, .5fr); gap: 2rem; align-items: start; }
   .tactile-acknowledgement p { max-width: 48rem; color: var(--ink-soft); font-size: .8rem; line-height: 1.7; }
   .tactile-acknowledgement strong { color: var(--ink); }
   @media (max-width: 1023px) {
-    .tactile-heading, .tactile-training__heading, .tactile-calibration, .tactile-calibration__method, .tactile-acknowledgement { grid-template-columns: 1fr; gap: 2.5rem; }
+    .tactile-heading, .tactile-training__heading, .tactile-acknowledgement { grid-template-columns: 1fr; gap: 2.5rem; }
     .tactile-training__heading .eyebrow { grid-row: auto; }
     .tactile-heading > div { grid-template-columns: 1fr; gap: 2rem; }
     .tactile-operations__heading { grid-template-columns: 1fr 1.4fr; }
@@ -321,13 +208,11 @@ const calibrationMetrics = [
   }
   @media (max-width: 767px) {
     .architecture-figure__bar { align-items: flex-start; flex-direction: column; }
-    .tactile-stages, .tactile-training__stages, .tactile-calibration__metrics, .tactile-calibration__visuals { grid-template-columns: 1fr; }
+    .tactile-stages, .tactile-training__stages { grid-template-columns: 1fr; }
     .tactile-stages li { min-height: auto; }
     .tactile-stages h3 { margin-top: 2.5rem; }
     .tactile-operations__heading { grid-template-columns: 1fr; gap: 1.5rem; }
     .tactile-operations__heading > p:last-child { grid-column: 1; }
-    .tactile-calibration { margin-inline: calc(var(--page-gutter) * -1); padding-inline: var(--page-gutter); }
-    .tactile-calibration__metrics > div { min-height: 10rem; }
     .tactile-acknowledgement > div { grid-template-columns: 1fr; }
   }
   @media (prefers-reduced-motion: reduce) { .architecture-figure__image img { transition: none; } }

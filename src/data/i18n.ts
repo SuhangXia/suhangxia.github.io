@@ -1,3 +1,5 @@
+import { tactileEngineeringZh } from './tactile-engineering-i18n';
+
 export type Locale = 'en' | 'zh';
 
 /**
@@ -5,6 +7,7 @@ export type Locale = 'en' | 'zh';
  * intentionally local: the language switch never calls a translation service.
  */
 export const zhTranslations: Record<string, string> = {
+  ...tactileEngineeringZh,
   'Page not found — Suhang Xia': '页面未找到 — 夏苏杭',
   'Suhang Xia — Robotics & Embodied AI': '夏苏杭 — 机器人与具身智能',
   'VLA, visuotactile learning, robot manipulation, and real-world robotic systems by Suhang Xia.': '夏苏杭的 VLA、视触觉学习、机器人操作与真实机器人系统研究。',
