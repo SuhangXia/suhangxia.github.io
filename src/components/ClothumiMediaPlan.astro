@@ -1,6 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import workflow from '../assets/media/tactile-umi/workflow.svg';
+import workflowMobile from '../assets/media/tactile-umi/workflow-mobile.svg';
+import workflowZh from '../assets/media/tactile-umi/workflow-zh.svg';
+import workflowZhMobile from '../assets/media/tactile-umi/workflow-zh-mobile.svg';
 import uniforceArchitecture from '../assets/media/tactile-umi/uniforce-architecture-original.png';
 import collectionGuiOriginal from '../assets/media/tactile-umi/collection-gui-original.png';
 import TactileEngineering from './TactileEngineering.astro';
@@ -8,6 +11,9 @@ import pacmanPreview from '../assets/media/clothumi-taichi/pacman.gif';
 import pacmanStill from '../assets/media/clothumi-taichi/pacman-still.png';
 
 const simulationDatasetUrl = 'https://huggingface.co/datasets/LancetRobotics/uniforce_loading_only_30f_rect_safe_500k_v2_gray_jpeg30k';
+const chinese = Astro.url.pathname.startsWith('/zh/');
+const workflowWide = chinese ? workflowZh : workflow;
+const workflowCompact = chinese ? workflowZhMobile : workflowMobile;
 
 const stages = [
   {
@@ -42,13 +48,16 @@ const stages = [
     </div>
   </header>
 
-  <figure class="architecture-figure architecture-figure--workflow">
+  <figure class="architecture-figure architecture-figure--workflow" id="tactile-workflow">
     <div class="architecture-figure__bar">
       <span>01 / End-to-end workflow</span>
-      <a href={workflow.src} target="_blank" rel="noreferrer">Open full resolution ↗</a>
+      <a href={workflowWide.src} target="_blank" rel="noreferrer">Open full resolution ↗</a>
     </div>
-    <a class="architecture-figure__image" href={workflow.src} target="_blank" rel="noreferrer" aria-label="Open the Tactile UMI workflow diagram at full resolution">
-      <img src={workflow.src} alt="Tactile UMI workflow from calibration and multimodal demonstration capture through dataset curation, tactile representation learning, and Franka FR3 deployment" loading="lazy" />
+    <a class="architecture-figure__image" href={workflowWide.src} target="_blank" rel="noreferrer" aria-label="Open the Tactile UMI workflow diagram at full resolution">
+      <picture>
+        <source media="(max-width: 1023px)" srcset={workflowCompact.src} width="440" height="2280" />
+        <img src={workflowWide.src} width="1440" height="824" alt="Tactile UMI workflow from calibration and multimodal demonstration capture through dataset curation, tactile representation learning, and Franka FR3 deployment" loading="lazy" />
+      </picture>
     </a>
     <figcaption>Setup and calibration → collection and curation → representation and policy learning.</figcaption>
   </figure>
@@ -157,6 +166,9 @@ const stages = [
   .architecture-figure__image { display: block; padding: clamp(.75rem, 2.2vw, 2rem); overflow: hidden; }
   .architecture-figure__image img { display: block; width: 100%; height: auto; transition: transform 700ms cubic-bezier(.2,.7,.2,1); }
   .architecture-figure__image:hover img { transform: scale(1.012); }
+  .architecture-figure--workflow .architecture-figure__image { padding: 0; background: #fff; }
+  .architecture-figure--workflow { scroll-margin-top: calc(var(--header-height) + 1.5rem); }
+  .architecture-figure--workflow .architecture-figure__image:hover img { transform: none; }
   .architecture-figure figcaption { padding: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .72rem; line-height: 1.65; }
   .architecture-figure--algorithm { margin-top: clamp(5rem, 9vw, 9rem); background: #efeee8; }
   .architecture-figure--algorithm figcaption { max-width: none; color: var(--ink-soft); }
@@ -200,6 +212,7 @@ const stages = [
   .tactile-acknowledgement p { max-width: 48rem; color: var(--ink-soft); font-size: .8rem; line-height: 1.7; }
   .tactile-acknowledgement strong { color: var(--ink); }
   @media (max-width: 1023px) {
+    .architecture-figure--workflow picture { display: block; max-width: 480px; margin-inline: auto; }
     .tactile-heading, .tactile-training__heading, .tactile-acknowledgement { grid-template-columns: 1fr; gap: 2.5rem; }
     .tactile-training__heading .eyebrow { grid-row: auto; }
     .tactile-heading > div { grid-template-columns: 1fr; gap: 2rem; }

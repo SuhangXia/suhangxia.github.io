@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="2280" viewBox="0 0 440 2280" role="img" aria-labelledby="title description">
+<title id="title">Tactile UMI: calibration, dataset curation and policy deployment</title>
+<desc id="description">Three stages connect calibrated acquisition, raw H5, alignment and audit, clean Zarr, simulation-pretrained and real-adapted UniForce, frozen tactile encoding, Diffusion Policy and Franka FR3 execution.</desc>
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7" fill="#476b5a"/></marker></defs>
+<style>text{font-family:Inter,Arial,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#26332d}.stage-title{font-size:26px;font-weight:600}.number{font-size:20px;font-weight:600;fill:#a5543c}.subtitle{font-size:18px;fill:#6b7367}.node-title{font-size:21px;font-weight:600}.body{fill:#677161}.connector-label{font-size:14px;fill:#737c6d}.footer{font-size:16px;fill:#6b7367}.mobile-link{font-size:17px;fill:#476b5a}</style>
+<rect width="100%" height="100%" fill="#fff"/>
+<path d="M220 235V255" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 367V387" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 499V519" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 923V943" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 1045V1065" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 1177V1197" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 1309V1329" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 1721V1741" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 1853V1873" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 1975V1995" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M220 2107V2127" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M28 571H12V868H23" fill="none" stroke="#8d9688" stroke-width="1.6" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+<path d="M28 1381H12V2052H23" fill="none" stroke="#8d9688" stroke-width="1.6" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+<g data-stage="1">
+<text x="28" y="49" class="number" >01</text>
+<text x="76" y="49" class="stage-title" >Calibrate</text>
+<text x="28" y="81" class="subtitle" >Geometry &amp; sensor clocks</text>
+<path d="M28 100H412" stroke="#bfc8bb"/>
+<g data-node="mounts"><rect x="28" y="130" width="384" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="161" class="node-title" >Mounts &amp; camera calibration</text>
+<text x="48" y="187" class="body" style="font-size:20px">Rigid mounts · camera intrinsics</text>
+<text x="48" y="210" class="body" style="font-size:20px">FR3 wrist camera: hand–eye</text>
+</g>
+<g data-node="quest"><rect x="28" y="262" width="384" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="293" class="node-title" >Quest–camera hand–eye</text>
+<text x="48" y="319" class="body" style="font-size:20px">TCP geometry · transform direction</text>
+<text x="48" y="342" class="body" style="font-size:20px">Multi-pose calibration &amp; consistency</text>
+</g>
+<g data-node="timing"><rect x="28" y="394" width="384" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="425" class="node-title" >Gripper &amp; stream timing</text>
+<text x="48" y="451" class="body" style="font-size:20px">ArUco width LUT · Quest/RGB offset</text>
+<text x="48" y="474" class="body" style="font-size:20px">Tactile-camera latency calibration</text>
+</g>
+<g data-node="calibration"><rect x="28" y="526" width="384" height="90" rx="3" fill="#f1f3ee" stroke="#d1d8ce"/>
+<path d="M29 538V604" stroke="#476b5a" stroke-width="3"/>
+<text x="48" y="557" class="node-title" >Calibration configuration</text>
+<text x="48" y="583" class="body" style="font-size:20px">Views · transforms · widths · offsets</text>
+</g>
+</g>
+<g data-stage="2">
+<text x="28" y="737" class="number" >02</text>
+<text x="76" y="737" class="stage-title" >Collect &amp; curate</text>
+<text x="28" y="769" class="subtitle" >Native records → training dataset</text>
+<path d="M28 788H412" stroke="#bfc8bb"/>
+<g data-node="record"><rect x="28" y="818" width="384" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="849" class="node-title" >Multimodal recording</text>
+<text x="48" y="875" class="body" style="font-size:20px">Wrist RGB · left/right tactile</text>
+<text x="48" y="898" class="body" style="font-size:20px">Quest motion · gripper state</text>
+</g>
+<g data-node="raw"><rect x="28" y="950" width="384" height="90" rx="3" fill="#f1f3ee" stroke="#d1d8ce"/>
+<path d="M29 962V1028" stroke="#476b5a" stroke-width="3"/>
+<text x="48" y="981" class="node-title" >Raw H5</text>
+<text x="48" y="1007" class="body" style="font-size:20px">Streams &amp; host timestamps</text>
+</g>
+<g data-node="align"><rect x="28" y="1072" width="384" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="1103" class="node-title" >Align &amp; derive poses</text>
+<text x="48" y="1129" class="body" style="font-size:20px">Apply measured latency offsets</text>
+<text x="48" y="1152" class="body" style="font-size:20px">Camera-relative poses / actions</text>
+</g>
+<g data-node="audit"><rect x="28" y="1204" width="384" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="1235" class="node-title" >Audit &amp; select</text>
+<text x="48" y="1261" class="body" style="font-size:20px">CLI: integrity · timing · jumps</text>
+<text x="48" y="1284" class="body" style="font-size:20px">Web: replay &amp; manual review</text>
+</g>
+<g data-node="zarr"><rect x="28" y="1336" width="384" height="90" rx="3" fill="#f1f3ee" stroke="#d1d8ce"/>
+<path d="M29 1348V1414" stroke="#476b5a" stroke-width="3"/>
+<text x="48" y="1367" class="node-title" >Clean Zarr</text>
+<text x="48" y="1393" class="body" style="font-size:20px">7D actions · six-record tactile history</text>
+</g>
+</g>
+<g data-stage="3">
+<text x="28" y="1535" class="number" >03</text>
+<text x="76" y="1535" class="stage-title" >Learn &amp; execute</text>
+<text x="28" y="1567" class="subtitle" >Two-stage UniForce → robot policy</text>
+<path d="M28 1586H412" stroke="#bfc8bb"/>
+<g data-node="pretrain"><rect x="28" y="1616" width="384" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="1647" class="node-title" >Simulation pretraining</text>
+<text x="48" y="1673" class="body" style="font-size:20px">Taichi loading-only indentation data</text>
+<text x="48" y="1696" class="body" style="font-size:20px">UniForce tactile representation</text>
+</g>
+<g data-node="adapt"><rect x="28" y="1748" width="384" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="1779" class="node-title" >Real-sensor adaptation</text>
+<text x="48" y="1805" class="body" style="font-size:20px">Paired real tactile press recordings</text>
+<text x="48" y="1828" class="body" style="font-size:20px">Six-frame causal windows</text>
+</g>
+<g data-node="frozen"><rect x="28" y="1880" width="384" height="90" rx="3" fill="#e8eee6" stroke="#d1d8ce"/>
+<path d="M29 1892V1958" stroke="#476b5a" stroke-width="3"/>
+<text x="48" y="1911" class="node-title" >Frozen UniForce</text>
+<text x="48" y="1937" class="body" style="font-size:20px">Encoder fixed during policy training</text>
+</g>
+<g data-node="policy"><rect x="28" y="2002" width="384" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="2033" class="node-title" >Tactile-conditioned DP</text>
+<text x="48" y="2059" class="body" style="font-size:20px">RGB + state + tactile adapter</text>
+<text x="48" y="2082" class="body" style="font-size:20px">Eight camera-relative 7D actions</text>
+</g>
+<g data-node="robot"><rect x="28" y="2134" width="384" height="90" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="48" y="2165" class="node-title" >Franka FR3 execution</text>
+<text x="48" y="2191" class="body" style="font-size:20px">TCP bridge · Robotiq gripper</text>
+<text x="48" y="2214" class="body" style="font-size:20px">Polymetis impedance control</text>
+</g>
+</g>
+<text x="32" y="660" class="mobile-link" >Calibration config → collection &amp; alignment</text>
+<text x="32" y="1472" class="mobile-link" >Clean Zarr → Diffusion Policy training</text>
+<text x="28" y="2258" class="footer" >Raw recordings remain unchanged.</text>
+</svg>
