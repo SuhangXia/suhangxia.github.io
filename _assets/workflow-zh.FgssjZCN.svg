@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="824" viewBox="0 0 1440 824" role="img" aria-labelledby="title description">
+<title id="title">Tactile UMI：标定、数据整理与策略部署</title>
+<desc id="description">三阶段连接标定后的采集、原始 H5、对齐与审查、清洗后 Zarr、仿真预训练和真实适配的 UniForce、冻结触觉编码、扩散策略与 Franka FR3 执行。</desc>
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7" fill="#476b5a"/></marker></defs>
+<style>text{font-family:Inter,Arial,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#26332d}.stage-title{font-size:26px;font-weight:600}.number{font-size:20px;font-weight:600;fill:#a5543c}.subtitle{font-size:18px;fill:#6b7367}.node-title{font-size:21px;font-weight:600}.body{fill:#677161}.connector-label{font-size:14px;fill:#737c6d}.footer{font-size:16px;fill:#6b7367}.mobile-link{font-size:17px;fill:#476b5a}</style>
+<rect width="100%" height="100%" fill="#fff"/>
+<path d="M248 231V251" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M248 363V383" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M248 495V515" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M720 231V251" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M720 353V373" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M720 485V505" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M720 617V637" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M1192 231V251" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M1192 363V383" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M1192 485V505" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M1192 617V637" fill="none" stroke="#476b5a" stroke-width="1.6"  marker-end="url(#arrow)"/>
+<path d="M460 567H484V176H503" fill="none" stroke="#8d9688" stroke-width="1.6" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+<path d="M932 689H956V562H975" fill="none" stroke="#8d9688" stroke-width="1.6" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+<g data-stage="1">
+<text x="36" y="59" class="number" >01</text>
+<text x="84" y="59" class="stage-title" >空间与时间标定</text>
+<text x="36" y="91" class="subtitle" >安装几何与传感器时钟</text>
+<path d="M36 110H460" stroke="#bfc8bb"/>
+<g data-node="mounts"><rect x="36" y="126" width="424" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="56" y="157" class="node-title" >安装与相机标定</text>
+<text x="56" y="183" class="body" style="font-size:17px">固定安装 · 独立相机内参</text>
+<text x="56" y="206" class="body" style="font-size:17px">FR3 腕部相机手眼标定</text>
+</g>
+<g data-node="quest"><rect x="36" y="258" width="424" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="56" y="289" class="node-title" >Quest–相机手眼标定</text>
+<text x="56" y="315" class="body" style="font-size:17px">TCP 几何 · 变换方向</text>
+<text x="56" y="338" class="body" style="font-size:17px">多姿态标定与一致性检查</text>
+</g>
+<g data-node="timing"><rect x="36" y="390" width="424" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="56" y="421" class="node-title" >夹爪与跨流时间标定</text>
+<text x="56" y="447" class="body" style="font-size:17px">ArUco 宽度查找表 · Quest/RGB 偏移</text>
+<text x="56" y="470" class="body" style="font-size:17px">触觉相机延迟标定</text>
+</g>
+<g data-node="calibration"><rect x="36" y="522" width="424" height="90" rx="3" fill="#f1f3ee" stroke="#d1d8ce"/>
+<path d="M37 534V600" stroke="#476b5a" stroke-width="3"/>
+<text x="56" y="553" class="node-title" >标定配置</text>
+<text x="56" y="579" class="body" style="font-size:17px">视角 · 变换 · 宽度 · 时间偏移</text>
+</g>
+</g>
+<g data-stage="2">
+<text x="508" y="59" class="number" >02</text>
+<text x="556" y="59" class="stage-title" >数据采集与审查</text>
+<text x="508" y="91" class="subtitle" >原始记录 → 训练数据</text>
+<path d="M508 110H932" stroke="#bfc8bb"/>
+<g data-node="record"><rect x="508" y="126" width="424" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="528" y="157" class="node-title" >多模态采集</text>
+<text x="528" y="183" class="body" style="font-size:17px">腕部 RGB · 左右触觉</text>
+<text x="528" y="206" class="body" style="font-size:17px">Quest 位姿 · 夹爪状态</text>
+</g>
+<g data-node="raw"><rect x="508" y="258" width="424" height="90" rx="3" fill="#f1f3ee" stroke="#d1d8ce"/>
+<path d="M509 270V336" stroke="#476b5a" stroke-width="3"/>
+<text x="528" y="289" class="node-title" >原始 H5</text>
+<text x="528" y="315" class="body" style="font-size:17px">独立数据流与主机时间戳</text>
+</g>
+<g data-node="align"><rect x="508" y="380" width="424" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="528" y="411" class="node-title" >时间对齐与位姿派生</text>
+<text x="528" y="437" class="body" style="font-size:17px">应用实测延迟偏移</text>
+<text x="528" y="460" class="body" style="font-size:17px">相机相对位姿 / 动作记录</text>
+</g>
+<g data-node="audit"><rect x="508" y="512" width="424" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="528" y="543" class="node-title" >数据审查与筛选</text>
+<text x="528" y="569" class="body" style="font-size:17px">CLI：完整性 · 时间 · 跳变检查</text>
+<text x="528" y="592" class="body" style="font-size:17px">网页：时间线复核 · 人工筛选</text>
+</g>
+<g data-node="zarr"><rect x="508" y="644" width="424" height="90" rx="3" fill="#f1f3ee" stroke="#d1d8ce"/>
+<path d="M509 656V722" stroke="#476b5a" stroke-width="3"/>
+<text x="528" y="675" class="node-title" >清洗后 Zarr</text>
+<text x="528" y="701" class="body" style="font-size:17px">7D 动作 · 六帧触觉历史记录</text>
+</g>
+</g>
+<g data-stage="3">
+<text x="980" y="59" class="number" >03</text>
+<text x="1028" y="59" class="stage-title" >模型学习与执行</text>
+<text x="980" y="91" class="subtitle" >两阶段 UniForce → 机器人策略</text>
+<path d="M980 110H1404" stroke="#bfc8bb"/>
+<g data-node="pretrain"><rect x="980" y="126" width="424" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="1000" y="157" class="node-title" >仿真预训练</text>
+<text x="1000" y="183" class="body" style="font-size:17px">Taichi 仅压入阶段仿真数据</text>
+<text x="1000" y="206" class="body" style="font-size:17px">UniForce 触觉表征</text>
+</g>
+<g data-node="adapt"><rect x="980" y="258" width="424" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="1000" y="289" class="node-title" >真实传感器适配</text>
+<text x="1000" y="315" class="body" style="font-size:17px">配对真实触觉按压记录</text>
+<text x="1000" y="338" class="body" style="font-size:17px">六帧因果时间窗口</text>
+</g>
+<g data-node="frozen"><rect x="980" y="390" width="424" height="90" rx="3" fill="#e8eee6" stroke="#d1d8ce"/>
+<path d="M981 402V468" stroke="#476b5a" stroke-width="3"/>
+<text x="1000" y="421" class="node-title" >冻结 UniForce</text>
+<text x="1000" y="447" class="body" style="font-size:17px">策略训练期间不更新编码器</text>
+</g>
+<g data-node="policy"><rect x="980" y="512" width="424" height="100" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="1000" y="543" class="node-title" >触觉条件扩散策略</text>
+<text x="1000" y="569" class="body" style="font-size:17px">RGB + 状态 + 可学习触觉 adapter</text>
+<text x="1000" y="592" class="body" style="font-size:17px">八步相机相对 7D 动作</text>
+</g>
+<g data-node="robot"><rect x="980" y="644" width="424" height="90" rx="3" fill="#fff" stroke="#d1d8ce"/>
+<text x="1000" y="675" class="node-title" >Franka FR3 执行</text>
+<text x="1000" y="701" class="body" style="font-size:17px">TCP 通信桥 · Robotiq 夹爪</text>
+<text x="1000" y="724" class="body" style="font-size:17px">Polymetis 阻抗控制</text>
+</g>
+</g>
+<text x="472" y="370" class="connector-label" text-anchor="middle" transform="rotate(-90 472 370)">标定配置</text>
+<text x="944" y="635" class="connector-label" text-anchor="middle" transform="rotate(-90 944 635)">策略数据</text>
+<path d="M36 770H1404" stroke="#d1d8ce"/>
+<text x="36" y="800" class="footer" >实线：流程    ·    虚线：跨阶段配置 / 数据依赖</text>
+<text x="1404" y="800" class="footer" text-anchor="end">原始采集数据保持不变。</text>
+</svg>
