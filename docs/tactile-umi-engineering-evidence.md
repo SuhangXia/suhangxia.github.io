@@ -4,14 +4,18 @@ Updated 2026-10-15 from read-only analysis of the supplied calibration and datas
 
 ## Web figures and analysis contract
 
-The page replaces the former Calibration Ledger with three adjacent figure/text modules:
+The page replaces the former Calibration Ledger with three figure/text modules:
 spatial calibration and reuse, exUMI-inspired latency calibration, and causal observation
 windows. The original architecture, tactile pretraining/adaptation, controlled trial
 statistics, robot videos and on-demand Rerun replay remain in place.
 
+The spatial module uses the supplied original hand–eye geometry diagram, uncropped at
+16:9, across the content width with an explicit full-resolution link. Responsive WebP
+variants reduce transfer size; the source image and its labels remain unchanged.
+
 The plots use Python/matplotlib, editable SVG and a separate readable mobile layout.
 All forty calibration observations are included. The latency figure has a labelled
-3–6 s detail plus the entire recorded signal; before/after retain identical axes,
+3–4 s detail plus a camera-minus-Quest difference trace and the entire recorded signal; before/after retain identical axes,
 camera-time interpolation and fixed full-record normalization. No values are inferred
 from screenshot pixels. PNG QA previews and full per-episode statistics stay outside Git.
 

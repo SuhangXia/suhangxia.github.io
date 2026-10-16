@@ -2,6 +2,7 @@
 import { publicVideos } from '../data/videos';
 
 const fallbackVideo = publicVideos.find((video) => video.id === 'tactile-umi-audit-screen-recording');
+const viewerHref = `/media/tactile-umi/viewer.html?v=2&lang=${Astro.url.pathname.startsWith('/zh/') ? 'zh' : 'en'}`;
 ---
 
 <section class="audit-replay section-shell" aria-labelledby="audit-replay-title">
@@ -29,7 +30,7 @@ const fallbackVideo = publicVideos.find((video) => video.id === 'tactile-umi-aud
         </div>
       </div>
     </div>
-    <iframe id="audit-replay-viewer" title="Interactive Tactile UMI audit replay of one trajectory" allow="fullscreen" loading="lazy" hidden data-audit-frame></iframe>
+    <iframe id="audit-replay-viewer" title="Interactive Tactile UMI audit replay of one trajectory" allow="fullscreen" loading="lazy" hidden data-audit-frame data-audit-src={viewerHref}></iframe>
   </div>
 
   <div class="audit-replay__foot">
@@ -37,8 +38,18 @@ const fallbackVideo = publicVideos.find((video) => video.id === 'tactile-umi-aud
       The archived audit ran relative-action checks with IK checks disabled. This replay demonstrates synchronized
       records, not robot IK feasibility or task success.
     </p>
-    <a href="/media/tactile-umi/viewer.html" target="_blank" rel="noreferrer" data-audit-fullscreen>Open replay full screen ↗</a>
+    <a href={viewerHref} target="_blank" rel="noreferrer" data-audit-fullscreen>Open replay full screen ↗</a>
   </div>
+
+  <aside class="audit-replay__references" aria-label="Visualization references">
+    <span>References</span>
+    <p>
+      <span>3D visualization adapted from</span>{' '}
+      <a href="https://github.com/chaoyiL/ManiSkill-vitac/tree/main/robot_visualization" target="_blank" rel="noreferrer">ManiSkill-ViTac · robot_visualization ↗</a>.
+      <span>Interactive web playback powered by</span>{' '}
+      <a href="https://github.com/rerun-io/rerun" target="_blank" rel="noreferrer">Rerun ↗</a>.
+    </p>
+  </aside>
 
   {fallbackVideo && (
     <details class="audit-replay__fallback" data-audit-fallback>
@@ -72,7 +83,7 @@ const fallbackVideo = publicVideos.find((video) => video.id === 'tactile-umi-aud
   openButton?.addEventListener('click', () => {
     if (!frame || !poster) return;
     frame.loading = 'eager';
-    frame.src = '/media/tactile-umi/viewer.html';
+    frame.src = frame.dataset.auditSrc ?? '/media/tactile-umi/viewer.html?v=2';
     frame.hidden = false;
     poster.hidden = true;
     openButton.setAttribute('aria-expanded', 'true');
@@ -102,6 +113,10 @@ const fallbackVideo = publicVideos.find((video) => video.id === 'tactile-umi-aud
   .audit-replay__foot { display: flex; justify-content: space-between; gap: 2rem; margin-top: 1rem; color: var(--muted); font-size: .72rem; line-height: 1.6; }
   .audit-replay__foot p { max-width: 49rem; }
   .audit-replay__foot a { flex: none; align-self: start; color: var(--ink); text-decoration: underline; text-underline-offset: .22em; }
+  .audit-replay__references { display: flex; align-items: baseline; flex-wrap: wrap; gap: .65rem 1.5rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); }
+  .audit-replay__references > span { font-size: .7rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+  .audit-replay__references p { flex: 1 1 24rem; font-size: .85rem; line-height: 1.8; }
+  .audit-replay__references a { color: var(--ink); text-decoration: underline; text-underline-offset: .22em; overflow-wrap: anywhere; }
   .audit-replay__fallback { margin-top: clamp(2rem, 4vw, 4rem); border-block: 1px solid var(--line); }
   .audit-replay__fallback summary { display: grid; grid-template-columns: 1fr 2fr auto; align-items: center; gap: 1.5rem; padding: 1.3rem 0; cursor: pointer; list-style: none; }
   .audit-replay__fallback summary::-webkit-details-marker { display: none; }

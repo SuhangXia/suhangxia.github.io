@@ -85,6 +85,14 @@ def main():
     elapsed = t - origin
     ymin = min(np.min(cam), np.min(before), np.min(after)) - .15
     ymax = max(np.max(cam), np.max(before), np.max(after)) + .15
+    # Zoom into the first second of the previously displayed 3–6 s sweep.
+    # This is a labelled local example, not a new fit or a full-record result.
+    detail = (3., 4.)
+    detail_mask = (elapsed >= detail[0]) & (elapsed <= detail[1])
+    detail_values = np.concatenate([v[detail_mask] for v in [cam, before, after]])
+    detail_pad = .12 * np.ptp(detail_values)
+    detail_ylim = (float(detail_values.min() - detail_pad), float(detail_values.max() + detail_pad))
+    residual_limit = float(max(np.max(np.abs((cam-v)[detail_mask])) for v in [before, after]) * 1.12)
     lut = yaml.safe_load(args.gripper_lut.read_text())
 
     for mobile in [False, True]:
@@ -103,15 +111,26 @@ def main():
         save(fig, f'board-consistency{suffix}', args.output, args.preview_output)
 
         for mode, values, title in [('before', before, 'Before alignment'), ('after', after, 'After alignment')]:
-            fig, (ax, overview) = plt.subplots(2, 1, figsize=(width, 4.15), height_ratios=[3.4, 1], layout='constrained')
+            fig, (ax, residual, overview) = plt.subplots(3, 1, figsize=(width, 5), height_ratios=[2.5, 1.15, .65], layout='constrained')
             for target in [ax, overview]:
                 target.plot(elapsed, cam, color=GREEN, lw=1.7, label='Camera · ArUco')
                 target.plot(elapsed, values, color=CLAY, lw=1.35, linestyle=(0, (4, 2)), label='Quest · motion')
                 style(target)
-            ax.set(xlim=(3, 6), ylim=(ymin, ymax), ylabel='Normalized velocity')
-            ax.set_title('Motion detail · 3–6 s', loc='left', fontsize=11, pad=8)
-            ax.legend(loc='upper right', frameon=False, fontsize=9)
-            overview.axvspan(3, 6, color=GREEN, alpha=.12)
+            ax.set(xlim=detail, ylim=detail_ylim, ylabel='Velocity (normalized)')
+            ax.set_title('Same sweep · 3–4 s detail', loc='left', fontsize=11, pad=30)
+            ax.legend(loc='lower left', bbox_to_anchor=(0, 1.01), ncols=1 if mobile else 2, frameon=False, fontsize=9, borderaxespad=0)
+            ax.tick_params(labelbottom=False)
+            difference = cam - values
+            residual.fill_between(elapsed, 0, difference, color=CLAY, alpha=.15)
+            residual.plot(elapsed, difference, color=CLAY, lw=1.2)
+            residual.axhline(0, color=GREEN, lw=1)
+            style(residual)
+            residual.set(xlim=detail, ylim=(-residual_limit, residual_limit), ylabel='Difference', xlabel='Time in recording (s)')
+            local_mse = float(np.mean(difference[detail_mask] ** 2))
+            residual.text(.98, .94, f'Detail MSE {local_mse:.3f}', transform=residual.transAxes,
+                          ha='right', va='top', fontsize=9, color=INK,
+                          bbox={'facecolor': 'white', 'edgecolor': 'none', 'alpha': .85, 'pad': 1})
+            overview.axvspan(*detail, color=GREEN, alpha=.2)
             overview.set(xlim=(0, float(elapsed[-1])), ylim=(ymin, ymax), xlabel='Time in full recording (s)', yticks=[])
             overview.spines['left'].set_visible(False)
             save(fig, f'latency-{mode}{suffix}', args.output, args.preview_output)
@@ -141,7 +160,11 @@ def main():
         save(fig, f'source-reuse{suffix}', args.output, args.preview_output)
 
     provenance = {'camera_detections': len(camera), 'quest_samples': len(quest), 'display_samples': len(t),
-                  'estimated_offset_ms': offset * 1000, 'shown_detail_seconds': [3, 6],
+                  'estimated_offset_ms': offset * 1000, 'shown_detail_seconds': list(detail),
+                  'detail_selection': 'First second of the previously displayed 3–6 s sweep; a local illustration, not the global fit metric.',
+                  'detail_mse_before': float(np.mean((cam[detail_mask]-before[detail_mask])**2)),
+                  'detail_mse_after': float(np.mean((cam[detail_mask]-after[detail_mask])**2)),
+                  'detail_shared_ylim': list(detail_ylim), 'residual_shared_ylim': [-residual_limit, residual_limit],
                   'normalization': 'Full-record z-score, Quest center/scale held fixed between before/after.',
                   'position_to_signal': 'Camera-time interpolation, Gaussian sigma=1 sample, velocity gradient.',
                   'display_mse_before': float(np.mean((cam-before)**2)), 'display_mse_after': float(np.mean((cam-after)**2)),

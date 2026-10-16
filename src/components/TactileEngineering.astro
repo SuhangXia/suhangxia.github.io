@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import handEyeGeometry from '../assets/media/tactile-umi/quest-camera-hand-eye.png';
 import board from '../assets/media/tactile-umi/engineering/board-consistency.svg';
 import boardMobile from '../assets/media/tactile-umi/engineering/board-consistency-mobile.svg';
 import before from '../assets/media/tactile-umi/engineering/latency-before.svg';
@@ -45,42 +47,19 @@ const formats = [{ name: 'wide', width: 740, left: 110 }, { name: 'compact', wid
     </div>
   </header>
 
-  <article class="engineering-row" id="hand-eye-calibration">
+  <article class="engineering-row engineering-row--spatial" id="hand-eye-calibration">
     <div class="engineering-visual" data-engineering-switch>
       <div class="engineering-tabs" role="tablist" aria-label="Spatial calibration views">
         <button type="button" role="tab" id="spatial-tab-chain" aria-controls="spatial-chain" aria-selected="true">Coordinate chains</button>
         <button type="button" role="tab" id="spatial-tab-validation" aria-controls="spatial-validation" aria-selected="false" tabindex="-1">Validation</button>
         <button type="button" role="tab" id="spatial-tab-gripper" aria-controls="gripper-width-mapping" aria-selected="false" tabindex="-1">Gripper LUT</button>
       </div>
-      <div class="engineering-panel chain-panel" id="spatial-chain" role="tabpanel" aria-labelledby="spatial-tab-chain">
-        <div class="coordinate-lane">
-          <p class="chain-label">DEMONSTRATION</p>
-          <div class="coordinate-chain">
-            <div class="coordinate-node"><b>W<sub>u</sub></b><span>Quest world</span></div>
-            <div class="coordinate-link"><span>←</span><small>tracked</small></div>
-            <div class="coordinate-node"><b>Q</b><span>Controller</span></div>
-            <div class="coordinate-link"><span>←</span><small>PARK</small></div>
-            <div class="coordinate-node"><b>C<sub>u</sub></b><span>Wrist camera</span></div>
-            <div class="coordinate-link"><span>←</span><small>tool geometry</small></div>
-            <div class="coordinate-node"><b>T<sub>u</sub></b><span>Demo TCP</span></div>
-          </div>
-        </div>
-        <div class="chain-divider"><span>Camera-relative action</span><span>Independent world frames</span></div>
-        <div class="coordinate-lane">
-          <p class="chain-label">EXECUTION</p>
-          <div class="coordinate-chain coordinate-chain--robot">
-            <div class="coordinate-node"><b>B</b><span>Franka base</span></div>
-            <div class="coordinate-link"><span>←</span><small>kinematics</small></div>
-            <div class="coordinate-node"><b>F</b><span>Flange</span></div>
-            <div class="coordinate-link"><span>←</span><small>calibrated</small></div>
-            <div class="coordinate-branches">
-              <div class="coordinate-node"><b>C<sub>r</sub></b><span>Robot camera</span></div>
-              <div class="coordinate-node"><b>T<sub>r</sub></b><span>Robot TCP</span></div>
-            </div>
-          </div>
-        </div>
-        <p class="chain-key">Arrows map child-frame coordinates into the parent frame.</p>
-      </div>
+      <figure class="engineering-panel hand-eye-panel" id="spatial-chain" role="tabpanel" aria-labelledby="spatial-tab-chain">
+        <a class="hand-eye-image-link" href={handEyeGeometry.src} target="_blank" rel="noreferrer" aria-label="Open the full-resolution hand–eye calibration diagram">
+          <Image src={handEyeGeometry} widths={[640, 960, 1440, 1920, 2560, 3840]} sizes="(max-width: 767px) 92vw, 90vw" format="webp" quality={90} loading="lazy" alt="Quest–camera hand–eye calibration diagram showing two gripper poses, the fixed ArUco marker, coordinate transforms and the AX = XB relationship" />
+        </a>
+        <figcaption class="hand-eye-caption"><span>Quest–camera hand–eye calibration: two poses, one fixed ArUco marker, AX = XB.</span><a href={handEyeGeometry.src} target="_blank" rel="noreferrer">View full-resolution diagram ↗</a></figcaption>
+      </figure>
       <figure class="engineering-panel" id="spatial-validation" role="tabpanel" aria-labelledby="spatial-tab-validation" hidden>
         <picture><source media="(max-width: 767px)" srcset={boardMobile.src} width="425" height="375" /><img src={board.src} width="750" height="375" loading="lazy" alt="All forty fixed-board reconstructions, centered on the median, with x y z standard deviations of 1.67, 3.09 and 1.91 millimetres" /></picture>
         <figcaption>All 40 poses; axis-wise fixed-board spread, not absolute positioning accuracy.</figcaption>
@@ -109,13 +88,13 @@ const formats = [{ name: 'wide', width: 740, left: 110 }, { name: 'compact', wid
       </div>
       {[{ id: 'before', image: before, mobile: beforeMobile }, { id: 'after', image: after, mobile: afterMobile }].map((view) => (
         <figure class="engineering-panel" id={`latency-${view.id}`} role="tabpanel" aria-labelledby={`latency-tab-${view.id}`} hidden={view.id !== 'after'}>
-          <picture><source media="(max-width: 767px)" srcset={view.mobile.src} width="425" height="415" /><img src={view.image.src} width="750" height="415" loading="lazy" alt={`${view.id === 'after' ? 'After' : 'Before'} time alignment: recorded camera and Quest motion, with a three-second detail and the full recording below, using identical axes`} /></picture>
+          <picture><source media="(max-width: 767px)" srcset={view.mobile.src} width="425" height="500" /><img src={view.image.src} width="750" height="500" loading="lazy" alt={`${view.id === 'after' ? 'After' : 'Before'} time alignment: recorded camera and Quest motion, with a one-second detail, a difference trace and the full recording, using identical scales`} /></picture>
         </figure>
       ))}
       <figure class="engineering-panel tactile-delay-panel" id="latency-tactile" role="tabpanel" aria-labelledby="latency-tab-tactile" hidden>
         <a href={tactileDelay.src} target="_blank" rel="noreferrer"><img src={tactileDelay.src} width="1760" height="1440" loading="lazy" alt="Original flicker signals and cross-correlation curve used for the 25 millisecond tactile-camera offset" /></a>
       </figure>
-      <p class="engineering-caption">Recorded motion, identical scales. Quest timestamps shift +56.738 ms; this is the estimated offset. Full recording shown below the detail.</p>
+      <p class="engineering-caption">Same scales in both views. Detail: 3–4 s; difference = camera − Quest (closer to zero is better). Full-record MSE: 0.523 → 0.476. The 56.738 ms shift is the estimated offset, not residual error.</p>
     </div>
     <div class="engineering-copy">
       <p class="engineering-index">B / exUMI-inspired latency calibration</p>
@@ -299,22 +278,16 @@ const formats = [{ name: 'wide', width: 740, left: 110 }, { name: 'compact', wid
   .calibration-reuse li { flex: 1; position: relative; padding: 1.1rem .6rem 0 0; font-size: .71rem; line-height: 1.6; color: var(--muted); }
   .calibration-reuse li::before { content: ''; position: absolute; top: -3px; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
   .calibration-reuse strong { display: block; color: var(--ink); }
-  .chain-panel { padding: 1.5rem 1.2rem; }
-  .chain-label { margin: 0 0 1rem; color: var(--muted); font-size: .67rem; font-weight: 750; letter-spacing: .12em; }
-  .coordinate-chain { display: grid; grid-template-columns: 1fr .45fr 1fr .45fr 1fr .45fr 1fr; align-items: center; gap: .15rem; }
-  .coordinate-chain--robot { grid-template-columns: 1fr .45fr 1fr .45fr 1fr; }
-  .coordinate-node { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 5rem; background: #f1f4ee; padding: .65rem .25rem; border: 1px solid #dce2d7; }
-  .coordinate-node b { color: #476b5a; font: 450 2rem/1 var(--font-serif); }
-  .coordinate-node sub { font-size: .55em; }
-  .coordinate-node > span { margin-top: .65rem; text-align: center; font-size: .7rem; line-height: 1.4; }
-  .coordinate-link { text-align: center; align-self: center; }
-  .coordinate-link > span { font-size: 1.2rem; color: #747c6e; }
-  .coordinate-link small { display: block; font-size: .53rem; line-height: 1.3; overflow-wrap: anywhere; }
-  .coordinate-branches { display: grid; gap: .4rem; }
-  .coordinate-branches .coordinate-node { min-height: 4rem; }
-  .coordinate-branches .coordinate-node b { font-size: 1.5rem; }
-  .chain-divider { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .3rem; margin: 1.4rem 0; padding-block: .8rem; border-block: 1px dashed #c6cdbf; font-size: .63rem; color: var(--muted); }
-  .chain-key { margin-top: 1.1rem; font-size: .65rem; line-height: 1.6; color: var(--muted); }
+  .engineering-row--spatial { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .engineering-row--spatial .engineering-copy { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); column-gap: clamp(2rem, 4vw, 4rem); }
+  .engineering-row--spatial .engineering-index { grid-column: 1; }
+  .engineering-row--spatial .engineering-copy h4 { grid-column: 1; grid-row: 2 / 4; margin-bottom: 0; }
+  .engineering-row--spatial .engineering-copy > p:not(.engineering-index) { grid-column: 2; grid-row: 1 / 3; }
+  .engineering-row--spatial .calibration-reuse { grid-column: 2; grid-row: 3; }
+  .hand-eye-image-link { display: block; cursor: zoom-in; }
+  .hand-eye-image-link:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+  .engineering-panel .hand-eye-caption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1.5rem; }
+  .hand-eye-caption a { text-decoration: underline; text-underline-offset: .2em; }
   .timing-svg { display: block; width: 100%; height: auto; font-family: var(--font-sans); }
   .timing-svg--compact { display: none; }
   .timing-reference { font-size: 12px; fill: #62665f; }
@@ -340,7 +313,7 @@ const formats = [{ name: 'wide', width: 740, left: 110 }, { name: 'compact', wid
     .engineering-row, .engineering-row--reverse { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1.8rem; }
     .engineering-row--reverse .engineering-visual { grid-column: 1; }
     .engineering-row--reverse .engineering-copy { grid-column: 2; }
-    .coordinate-link small { display: none; }
+    .engineering-row--spatial { grid-template-columns: minmax(0, 1fr); }
   }
   @media (max-width: 767px) {
     .engineering-heading, .engineering-row, .engineering-row--reverse, .engineering-methods__content { grid-template-columns: minmax(0,1fr); }
@@ -351,19 +324,9 @@ const formats = [{ name: 'wide', width: 740, left: 110 }, { name: 'compact', wid
     .engineering-copy > p:not(.engineering-index) { font-size: 1rem; }
     .engineering-tabs { padding: .3rem; }
     .engineering-tabs button { padding-inline: .5rem; font-size: .7rem; }
-    .chain-panel { padding: 1.25rem .9rem; }
-    .coordinate-chain { grid-template-columns: 1fr; gap: .4rem; }
-    .coordinate-node { flex-direction: row; justify-content: flex-start; gap: 1rem; padding: .75rem 1rem; min-height: 3.4rem; }
-    .coordinate-node b { width: 2rem; flex-shrink: 0; font-size: 1.7rem; }
-    .coordinate-node > span { margin-top: 0; font-size: .85rem; }
-    .coordinate-link { display: flex; flex-direction: row; justify-content: center; gap: .7rem; align-items: center; }
-    .coordinate-link > span { transform: rotate(90deg); }
-    .coordinate-link small { font-size: .7rem; }
-    .coordinate-branches { grid-template-columns: 1fr 1fr; }
-    .coordinate-branches .coordinate-node { flex-direction: column; gap: .5rem; padding-inline: .25rem; }
-    .coordinate-branches .coordinate-node > span { font-size: .75rem; }
-    .chain-divider { font-size: .7rem; }
-    .chain-key { font-size: .75rem; }
+    .engineering-row--spatial .engineering-copy { display: block; }
+    .engineering-row--spatial .engineering-copy h4 { margin-bottom: 1.5rem; }
+    .engineering-row--spatial .engineering-panel[hidden] { display: none; }
     .timing-svg--wide { display: none; }
     .timing-svg--compact { display: block; }
     .timing-reference { font-size: 12px; }

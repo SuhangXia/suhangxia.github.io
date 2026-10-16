@@ -4,8 +4,19 @@
   "display_samples": 437,
   "estimated_offset_ms": -56.738201732020435,
   "shown_detail_seconds": [
-    3,
-    6
+    3.0,
+    4.0
+  ],
+  "detail_selection": "First second of the previously displayed 3\u20136 s sweep; a local illustration, not the global fit metric.",
+  "detail_mse_before": 1.1068316136113727,
+  "detail_mse_after": 0.6229080434142845,
+  "detail_shared_ylim": [
+    -3.388833465314085,
+    2.637576524173495
+  ],
+  "residual_shared_ylim": [
+    -2.1807292137711785,
+    2.1807292137711785
   ],
   "normalization": "Full-record z-score, Quest center/scale held fixed between before/after.",
   "position_to_signal": "Camera-time interpolation, Gaussian sigma=1 sample, velocity gradient.",

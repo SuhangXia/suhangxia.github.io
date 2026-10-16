@@ -61,12 +61,17 @@ try {
       const figure = await row.locator('.engineering-visual').boundingBox();
       const copy = await row.locator('.engineering-copy').boundingBox();
       assert(figure && copy);
-      if (width === 390) assert(figure.y + figure.height <= copy.y + 1, 'Mobile figure must precede copy');
+      if (width === 390 || rowId === 'hand-eye-calibration') assert(figure.y + figure.height <= copy.y + 1, 'Mobile/full-width figure must precede copy');
       else assert(Math.abs(figure.y + figure.height/2 - copy.y - copy.height/2) < 4, 'Desktop figure/text must be adjacent and centered');
+      if (rowId === 'hand-eye-calibration') {
+        assert(await row.locator('.hand-eye-image-link img').evaluate((img) => img.naturalWidth > 0 && Math.abs(img.naturalWidth / img.naturalHeight - 16 / 9) < .01), 'Original diagram must retain its full 16:9 aspect ratio');
+        assert(await row.locator('.hand-eye-image-link').getAttribute('href'), 'Full-resolution original must remain accessible');
+      }
       await captureIsolated(row, `${rowId}-${width}.png`);
     }
     for (const group of await page.locator('[data-engineering-switch]').all()) {
       const initialHeight = (await group.boundingBox()).height;
+      const naturalMobileHeight = width === 390 && await group.evaluate((el) => !!el.closest('.engineering-row--spatial'));
       for (const tab of await group.locator('[role=tab]').all()) {
         await tab.click();
         assert.equal(await tab.getAttribute('aria-selected'), 'true');
@@ -75,7 +80,7 @@ try {
         assert(await panel.isVisible());
         await panel.locator('img').evaluateAll((images) => Promise.all(images.map((im) => im.decode())));
         assert.equal(await group.locator('[role=tabpanel]:visible').count(), 1);
-        assert(Math.abs((await group.boundingBox()).height - initialHeight) < 2, 'Switches must not change figure-area height');
+        if (!naturalMobileHeight) assert(Math.abs((await group.boundingBox()).height - initialHeight) < 2, 'Switches must not change figure-area height');
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
       }
     }

@@ -1,94 +1,27 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
-    <title>Tactile UMI · One-trajectory audit replay</title>
-    <style>
-      html, body, #viewer { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #171917; }
-      #status { position: absolute; z-index: 1; inset: 0; display: grid; place-content: center; gap: .8rem; padding: 1rem; background: #171917; color: #f1efe8; font: 14px/1.6 system-ui, sans-serif; text-align: center; }
-      #status[hidden] { display: none; }
-      #status a { color: #f1efe8; text-underline-offset: .25em; }
-      #status nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; }
-    </style>
-  </head>
-  <body>
-    <div id="status" role="status">Loading the read-only trajectory replay…</div>
-    <div id="viewer"></div>
-    <script type="module">
-      const status = document.getElementById('status');
-      const viewerElement = document.getElementById('viewer');
-      const backend = new URLSearchParams(location.search).get('backend');
-      let failureShown = false;
-
-      async function showFailure(error) {
-        if (failureShown) return;
-        failureShown = true;
-        status.hidden = false;
-        const message = document.createElement('p');
-        message.textContent = /webgl|wgpu|gpu|surface|canvas/i.test(String(error))
-          ? 'The original Rerun replay could not initialize a graphics backend in this browser.'
-          : 'The original Rerun replay could not start.';
-        status.replaceChildren(message);
-
-        let webglAvailable = false;
-        let webgpuAvailable = false;
-        try {
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('webgl2');
-          webglAvailable = Boolean(context);
-          context?.getExtension('WEBGL_lose_context')?.loseContext();
-          webgpuAvailable = Boolean(await navigator.gpu?.requestAdapter());
-        } catch {
-          // A disabled browser graphics process can reject both probes.
-        }
-        if (!webglAvailable && !webgpuAvailable) {
-          const guidance = document.createElement('p');
-          guidance.textContent = 'WebGL2 and WebGPU are both unavailable in this browser session. Enable graphics acceleration in Chrome settings and fully restart Chrome, or use a browser with a working graphics backend. The archived video remains a manual option on the project page.';
-          status.append(guidance);
-          return;
-        }
-
-        const options = document.createElement('nav');
-        for (const [label, target, available] of [
-          ['Try WebGPU', '?backend=webgpu', webgpuAvailable],
-          ['Try WebGL', '?backend=webgl', webglAvailable],
-        ]) {
-          if (!available || target === `?backend=${backend}`) continue;
-          const link = document.createElement('a');
-          link.href = target;
-          link.textContent = label;
-          options.append(link);
-        }
-        if (options.childElementCount) status.append(options);
-      }
-
-      function containsStartFailure(root) {
-        if (root.textContent?.includes('Failed to start')) return true;
-        for (const element of root.querySelectorAll('*')) {
-          if (element.shadowRoot && containsStartFailure(element.shadowRoot)) return true;
-        }
-        return false;
-      }
-
-      try {
-        // Keep the original Tactile UMI WebViewer and match the .rrd export version.
-        const { WebViewer } = await import('https://esm.sh/@rerun-io/web-viewer@0.31.4');
-        const recording = new URL('./audit-episode-000001.rrd', location.href).href;
-        const viewer = new WebViewer();
-        const options = { width: '100%', height: '100%', theme: 'dark' };
-        if (backend === 'webgpu' || backend === 'webgl') options.render_backend = backend;
-        await viewer.start(recording, viewerElement, options);
-        status.hidden = true;
-        // Rerun can report a GPU-surface error inside its own UI after start() resolves.
-        setInterval(() => {
-          if (containsStartFailure(viewerElement)) showFailure('graphics surface');
-        }, 2000);
-      } catch (error) {
-        showFailure(error);
-        console.error('Tactile UMI audit replay:', error);
-      }
-    </script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Tactile UMI · One-trajectory audit replay</title>
+  <style>
+    html, body, #viewer { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #171917; }
+    #status { position: absolute; z-index: 2; inset: 0; display: grid; place-content: center; gap: .8rem; padding: clamp(1rem, 4vw, 3rem); background: #171917; color: #f1efe8; font: 14px/1.6 system-ui, sans-serif; text-align: center; }
+    #status[hidden] { display: none; }
+    #status p { max-width: 42rem; margin: 0 auto; }
+    #status h1 { font-size: 1.4rem; margin: 0; }
+    #status a { color: inherit; text-underline-offset: .25em; }
+    #status a:focus-visible { outline: 2px solid #dba78d; outline-offset: 3px; }
+    #status nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; }
+    #status details { max-width: 42rem; overflow-wrap: anywhere; }
+    #status pre { white-space: pre-wrap; text-align: left; font-size: .75rem; }
+    #status[data-stage="runtime"] { inset: 0 0 auto; padding: .5rem; pointer-events: none; font-size: .8rem; }
+  </style>
+</head>
+<body>
+  <div id="status" role="status" aria-live="polite">Checking browser graphics…</div>
+  <div id="viewer"></div>
+  <script type="module" src="./replay.mjs"></script>
+</body>
 </html>
