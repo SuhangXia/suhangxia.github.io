@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ClothumiEvidence from '../../components/ClothumiEvidence.astro';
 import ClothumiMediaPlan from '../../components/ClothumiMediaPlan.astro';
 import TactileAuditViewer from '../../components/TactileAuditViewer.astro';
+import RobotDataSchema from '../../components/RobotDataSchema.astro';
 import ProjectDemoGallery from '../../components/ProjectDemoGallery.astro';
 import ProjectEvidenceGallery from '../../components/ProjectEvidenceGallery.astro';
 import ProjectFeature from '../../components/ProjectFeature.astro';
@@ -96,6 +97,7 @@ const punctureEngineering = isPuncture && projectRepositoryEvidence ? {
   {project.slug === 'tactile-umi' ? (
     <>
       <ClothumiMediaPlan />
+      <RobotDataSchema />
       <TactileAuditViewer />
     </>
   ) : project.slug === 'touch-until-certain' ? (

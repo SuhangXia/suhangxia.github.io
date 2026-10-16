@@ -1,0 +1,32 @@
+---
+import schema from '../../public/data/robotdata-schema-summary.json';
+const stages = ['raw', 'aligned', 'training'] as const;
+const labels = { raw: 'Raw H5', aligned: 'Aligned H5', training: 'Training Zarr' };
+---
+<section class="rds-schema section-shell" aria-labelledby="rds-schema-title">
+  <div class="rds-schema-heading"><div><p class="eyebrow">Inside the Dataset</p><h2 id="rds-schema-title">The same demonstration, three representations.</h2></div><a class="text-link" href="/demo/robotdata-studio/?dataset=tactile-umi&view=schema">Open the Schema Explorer ↗</a></div>
+  <p class="rds-schema-intro">Inspect stored fields, timing and processing provenance in RobotData Studio. This summary is generated from its exported schema; shapes below describe a representative artifact.</p>
+  <div class="rds-stage-tabs" role="tablist" aria-label="Dataset representation">{stages.map((stage,i)=><button type="button" role="tab" aria-selected={i===0?'true':'false'} aria-controls={`rds-schema-${stage}`} id={`rds-tab-${stage}`} data-rds-stage={stage}>{labels[stage]}</button>)}</div>
+  {stages.map((stage,i)=><div id={`rds-schema-${stage}`} role="tabpanel" aria-labelledby={`rds-tab-${stage}`} hidden={i!==0}><div class="rds-schema-table"><table><thead><tr><th>Stored field</th><th>Shape / type</th><th>Physical meaning</th></tr></thead><tbody>{schema[stage].map(field=><tr><td><code>{field.path}</code></td><td><code>{field.shape_json} · {field.dtype}</code></td><td>{field.logical_name ?? 'Recorded metadata'}{field.reference_frame&&<small>{field.reference_frame} · {field.tracked_body}</small>}{field.temporal_role&&<small>{field.temporal_role.replaceAll('_',' ')}</small>}</td></tr>)}</tbody></table></div></div>)}
+  <p class="rds-schema-foot">Zarr stores absolute future camera targets. The DP loader derives targets relative to the same current camera pose; gripper width stays absolute. Six tactile history records can reuse original source frames.</p>
+</section>
+<script is:inline>
+  document.querySelectorAll('[data-rds-stage]').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-rds-stage]').forEach(tab => {
+        const active = tab === button;
+        tab.setAttribute('aria-selected', String(active));
+        document.getElementById('rds-schema-' + tab.dataset.rdsStage).hidden = !active;
+      });
+    });
+    button.addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+      const tabs = [...document.querySelectorAll('[data-rds-stage]')];
+      const index = (tabs.indexOf(button) + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      tabs[index].focus(); tabs[index].click(); event.preventDefault();
+    });
+  });
+</script>
+<style>
+ .rds-schema{padding-block:64px;border-top:1px solid var(--line,#ddd)}.rds-schema-heading{display:flex;justify-content:space-between;align-items:end;gap:24px}.rds-schema h2{font-family:var(--font-display,Georgia);font-weight:400;font-size:clamp(27px,3vw,40px);max-width:680px;margin:0}.rds-schema-intro{max-width:760px;font-size:14px;line-height:1.8;opacity:.7;margin-block:20px}.rds-stage-tabs{display:flex;gap:8px;margin:25px 0 0}.rds-stage-tabs button{font:inherit;font-size:12px;padding:11px 18px;border:1px solid #cbd0c2;background:transparent;cursor:pointer}.rds-stage-tabs button[aria-selected=true]{background:#354936;color:white;border-color:#354936}.rds-schema-table{overflow:auto;border:1px solid #d9ddd1;margin-top:12px}.rds-schema table{width:100%;border-collapse:collapse;font-size:12px;text-align:left;min-width:640px}.rds-schema th,.rds-schema td{padding:14px;border-bottom:1px solid #e0e3d9;vertical-align:top}.rds-schema th{font-size:10px;text-transform:uppercase;letter-spacing:1px;background:#eef0e7}.rds-schema code{font-size:11px;overflow-wrap:anywhere}.rds-schema small{display:block;opacity:.6;line-height:1.7;margin-top:4px}.rds-schema-foot{font-size:12px;line-height:1.8;max-width:850px;opacity:.7;margin-top:18px}@media(max-width:700px){.rds-schema-heading{display:block}.rds-schema-heading>a{display:inline-block;margin-top:20px}.rds-stage-tabs button{padding:10px 14px}}
+</style>

@@ -23,6 +23,11 @@ import { projects } from '../data/projects';
     </div>
 
     <div class="research-directory__list">
+      <a class="research-directory__item" href="/research/robotdata-studio/">
+        <span class="research-directory__index">S1</span>
+        <div><p>Independent software · Robot data infrastructure</p><h3>RobotData Studio</h3><span>A local workspace and browser-queryable public catalog for robot demonstrations.</span></div>
+        <span class="research-directory__action">Open project <b aria-hidden="true">↗</b></span>
+      </a>
       {projects.map((project) => (
         <a class="research-directory__item" href={`/research/${project.slug}/`}>
           <span class="research-directory__index">{project.index}</span>
