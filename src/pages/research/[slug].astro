@@ -97,7 +97,6 @@ const punctureEngineering = isPuncture && projectRepositoryEvidence ? {
     <>
       <ClothumiMediaPlan />
       <TactileAuditViewer />
-      <ClothumiEvidence />
     </>
   ) : project.slug === 'touch-until-certain' ? (
     <VtlaThesisEvidence />
@@ -149,7 +148,11 @@ const punctureEngineering = isPuncture && projectRepositoryEvidence ? {
 
   {punctureEngineering && <ProjectEvidenceGallery evidence={punctureEngineering} headingId="puncture-engineering-title" zoomable />}
 
-  {projectDemo && <ProjectDemoGallery {...projectDemo} videos={projectVideos} />}
+  {projectDemo && (
+    <ProjectDemoGallery {...projectDemo} videos={projectVideos}>
+      {project.slug === 'tactile-umi' && <ClothumiEvidence slot="results" />}
+    </ProjectDemoGallery>
+  )}
 
   {isPuncture && (
     <>

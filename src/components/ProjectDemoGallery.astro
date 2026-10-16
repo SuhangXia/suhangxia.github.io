@@ -41,6 +41,7 @@ const publicDemos = videos.filter((video) => video.status === 'public' && !video
           </article>
         ))}
       </div>
+      <slot name="results" />
     </section>
   )
 }

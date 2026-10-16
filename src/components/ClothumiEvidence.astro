@@ -5,118 +5,115 @@ const corpus = [
   { value: '77', label: 'demonstrations in the strict subset' },
   { value: '68', label: 'physical evaluation rollouts' },
 ] as const;
-
-const protocol = [
-  { number: '01', title: 'Controlled task', body: 'A fixed-layout, low-contrast white cylinder is moved toward a white plate.' },
-  { number: '02', title: 'Shared training basis', body: 'Both Diffusion Policy conditions use the same strict 77-demonstration subset, split into 65 training and 12 validation episodes.' },
-  { number: '03', title: 'Narrow success rule', body: 'Object–plate contact defines success. Stable placement is not required, so this is not a full pick-and-place result.' },
-] as const;
 ---
 
-<section class="clothumi-evidence section-shell" aria-labelledby="clothumi-evidence-title">
-  <div class="clothumi-evidence__heading">
-    <p class="eyebrow">Controlled evaluation · 68 physical rollouts</p>
+<section class="trial-summary" id="controlled-evaluation" aria-labelledby="clothumi-evidence-title">
+  <header class="trial-summary__heading">
     <div>
-      <h3 id="clothumi-evidence-title">Hold the policy contract fixed. Change the tactile evidence.</h3>
-      <p>
-        The primary comparison isolates the added tactile pathway inside one Diffusion Policy family. Both
-        conditions share wrist RGB, robot state, camera-relative actions, data subset, and rollout protocol;
-        the tactile condition adds two causal histories encoded by frozen UniForce.
-      </p>
+      <p class="eyebrow">Controlled evaluation · 68 physical rollouts</p>
+      <h4 id="clothumi-evidence-title">Does tactile conditioning help?</h4>
     </div>
+    <p>Shared RGB, state, actions and protocol; only tactile conditioning differs.</p>
+  </header>
+
+  <table class="trial-summary__table">
+    <caption class="sr-only">Contact success across 68 physical rollouts, with Wilson 95% confidence intervals.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Policy</th>
+        <th scope="col">Contacts</th>
+        <th scope="col"><span>Success rate</span><small>Wilson 95% CI</small></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Vision-only DP</th>
+        <td>10 / 34</td>
+        <td><strong>29.4%</strong><small>16.8–46.2%</small></td>
+      </tr>
+      <tr class="trial-summary__tactile">
+        <th scope="row">UniForce + DP</th>
+        <td>14 / 34</td>
+        <td><strong>41.2%</strong><small>26.4–57.8%</small></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="trial-summary__difference"><span>Observed difference</span><strong>+4</strong><span>successful contacts</span><span aria-hidden="true">·</span><span>+11.8 percentage points</span></p>
+
+  <div class="trial-summary__protocol">
+    <p><strong>Shared training basis</strong><span>Same 77-demonstration subset: 65 training / 12 validation episodes.</span></p>
+    <p><strong>Task &amp; success criterion</strong><span>White cylinder → white plate. Success means contact, not stable placement.</span></p>
   </div>
 
-  <dl class="tactile-corpus" aria-label="Tactile UMI dataset and evaluation scale">
-    {corpus.map((item) => (
-      <div>
-        <dd>{item.value}</dd>
-        <dt>{item.label}</dt>
-      </div>
-    ))}
-  </dl>
+  <p class="trial-summary__boundary">Preliminary comparison; two-sided Fisher exact test, p = 0.447 (not statistically significant).</p>
 
-  <ol class="tactile-protocol" aria-label="Controlled experiment protocol">
-    {protocol.map((item) => (
-      <li>
-        <span>{item.number}</span>
-        <h4>{item.title}</h4>
-        <p>{item.body}</p>
-      </li>
-    ))}
-  </ol>
-
-  <div class="clothumi-evidence__pipeline" aria-label="Tactile UMI policy comparison">
-    <div class="evidence-path evidence-path--vision">
-      <span>Shared condition</span>
-      <strong>Wrist RGB + state</strong>
-      <small>Frozen DINO ViT-B base with LoRA in the last four blocks · two observation steps</small>
+  <details class="trial-summary__details">
+    <summary>Model conditions, dataset context &amp; limitations</summary>
+    <div class="trial-summary__details-content">
+      <p class="trial-summary__context">Two Diffusion Policy conditions share wrist RGB, robot state, camera-relative actions and rollout protocol; only the tactile pathway differs.</p>
+      <p class="trial-summary__context">A fixed-layout, low-contrast white cylinder is moved toward a white plate.</p>
+      <dl class="trial-summary__corpus" aria-label="Tactile UMI dataset and evaluation scale">
+        {corpus.map((item) => <div><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
+      </dl>
+      <dl class="trial-summary__conditions" aria-label="Tactile UMI policy comparison">
+        <div><dt>Shared condition</dt><dd><strong>Wrist RGB + state</strong><span>Frozen DINO ViT-B base with LoRA in the last four blocks · two observation steps</span></dd></div>
+        <div><dt>Added condition</dt><dd><strong>Dual tactile history</strong><span>2 sides × 6 causal frames → frozen UniForce → 8 contact tokens</span></dd></div>
+        <div><dt>Shared output</dt><dd><strong>Diffusion Policy</strong><span>Eight camera-relative 7D actions: translation, rotation, and gripper width</span></dd></div>
+      </dl>
+      <p>This preliminary evaluation does not establish broad generalisation, cloth-manipulation performance, stable placement, or a causal mechanism for the improvement.</p>
+      <p>The π0.5 integration is separate and is not included in this comparison.</p>
     </div>
-    <div class="evidence-path evidence-path--tactile">
-      <span>Added condition</span>
-      <strong>Dual tactile history</strong>
-      <small>2 sides × 6 causal frames → frozen UniForce → 8 contact tokens</small>
-    </div>
-    <div class="evidence-path evidence-path--output">
-      <span>Shared output</span>
-      <strong>Diffusion Policy</strong>
-      <small>Eight camera-relative 7D actions: translation, rotation, and gripper width</small>
-    </div>
-  </div>
-
-  <div class="clothumi-results">
-    <article>
-      <p>Vision-only DP</p>
-      <strong>10 <span>/ 34</span></strong>
-      <div>
-        <span>29.4% contact success</span>
-        <small>Wilson 95% CI · 16.8–46.2%</small>
-      </div>
-    </article>
-    <article class="clothumi-results__tactile">
-      <p>UniForce + DP</p>
-      <strong>14 <span>/ 34</span></strong>
-      <div>
-        <span>41.2% contact success</span>
-        <small>Wilson 95% CI · 26.4–57.8%</small>
-      </div>
-    </article>
-    <article class="clothumi-results__delta">
-      <p>Observed difference</p>
-      <strong>+4</strong>
-      <div>
-        <span>successful contacts</span>
-        <small>+11.8 percentage points</small>
-      </div>
-    </article>
-  </div>
-
-  <div class="clothumi-evidence__qualification">
-    <span>Evidence boundary</span>
-    <p>
-      The observed direction is encouraging but not statistically significant at this sample size (two-sided
-      Fisher exact test, p = 0.447). This preliminary evaluation does not establish broad generalisation,
-      cloth-manipulation performance, stable placement, or a causal mechanism for the improvement. The separate
-      π0.5 integration is retained as systems evidence and is not folded into this 34-versus-34 comparison.
-    </p>
-  </div>
+  </details>
 </section>
 
 <style>
-  .tactile-corpus { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin-top: clamp(4rem, 7vw, 7rem); border: 1px solid var(--line); background: var(--line); }
-  .tactile-corpus > div { min-height: 10rem; padding: clamp(1.25rem, 2.4vw, 2.35rem); background: var(--paper-deep); }
-  .tactile-corpus dd { font-family: var(--font-serif); font-size: clamp(2.5rem, 4.6vw, 5.3rem); letter-spacing: -.055em; line-height: .9; }
-  .tactile-corpus dt { max-width: 13rem; margin-top: 1.4rem; color: var(--muted); font-size: .66rem; line-height: 1.5; text-transform: uppercase; letter-spacing: .07em; }
-  .tactile-protocol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--page-gutter); margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--line); list-style: none; }
-  .tactile-protocol li { display: grid; grid-template-columns: 2rem 1fr; column-gap: 1rem; }
-  .tactile-protocol li > span { grid-row: 1 / 3; color: var(--accent); font-size: .65rem; font-weight: 750; }
-  .tactile-protocol h4 { font-family: var(--font-serif); font-size: clamp(1.25rem, 2vw, 2rem); font-weight: 450; letter-spacing: -.025em; }
-  .tactile-protocol p { margin-top: .75rem; color: var(--muted); font-size: .72rem; line-height: 1.65; }
-  @media (max-width: 1023px) {
-    .tactile-corpus { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .tactile-protocol { grid-template-columns: 1fr; gap: 2rem; }
-  }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .trial-summary { margin-top: clamp(1.75rem, 3vw, 3rem); padding-top: 1.25rem; border-top: 1px solid var(--line); scroll-margin-top: 7rem; }
+  .trial-summary__heading { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 1rem 3rem; }
+  .trial-summary__heading .eyebrow { font-size: .7rem; }
+  .trial-summary__heading h4 { margin: .6rem 0 0; font: 450 clamp(1.6rem, 2.5vw, 2.5rem)/1.1 var(--font-serif); letter-spacing: -.03em; }
+  .trial-summary__heading > p { max-width: 42rem; font-size: .9rem; line-height: 1.7; color: var(--muted); }
+  .trial-summary__table { width: 100%; margin-top: 1.5rem; border-collapse: collapse; text-align: left; font-size: .95rem; font-variant-numeric: tabular-nums; }
+  .trial-summary__table th, .trial-summary__table td { padding: .85rem 1rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .trial-summary__table thead th { color: var(--muted); font-size: .8rem; font-weight: 600; }
+  .trial-summary__table thead th:first-child { width: 42%; }
+  .trial-summary__table thead th:nth-child(2) { width: 25%; }
+  .trial-summary__table tbody th { font-weight: 600; }
+  .trial-summary__table td:nth-child(2) { white-space: nowrap; }
+  .trial-summary__table td strong { font-size: 1.15rem; font-weight: 650; }
+  .trial-summary__table small { display: block; margin-top: .15rem; font-size: .78rem; line-height: 1.5; color: var(--muted); font-weight: 400; }
+  .trial-summary__tactile { background: var(--paper-deep); }
+  .trial-summary__tactile th { box-shadow: inset 2px 0 var(--accent); }
+  .trial-summary__difference { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem .65rem; margin-top: .8rem; font-size: .85rem; color: var(--muted); }
+  .trial-summary__difference strong { font-weight: 650; color: var(--ink); }
+  .trial-summary__protocol { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 3rem; margin-top: 1.5rem; }
+  .trial-summary__protocol p { font-size: .87rem; line-height: 1.75; color: var(--muted); }
+  .trial-summary__protocol strong { display: block; margin-bottom: .25rem; font-size: .83rem; font-weight: 650; color: var(--ink); }
+  .trial-summary__boundary { margin-top: 1rem; font-size: .83rem; line-height: 1.75; color: var(--muted); }
+  .trial-summary__details { margin-top: 1rem; border-top: 1px solid var(--line); }
+  .trial-summary__details summary { width: fit-content; max-width: 100%; padding: .85rem 0; color: var(--ink-soft); cursor: pointer; font-size: .83rem; line-height: 1.6; }
+  .trial-summary__details-content { padding-bottom: 1rem; font-size: .85rem; line-height: 1.75; color: var(--muted); }
+  .trial-summary__context { margin-bottom: .75rem; }
+  .trial-summary__corpus { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; margin-bottom: 1.25rem; }
+  .trial-summary__corpus dt { font-size: .78rem; }
+  .trial-summary__corpus dd { margin: .2rem 0 0; color: var(--ink); font-size: 1rem; font-weight: 650; }
+  .trial-summary__conditions { display: grid; gap: .7rem; margin-bottom: 1rem; }
+  .trial-summary__conditions > div { display: grid; grid-template-columns: 8rem 1fr; gap: 1rem; }
+  .trial-summary__conditions dt { font-size: .78rem; }
+  .trial-summary__conditions dd { margin: 0; }
+  .trial-summary__conditions strong, .trial-summary__conditions span { display: block; }
+  .trial-summary__conditions strong { color: var(--ink); font-weight: 600; }
   @media (max-width: 767px) {
-    .tactile-corpus { grid-template-columns: 1fr; }
-    .tactile-corpus > div { min-height: 8rem; }
+    .trial-summary__heading, .trial-summary__protocol { grid-template-columns: 1fr; gap: .9rem; }
+    .trial-summary__table { font-size: .85rem; }
+    .trial-summary__table th, .trial-summary__table td { padding: .75rem .5rem; }
+    .trial-summary__table thead th:first-child { width: 38%; }
+    .trial-summary__table thead th:nth-child(2) { width: 25%; }
+    .trial-summary__table thead th { font-size: .72rem; }
+    .trial-summary__table td strong { font-size: 1rem; }
+    .trial-summary__table small { font-size: .72rem; }
+    .trial-summary__corpus { grid-template-columns: 1fr 1fr; }
+    .trial-summary__conditions > div { grid-template-columns: 1fr; gap: .15rem; }
   }
 </style>

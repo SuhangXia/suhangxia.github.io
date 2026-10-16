@@ -105,7 +105,13 @@ try {
   assert(await page.locator('#engineering-methods').evaluate((el) => el.open));
   await page.goto(base + route, { waitUntil: 'domcontentloaded' });
   assert.equal(await page.locator('video[controls]').count(), 3);
-  assert(await page.locator('.clothumi-results').innerText().then((s) => s.includes('10') && s.includes('14')));
+  assert(await page.locator('.trial-summary__table').innerText().then((s) => s.includes('10 / 34') && s.includes('14 / 34')));
+  assert.equal(await page.locator('.trial-summary__table tbody tr').count(), 2);
+  assert(await page.locator('.trial-summary').evaluate((el) => {
+    const video = el.closest('.project-demos')?.querySelector('video');
+    return video && Boolean(video.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING);
+  }), 'Compact comparison must follow the result video');
+  assert.equal(await page.locator('.trial-summary__details').evaluate((el) => el.open), false);
   assert.equal(await page.locator('.tactile-training__stages article').count(), 2);
   assert((await page.locator('#quest-camera-latency .method-credit a').getAttribute('href')).includes('xu25e.html'));
   await page.locator('[data-audit-video-open]').click();
