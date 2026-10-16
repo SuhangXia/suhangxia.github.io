@@ -1,0 +1,118 @@
+---
+import { Image } from 'astro:assets';
+import dashboard from '../assets/media/tactile-umi/audit-dashboard-cleaning.png';
+
+const checks = [
+  ['Pose validity', 'Finite position and axis-angle rotation; finite relative transforms.', 'Flag invalid frames / steps'],
+  ['Gripper validity', 'Finite width; width ≥ −0.0001 m (numerical tolerance).', 'Flag invalid frames'],
+  ['Required sensor streams', 'Configured RGB / tactile streams exist and cover the episode length.', 'Flag missing streams'],
+  ['Tracking continuity', 'Per-step translation ≤ 50 mm; rotation ≤ 20°.', 'Reject tracking jumps'],
+  ['Idle trimming', 'Translation < 1 mm AND rotation < 1° per step for ≥ 1 s; retain 0.5 s padding.', 'Trim leading / trailing idle'],
+  ['Manual decisions', 'Reason-coded keep / exclude decisions at episode level.', 'Record reviewer decisions'],
+  ['Training-window validity', 'All observation frames and action-horizon steps pass the enabled checks.', 'Export sample masks / good segments'],
+] as const;
+const robotChecks = [
+  ['Sequential IK', 'Converged solution; Cartesian residual ≤ 5 mm and ≤ 5°.', 'Flag infeasible steps'],
+  ['Joint limits & speed', 'URDF limits; margin ≥ 0.03 rad; joint-speed / URDF-limit ratio ≤ 0.8.', 'Flag limit / speed violations'],
+  ['Collision checking', 'Requires an enabled collision backend with geometry support.', 'Report collisions or backend unavailability'],
+] as const;
+const features = [
+  ['Synchronized review', 'Timeline, sensor views, 3D replay and failure inspection.'],
+  ['Gripper recovery', 'ArUco re-detection; calibrated width and bounded single-marker recovery.'],
+  ['Contact diagnostics', 'Left / right contact scores, phases and tactile-window coverage.'],
+  ['Curation outputs', 'Reason logs, valid segments, filtered exports and quarantine preview.'],
+] as const;
+---
+
+<section class="tactile-cleaning" id="dataset-cleaning" aria-labelledby="dataset-cleaning-title">
+  <header class="tactile-cleaning__heading">
+    <div>
+      <p class="eyebrow">Dataset curation · Audit tooling</p>
+      <h3 id="dataset-cleaning-title">Data cleaning, with an inspectable record.</h3>
+    </div>
+    <p>An Audit dashboard I built for H5/Zarr inspection, quality checks, synchronized review and training-set curation.</p>
+  </header>
+
+  <figure class="tactile-cleaning__figure">
+    <a class="tactile-cleaning__image" href={dashboard.src} target="_blank" rel="noreferrer" aria-label="Open the full-resolution Audit dashboard screenshot">
+      <Image src={dashboard} alt="Audit dashboard showing data-quality checks, gripper marker processing, episode counters, sample-validity rules and the trajectory list" widths={[640, 960, 1440, 1920, 2482]} sizes="(max-width: 767px) 100vw, 94vw" format="webp" quality={90} loading="lazy" />
+    </a>
+    <figcaption><span>Audit dashboard · Original interface screenshot, shown without cropping.</span><a href={dashboard.src} target="_blank" rel="noreferrer">Open full resolution ↗</a></figcaption>
+  </figure>
+
+  <div class="tactile-cleaning__checks">
+    <h4 id="audit-checks-title">Data-quality acceptance criteria</h4>
+    <p class="tactile-cleaning__defaults">Configurable code defaults, not an external certification standard. Motion thresholds are per sample step; the default time step is 0.1 s.</p>
+    <div class="tactile-cleaning__table-wrap" role="region" aria-labelledby="audit-checks-title" tabindex="0">
+      <table>
+        <thead><tr><th scope="col">Check</th><th scope="col">Rule / default</th><th scope="col">Action / output</th></tr></thead>
+        <tbody>{checks.map(([name, rule, output]) => <tr><th scope="row">{name}</th><td>{rule}</td><td>{output}</td></tr>)}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <details class="tactile-cleaning__robot">
+    <summary id="audit-robot-title">Optional robot-model checks</summary>
+    <p class="tactile-cleaning__defaults">Available when the robot model, transforms and corresponding backend are configured.</p>
+    <div class="tactile-cleaning__table-wrap" role="region" aria-labelledby="audit-robot-title" tabindex="0">
+      <table>
+        <thead><tr><th scope="col">Check</th><th scope="col">Rule / default</th><th scope="col">Action / output</th></tr></thead>
+        <tbody>{robotChecks.map(([name, rule, output]) => <tr><th scope="row">{name}</th><td>{rule}</td><td>{output}</td></tr>)}</tbody>
+      </table>
+    </div>
+  </details>
+
+  <ul class="tactile-cleaning__features" aria-label="Audit interface capabilities">
+    {features.map(([title, body]) => <li><h4>{title}</h4><p>{body}</p></li>)}
+  </ul>
+
+  <details class="tactile-cleaning__mutations">
+    <summary>Repair, pixel masking and quarantine are explicit data changes</summary>
+    <ul><li>Gripper repair: writes recovered widths to H5 with backups.</li><li>ArUco masking: modifies image pixels.</li><li>Quarantine: previews or moves selected files; snapshot sources first.</li></ul>
+  </details>
+</section>
+
+<style>
+  .tactile-cleaning { margin-top: clamp(3rem, 5vw, 5rem); padding-top: 1.25rem; border-top: 1px solid var(--line); scroll-margin-top: calc(var(--header-height) + 1.5rem); }
+  .tactile-cleaning__heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem 4rem; align-items: end; }
+  .tactile-cleaning__heading h3 { margin: .8rem 0 0; max-width: 18em; font: 440 clamp(1.8rem, 3vw, 3.1rem)/1.08 var(--font-serif); letter-spacing: -.035em; }
+  .tactile-cleaning__heading > p { max-width: 42rem; color: var(--muted); font-size: .95rem; line-height: 1.8; }
+  .tactile-cleaning__figure { margin: 1.75rem 0 0; border: 1px solid var(--line); background: var(--paper-raised); }
+  .tactile-cleaning__image { display: block; background: #fff; cursor: zoom-in; }
+  .tactile-cleaning__image :global(img) { display: block; width: 100%; height: auto; }
+  .tactile-cleaning__image:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .tactile-cleaning__figure figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; padding: .9rem 1rem; border-top: 1px solid var(--line); font-size: .83rem; line-height: 1.65; color: var(--muted); }
+  .tactile-cleaning__figure figcaption a { text-decoration: underline; text-underline-offset: .2em; color: var(--ink); }
+  .tactile-cleaning__checks { margin-top: 2rem; }
+  .tactile-cleaning h4 { margin: 0 0 .6rem; font-size: 1.08rem; font-weight: 650; line-height: 1.5; }
+  .tactile-cleaning__defaults { margin: .6rem 0 1rem; color: var(--muted); font-size: .86rem; line-height: 1.7; }
+  .tactile-cleaning__table-wrap { overflow-x: auto; }
+  .tactile-cleaning__table-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tactile-cleaning table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: .94rem; line-height: 1.65; }
+  .tactile-cleaning th, .tactile-cleaning td { padding: .85rem .9rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+  .tactile-cleaning thead { background: var(--paper-raised); border-top: 1px solid var(--line); }
+  .tactile-cleaning th { font-weight: 650; }
+  .tactile-cleaning th:first-child { width: 24%; }
+  .tactile-cleaning th:last-child { width: 26%; }
+  .tactile-cleaning td { color: var(--muted); }
+  .tactile-cleaning__robot { margin-top: 1.25rem; border-bottom: 1px solid var(--line); padding-bottom: .5rem; }
+  .tactile-cleaning__robot summary { padding: .65rem 0; font-size: 1rem; font-weight: 600; cursor: pointer; }
+  .tactile-cleaning__features { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem 2rem; list-style: none; margin: 1.75rem 0 0; padding: 0; }
+  .tactile-cleaning__features li { min-width: 0; border-top: 1px solid var(--line); padding-top: .85rem; }
+  .tactile-cleaning__features h4 { font-size: 1rem; }
+  .tactile-cleaning__features p { font-size: .9rem; line-height: 1.7; color: var(--muted); }
+  .tactile-cleaning__mutations { margin-top: 1rem; border-top: 1px solid var(--line); font-size: .86rem; line-height: 1.8; color: var(--muted); }
+  .tactile-cleaning__mutations summary { padding-block: .85rem; cursor: pointer; color: var(--ink-soft); }
+  .tactile-cleaning__mutations ul { padding: 0 0 1rem 1.25rem; }
+  @media (max-width: 1023px) { .tactile-cleaning__features { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 767px) {
+    .tactile-cleaning__heading { grid-template-columns: minmax(0, 1fr); }
+    .tactile-cleaning__heading { gap: 1rem; }
+    .tactile-cleaning__features { gap: 1rem; }
+    .tactile-cleaning table { font-size: .85rem; }
+    .tactile-cleaning th, .tactile-cleaning td { padding: .7rem .45rem; }
+    .tactile-cleaning th:first-child { width: 27%; }
+    .tactile-cleaning th:last-child { width: 25%; }
+    .tactile-cleaning__figure figcaption { font-size: .8rem; }
+  }
+</style>
